@@ -1,15 +1,26 @@
-# Independent slide review
+# Revision review
 
-November 16, 2026. Reviewer: independent_slide_review. First pass used the rendered 48-main-slide handout alone, without manuscript or author notes. The reviewer correctly reconstructed the two central arguments: optimality targets and rare resets for actor-critic learning; fixed ancestors, correction weights and discounting for likelihood derivatives. No clipping, overlap, or pervasive readability issue was found.
+November 16, 2026. The first delivery was rejected. Its review did not catch the incorrect expansion of Wei Fan's name or the imprecise optimism construction. Its previous completion statement is superseded.
 
-## Findings and changes
+## Source review
 
-- Opening feedback arrow pointed to the physical system. It now points from observations to action choice.
-- The optimism-free hybrid theorem was followed by a neural experiment that retains approximate optimism. Slide 23 now states this distinction in its title, with action-sampling details below the plot.
-- Correction weights were asserted without explaining cancellation. New slide 35 expands the conditional first-step expectation and multiplies by the baseline likelihood increment.
-- The empirical fitting budget was called comparable effort. Slide 44 specifies 100 searches per method with similar wall-clock budgets; diagnostic likelihood calls are excluded from timing, as in the manuscript.
-- MCTS is expanded on slide 48.
+Compared the live proposal with the local proposal and read the author actor-critic manuscript, the current DMOP source, and the control method/implementation sections. See SOURCES.md for paths and versions. Checked author order, observation model, regression/softmax operations, regret/covering argument, pointwise optimism, resets, hybrid-theorem versus experiment distinction, correction-weight operations, score bounds and assumptions, empirical budgets, and QMDP's computational role. This checks fidelity to the papers, not the validity of every proof in those papers.
 
-The reviewer re-read all five changed frames and reported no remaining material comprehension issue. They identified touching underbrace labels on slide 35. The first label was shortened to selection, and the rendered result was checked again.
+## Independent rendered-slide review
 
-The new cancellation frame brings the deck to 49 main slides and 10 backups. Time was reallocated within filtering; the total remains 60 minutes. This review is not a rehearsal.
+The independent reviewer read the revised full deck. Findings addressed:
+- Slide 10: optimism must be pointwise over the confidence set.
+- Slides 26/50: missing paragraph boundaries caused broken layouts.
+- Slide 15: replace compressed proof jargon with what the stale-policy bound misses.
+- Slide 27: define model compartments and observed data.
+- Slide 37: label the unit weight as a correction weight, not an ordinary filter weight.
+- Slide 46: separate the transition from the recap paragraph.
+- Slide 24: enlarge the evaluation panel and its axes/legend.
+
+The reviewer found the revised explanations describe actual operations and recommended retaining Dhaka. They found no reason for another broad rewrite. Final targeted changes are checked visually by the primary agent.
+
+## Layout and pacing
+
+All 61 handout pages were rendered and inspected, including backup. Changed pages were rendered again after fixes. Representative intermediate reveals checked: pointwise optimism, the Bellman inequality, correction weights, unit weight derivative, and filtering recap. Layouts use plain equations and diagrams; repeated rounded colored text boxes were removed.
+
+51 main slides plus 10 backups. Timing allocation remains 60 minutes: 5 opening, 25 actor-critic, 25 DMOP, 5 control/closing. This has not been rehearsed.

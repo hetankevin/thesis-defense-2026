@@ -1,12 +1,14 @@
 {
-  "dmop-searches.pdf": "0bffe1462d8cf2667e3e9664125559c8415c9f6ab05703fda906fe20e707af08",
   "actor-hybrid.jpg": "dede6a5560e6c891eaee89e95e658099c94d39e3f9c5a5ec7a2e86ceee0efc00",
   "actor-regret.jpg": "0b93ee5e5e1195c12dba9c7d95e77a9cf3244c97ed3d99990cada7afa0c6f082",
-  "control-pipeline.pdf": "198cfe0235ed97aca482dedb1136668191b5e344a71c5bd9a4e7652a38680980",
-  "section-warehouse.png": "239825a84decba987449c7ee1e40b283f6a996830f5f9aee5105ed46e8ecf825",
   "actor-tracking.png": "ed001840549e950ec1213b305e7a4afd883bfe65452149357d41f8f8bd4ee85e",
-  "section-epidemic.png": "d19bdb141ae046997823f5e90f7748b5852856856ed9967baf45183afd0aac92",
+  "cholera-culture.jpg": "ab24e8bf8579ff538a94ee493fdf1f21f05f0693beff617ff7664fe81d9301d4",
   "cholera.png": "cd9991d394ea2eedfa2d206ad76c8977ed158778abf7d926e1444f3e6112d2fe",
+  "control-pipeline.pdf": "198cfe0235ed97aca482dedb1136668191b5e344a71c5bd9a4e7652a38680980",
   "dmop-biasvar.png": "fa23543c7398a5d68457f346e5ad456707a44eaaad15c3fa67e2d75313b721cb",
-  "dmop-local.png": "036e9bda2040518e5579950d9b3ebda71c76b64f924263ddc61cd03628541138"
+  "dmop-local.png": "036e9bda2040518e5579950d9b3ebda71c76b64f924263ddc61cd03628541138",
+  "dmop-searches.pdf": "0bffe1462d8cf2667e3e9664125559c8415c9f6ab05703fda906fe20e707af08",
+  "franka-photo.jpg": "422eb1d6990d4e01dfda0c630df03fe5bdf35439a60bc2e75e4b8fc1b37f1498",
+  "section-epidemic.png": "d19bdb141ae046997823f5e90f7748b5852856856ed9967baf45183afd0aac92",
+  "section-warehouse.png": "239825a84decba987449c7ee1e40b283f6a996830f5f9aee5105ed46e8ecf825"
 }

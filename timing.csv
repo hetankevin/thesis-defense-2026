@@ -1,50 +1,52 @@
 slide,section,title,seconds
 1,opening,Title,30
-2,opening,Decisions change the data we get,120
-3,opening,Two questions for this talk,150
-4,actor-critic,1. Learning a policy,20
-5,actor-critic,An action can be useful because of what happens next,60
-6,actor-critic,"We estimate future reward, not just immediate reward",80
-7,actor-critic,An actor--critic alternates two operations,75
-8,actor-critic,The critic update is a regression problem,95
-9,actor-critic,The actor increases the odds of higher-value actions,75
-10,actor-critic,Regression alone does not tell us where to explore,70
-11,actor-critic,We want the cost of learning to grow like $\sqrt T$,65
-12,actor-critic,The actor stores all previous critics,75
-13,actor-critic,A growing target class weakens the statistical bound,80
-14,actor-critic,Why not update the critic less often?,65
-15,actor-critic,A stale policy-evaluation critic leaves uncontrolled error,90
-16,actor-critic,Change the regression target to optimality,100
-17,actor-critic,The actor still has to approach the greedy policy,80
-18,actor-critic,Rare resets make the tracking cost manageable,95
-19,actor-critic,Alg. 2: change the critic when data reject its fit,75
-20,actor-critic,What the guarantee requires,90
-21,actor-critic,The simpler update can work better in an easy case,60
-22,actor-critic,Offline data can also reduce the need for optimism,70
-23,actor-critic,Neural hybrid variants retain approximate optimism,60
-24,actor-critic,What the actor--critic argument establishes,20
-25,filtering,2. Estimating a partially observed model,20
-26,filtering,Reported cases do not reveal the full disease state,60
-27,filtering,A model specifies hidden dynamics and observations,90
-28,filtering,Likelihood requires averaging over hidden states,95
-29,filtering,Particle filtering: simulate candidate states,50
-30,filtering,Particle filtering: weight by the observation,60
-31,filtering,Particle filtering: resample before continuing,70
-32,filtering,Why not differentiate the particle filter directly?,85
-33,filtering,"Run a baseline filter, then keep its ancestors fixed",90
-34,filtering,Correct the weights for the parameter change,70
-35,filtering,The correction cancels baseline resampling probabilities,50
-36,filtering,A weight can equal one and still have a derivative,90
-37,filtering,Differentiate the corrected likelihood estimate,80
-38,filtering,Discounting limits how far derivatives accumulate,80
-39,filtering,The error has a particle term and a discounting term,105
-40,filtering,State mixing alone is not enough for this bound,95
-41,filtering,Discounting changes local likelihood approximations,70
-42,filtering,An intermediate discount improves score estimation here,70
-43,filtering,Use these derivatives for likelihood optimization,75
-44,filtering,Likelihood searches for the Dhaka cholera model,70
-45,filtering,What differentiable filtering provides,25
-46,closing,A filtered state distribution can guide an action,60
-47,closing,Full belief planning is expensive,100
-48,closing,Use particles to connect estimation and planning,90
-49,closing,Two contributions to learning from sequential data,50
+2,opening,Learning from sequential data,120
+3,opening,Two topics,150
+4,actor-critic,1. Actor--critic methods,20
+5,actor-critic,Actions affect later rewards,55
+6,actor-critic,Estimating total reward,75
+7,actor-critic,What is an actor--critic?,70
+8,actor-critic,The critic update is a regression problem,90
+9,actor-critic,Updating the policy,70
+10,actor-critic,Regression alone does not tell us where to explore,65
+11,actor-critic,How much reward do we lose while learning?,60
+12,actor-critic,The actor stores all previous critics,70
+13,actor-critic,The regret bound hides a growing policy class,75
+14,actor-critic,Can we update the critic less often?,60
+15,actor-critic,The old-policy error can keep accumulating,85
+16,actor-critic,Use an optimality target instead,95
+17,actor-critic,Why this also fixes the optimism problem,60
+18,actor-critic,The actor must track the greedy policy,80
+19,actor-critic,How much do policy resets cost?,95
+20,actor-critic,Alg. 2: change the critic when data reject its fit,75
+21,actor-critic,Regret guarantee,90
+22,actor-critic,Online experiment: Tetris,60
+23,actor-critic,Offline data can also reduce the need for optimism,70
+24,actor-critic,Hybrid experiment: AntMaze,60
+25,actor-critic,What changed in the actor--critic?,20
+26,filtering,2. Differentiable particle filters,20
+27,filtering,Fitting the Dhaka cholera model,60
+28,filtering,A partially observed model,90
+29,filtering,Likelihood requires averaging over hidden states,95
+30,filtering,Particle filtering: simulate candidate states,50
+31,filtering,Particle filtering: weight by the observation,60
+32,filtering,Particle filtering: resample before continuing,70
+33,filtering,Why not differentiate the particle filter directly?,85
+34,filtering,"Run a baseline filter, then keep its ancestors fixed",90
+35,filtering,Correct the weights for the parameter change,70
+36,filtering,Why the weight correction works,50
+37,filtering,A weight can equal one and still have a derivative,90
+38,filtering,Differentiate the corrected likelihood estimate,80
+39,filtering,Discounting reduces the weight of earlier corrections,80
+40,filtering,Error in the score estimate,105
+41,filtering,State mixing alone is not enough for this bound,95
+42,filtering,Discounting changes local likelihood approximations,70
+43,filtering,Bias and variance of the estimated score,70
+44,filtering,Fitting the model,75
+45,filtering,Likelihood searches for the Dhaka cholera model,70
+46,filtering,What did we change in the particle filter?,25
+47,closing,Position alone does not tell us how to brake,60
+48,closing,Full belief planning is expensive,100
+49,closing,Particle filtering and planning,90
+50,closing,Two contributions,30
+51,closing,Thank you everyone!,20

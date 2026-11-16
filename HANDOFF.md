@@ -5,33 +5,37 @@ Updated November 16, 2026.
 ## Canonical project
 
 Overleaf: https://www.overleaf.com/project/6afb7b39d9eebab656f22483
-Linked private GitHub repository: https://github.com/hetankevin/thesis-defense-2026
-The proposal-defense repository copy is archival. Preserve live edits by exporting and comparing before future changes.
+Private GitHub: https://github.com/hetankevin/thesis-defense-2026
+Local working copy: this directory. Linked publication clone: `/tmp/thesis-defense-linked-20261116`. The surrounding proposal repo is archival and has divergent history; do not blindly push it.
 
-## Scope and pacing
+## Current scope
 
-49 main frames plus 10 backup frames. Target 60 minutes in a 90-minute slot: opening 5, actor-critic 25, filtering 25, control/closing 5. `timing.csv` totals 3600 seconds. This is an allocation, not a rehearsal.
+51 main frames plus 10 backups. 60-minute prepared talk in a 90-minute slot: opening 5, actor-critic 25, DMOP 25, control/closing 5. `timing.csv` totals 3600 seconds; this is an allocation, not a rehearsal. Actor-critic uses the single ICML paper and its hybrid extension. DMOP is the second topic. Control is a brief return to decision making, not a third full topic.
 
-RL uses only Tan, Fan, Wei's ICML 2025 actor-critic paper and its own hybrid extension. The second topic is DMOP. Four closing frames connect filtering to control and summarize the two contributions. The other proposal projects are not included. Audience: broad statistics, with definitions and essential explanations on slides and no required speaker notes.
+## User corrections that must persist
 
-## Sources and argument
+The first thesis delivery was rejected for invented attribution and generic prose/layout. Kevin's coauthor is Wei Fan, not Jianqing Fan. Use original author order and joint-work attribution. Restore personal acknowledgments from the live proposal. Do not infer contributors from writing samples.
 
-See `provenance/SOURCES.md` for manuscript and figure provenance. RL develops values, regression, policy updates, growing critic history, stale optimism, optimality targets, rare updates/resets, tracking, and the guarantee. It distinguishes the optimism-free hybrid theorem from the approximate-optimism neural experiment.
+Keep the Dhaka cholera application and its figures. Kevin explicitly objected when the agent misread his frustration as a request to remove it. The observation model is monthly cholera deaths, not case counts. Explain the statistical inference problem without an unrelated application detour.
 
-Filtering develops hidden states, likelihood, prediction/weighting/resampling, fixed ancestors, correction weights, their first-step cancellation, informative derivatives, discounting, and optimization. The current manuscript's error theorem and derivative-stability assumptions replace older versions. Control preserves the original PF-MCTQ diagram and explains QMDP's computational motivation.
+Use direct titles, necessary definitions, actual method operations, equations and manuscript figures. No cute summaries, mandatory three-box chains, generic research slogans, or notes carrying essential explanations. Proposed RL algorithms are numbered.
 
-## Review and verification
+## Changes in this revision
 
-Independent slides-alone review completed. See `provenance/REVIEW.md`. Findings addressed: observation feedback arrow, theorem/experiment distinction, missing correction cancellation, runtime matching description, and MCTS expansion. The follow-up found no material comprehension issue; its remaining underbrace-label spacing issue was fixed and visually checked.
+Rebuilt opening, restored proposal examples and acknowledgments, corrected authors, replaced the starting-value description with pointwise optimism, restored the accumulated-critic/policy-cover calculation and optimism reasoning, clarified stale-policy error and resets, defined Dhaka compartments and observations, distinguished correction weights from observation weights, enlarged the AntMaze panel, and distinguished control theory from experimental rollouts. Removed rounded filled diagram styling and several redundant text-box diagrams.
 
-Both final local versions compile: 134 overlay pages and 59 handout pages. No overfull, underfull, or undefined warnings. Benign source JPEG DPI and imported PDF version warnings remain. All initial pages were visually inspected, then every revised frame was re-rendered and checked. Representative intermediate reveals were checked for stable positioning.
+## Verification
 
-Final Overleaf XeLaTeX builds succeeded: 134 overlay pages and 59 handout pages. Both downloaded PDFs match the corresponding local PDF text on every page, and the final live correction slide was rendered and inspected. Reviewed source commit c745164 is merged in Overleaf. Before syncing, a fresh Overleaf source download was compared against all 36 tracked files in linked GitHub commit b01df96: no differences or intervening edits.
+Sources and scientific checks: `provenance/SOURCES.md`. Independent review: `provenance/REVIEW.md`. All handout pages inspected, then changed pages rechecked. Representative intermediate overlays inspected. No new experiments were run.
 
-## Build and delivery
+Latest live source was downloaded before editing and again at approximately 17:48 Eastern. All 37 tracked files matched linked GitHub commit 423cc73. No intervening Overleaf edits were found. The original proposal is untouched.
 
-Overleaf: XeLaTeX, TeX Live 2026. Open `handout.tex` explicitly before compiling handouts and `main.tex` before overlays: Overleaf may compile the open standalone file even when the main-document setting names another file. Restore main.tex when finished.
+Final local builds succeed: 142 overlay pages and 61 handout pages, with no overfull, underfull, undefined-reference, or TeX errors. Source JPEG DPI and imported PDF-version warnings remain benign. Final targeted pages and representative reveals were rendered and inspected. Live synchronization is pending; older `thesis-defense-overleaf-*` files must not be treated as revised until replaced.
 
-Local build: `bash build.sh` with Tectonic. PDFs and source ZIP are under `output/`. Files prefixed `thesis-defense-overleaf-` are downloaded live exports. Both live exports contain the final review fixes.
+## Build
 
-Delivery is complete. A rehearsal remains necessary to validate delivery pace.
+Run `bash build.sh` with Tectonic. On Overleaf use XeLaTeX / TeX Live 2026. Open `main.tex` for overlays and `handout.tex` for one page per frame before compiling; the open standalone file can override the configured main-document choice. Restore main.tex after exporting.
+
+## Remaining delivery steps
+
+Finish final render checks, commit/push canonical source, pull into Overleaf, compile both live versions, download and compare them with local builds, update this status, and deliver the revised handout plus examples.

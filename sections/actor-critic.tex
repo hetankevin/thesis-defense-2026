@@ -1,31 +1,38 @@
 
 \renewcommand{\stage}{1. Learning a policy}
-% 20 frames, 25 minutes
-\begin{frame}{1. Learning a policy}
+% 22 frames, 25 minutes
+\begin{frame}{1. Actor--critic methods}
+\begin{columns}[c]
+\column{.52\textwidth}
 {\Large Actor-Critics Can Achieve Optimal Sample Efficiency}\gap
-Kevin Tan, Jianqing Fan, Yuting Wei\gap ICML 2025
-\vspace{8mm}
-\eqbox{Can an actor--critic learn efficiently when it must also explore?}
+Joint work: Kevin Tan, Wei Fan, Yuting Wei.\gap ICML 2025
+\column{.44\textwidth}
+\includegraphics[width=\linewidth]{section-warehouse.png}
+\end{columns}
+\gap Can actor--critic methods learn efficiently without assuming the system is already well explored?
 \end{frame}
 
-\begin{frame}{An action can be useful because of what happens next}
+\begin{frame}{Actions affect later rewards}
+Suppose a robot has to reach a target. A motor command changes where it goes next.
 \begin{center}
-\begin{tikzpicture}[node distance=13mm]
-\node[box] (s) {At a junction};
-\node[box,right=22mm of s,yshift=12mm] (a) {Short route\\small reward};
-\node[box,right=22mm of s,yshift=-12mm] (b) {Unfamiliar route\\reward initially unknown};
-\node[box,right=13mm of b] (c) {Later reward};
-\draw[arr] (s)--node[above,sloped]{left}(a);
-\draw[arr] (s)--node[below,sloped]{right}(b);\draw[arr] (b)--(c);
+\begin{tikzpicture}[node distance=10mm]
+\node[box,text width=2.7cm] (s) {State $s_h$\\position and velocity};
+\node[box,text width=2.7cm,right=of s] (a) {Action $a_h$\\motor command};
+\node[box,text width=2.7cm,right=of a] (n) {Next state $s_{h+1}$\\reward $r_h$};
+\draw[arr] (s)--(a);\draw[arr] (a)--(n);
 \end{tikzpicture}
 \end{center}
 \pause
-A policy assigns action probabilities at each state.
-\gap $\pi_h(a\mid s)$: probability of action $a$ in state $s$ at step $h$.
-\pause\gap We repeat episodes of $H$ steps. Each reward lies in $[0,1]$.
+The \textbf{policy} gives the probabilities of possible commands:
+\[
+\pi_h(a\mid s)=\Pr(\text{choose action }a\mid\text{state }s\text{ at step }h).
+\]
+\pause
+One episode contains $H$ decisions. We want a large \emph{total} reward over the episode.
+\src{Finite action set $\A$, rewards in $[0,1]$. The robot is a motivating example, not a model assumption.}
 \end{frame}
 
-\begin{frame}{We estimate future reward, not just immediate reward}
+\begin{frame}{Estimating total reward}
 For a policy $\pi$, define its action value:
 \[
 Q_h^\pi(s,a)=\E\!\left[\sum_{k=h}^{H}r_k\;\middle|\;s_h=s,a_h=a,\text{ then follow }\pi\right].
@@ -44,7 +51,7 @@ V_h^\pi(s)=\sum_{a\in\A}\pi_h(a\mid s)Q_h^\pi(s,a).
 $\A$ is the finite action set. $V^\pi$ averages over the first action too.
 \end{frame}
 
-\begin{frame}{An actor--critic alternates two operations}
+\begin{frame}{What is an actor--critic?}
 \begin{center}
 \begin{tikzpicture}
 \node[box,text width=4cm] (c) {\textbf{Critic: regression}\\Estimate future reward for each action};
@@ -75,7 +82,7 @@ $D_h$ contains transitions at step $h$; $\F_h$ is the chosen function class.
 \pause\gap This is \textbf{Bellman regression}: the response uses another value estimate.
 \end{frame}
 
-\begin{frame}{The actor increases the odds of higher-value actions}
+\begin{frame}{Updating the policy}
 At episode $t$, a softmax update uses the critic $f_{t,h}$:
 \[
 \pi_{t+1,h}(a\mid s)=
@@ -94,35 +101,41 @@ $\eta>0$ is the learning rate.
 
 \begin{frame}{Regression alone does not tell us where to explore}
 \begin{columns}[c]
-\column{.48\textwidth}
+\column{.46\textwidth}
 \begin{tikzpicture}
-\node[box] (s) {Junction};
-\node[box,right=12mm of s,yshift=12mm] (a) {Visited often\\estimate precise};
-\node[box,right=12mm of s,yshift=-12mm] (b) {Rarely visited\\estimate uncertain};
+\node (s) {State};
+\node[align=left,right=12mm of s,yshift=12mm] (a) {Visited often\\estimate precise};
+\node[align=left,right=12mm of s,yshift=-12mm] (b) {Rarely visited\\estimate uncertain};
 \draw[arr] (s)--(a);\draw[arr,dashed] (s)--(b);
 \end{tikzpicture}
-\column{.47\textwidth}
-A good fit on visited states can leave the unfamiliar route unexplored.
+\column{.49\textwidth}
+Regression error on visited states says little about unvisited actions.
 \pause\gap
-\textbf{Optimism:} among value functions consistent with the data, choose one with a high starting value.
+We retain value functions whose Bellman error is consistent with the data.
 \end{columns}
-\pause\gap \textbf{Alg. 1:} current-policy regression, optimism, and softmax updates.
+\pause\gap
+At each state and action, use the largest value allowed by this confidence set $\mathcal C$:
+\[
+f_h(s,a)=\sup_{q\in\mathcal C}q_h(s,a).
+\]
+This is the optimistic critic. High uncertainty can make an action worth exploring.
+\src{Alg. 1 combines current-policy regression, pointwise optimism, and softmax updates.}
 \end{frame}
 
-\begin{frame}{We want the cost of learning to grow like $\sqrt T$}
+\begin{frame}{How much reward do we lose while learning?}
 Let $\pi^*$ maximize expected total reward. After $T$ episodes,
 \[
 \Reg(T)=\sum_{t=1}^{T}\left[V_1^{\pi^*}(s_1)-V_1^{\pi_t}(s_1)\right].
 \]
 We take a fixed starting state $s_1$ for this discussion.
+\pause\par\bigskip
+Our goal is
+\[
+\Reg(T)=\widetilde O(\sqrt T).
+\]
 \pause
-\begin{center}\begin{tikzpicture}
-\node[box,text width=4cm] (a) {$\Reg(T)=\widetilde O(\sqrt T)$\\cumulative cost of learning};
-\node[box,text width=4cm,right=15mm of a] (b) {$\Reg(T)/T=\widetilde O(T^{-1/2})$\\average policy error};
-\draw[arr] (a)--(b);
-\end{tikzpicture}\end{center}
-\pause
-$\widetilde O$ hides logarithmic factors. Model complexity and $H$ also enter the bound.
+Then average policy error decreases as $\Reg(T)/T=\widetilde O(T^{-1/2})$.
+\gap $\widetilde O$ hides logarithmic factors. Model complexity and episode length $H$ also enter the bound.
 \end{frame}
 
 \begin{frame}{The actor stores all previous critics}
@@ -142,63 +155,83 @@ Even if each critic is simple, their accumulated sum need not belong to the same
 \gap This matters because the policy also appears in our regression targets.
 \end{frame}
 
-\begin{frame}{A growing target class weakens the statistical bound}
-An $\varepsilon$-cover approximates every function to accuracy $\varepsilon$. Its size is the covering number $\mathcal N$.
-\gap More possible targets require a larger uniform confidence bound.
-\pause
+\begin{frame}{The regret bound hides a growing policy class}
+To control regression error, we need a confidence bound that holds for all targets the algorithm can construct.
+\pause\gap
+A covering number $\mathcal N_\Pi(\varepsilon)$ counts how many policies are needed to approximate this class to accuracy $\varepsilon$.
 \[
-\log \mathcal N(\text{policy-induced targets})
-\quad\text{can grow with the number of distinct critics.}
+\text{regret bound}\ \sim\ \sqrt{T\,\beta_T},\qquad
+\beta_T\text{ contains a log-covering term.}
 \]
 \pause
-\eqbox{If that number grows like $T$, the general argument no longer gives $\sqrt T$ regret.}
-\gap This is a limitation of this bound, not an impossibility result.
-\src{Alg. 1 attains the desired rate under an additional closure condition. General classes need another argument.}
+With $K$ distinct critics, the policy-cover bound contains
+\[
+\log\mathcal N_{\Pi_T}\ \lesssim\ K\log\mathcal N_{\F}.
+\]
+If we refit every episode, $K=T$: this argument can give a linear bound.
+\src{Schematic dependence, with suitable covering scales and other complexity factors suppressed. The exact target class also includes Bellman backups. This is a loose general bound, not an impossibility result.}
 \end{frame}
 
-\begin{frame}{Why not update the critic less often?}
+\begin{frame}{Can we update the critic less often?}
 \begin{center}\begin{tikzpicture}[x=1cm]
 \draw[arr] (0,0)--(11,0) node[right] {$t$};
 \foreach \x in {0.5,1.5,...,10.5}{\draw (\x,-.1)--(\x,.1);}
 \foreach \x/\lab in {0.5/1,4.5/2,8.5/3}{\draw[pink,very thick] (\x,-.3)--(\x,.5);\node[above,pink] at (\x,.5){critic \lab};}
-\node[below] at (5.5,-.4) {Actor updates between critic changes};
+\node[below] at (5.5,-.4) {Keep updating the actor between critic changes};
 \end{tikzpicture}\end{center}
 \pause
-Fewer distinct critics could control the size of the policy class.
-\pause\gap
-But $Q^{\pi_t}$ changes whenever the actor changes, even while the critic is fixed.
-\gap A confidence statement for the old policy need not remain valid for the new one.
+This reduces $K$. But the critic is estimating $Q^{\pi_t}$, and the actor keeps changing.
+\[
+y_t^\pi=r+\sum_b\pi_t(b\mid s')f_{h+1}(s',b).
+\]
+\pause
+Even with the same data and the same critic, the regression target changes.
+\gap The old critic can cease to be optimistic for the current policy.
 \end{frame}
 
-\begin{frame}{A stale policy-evaluation critic leaves uncontrolled error}
+\begin{frame}{The old-policy error can keep accumulating}
 \begin{columns}[c]
-\column{.72\textwidth}\includegraphics[width=\linewidth]{actor-tracking.png}
-\column{.26\textwidth}\small
-\textcolor{pink}{Pink:} optimistic optimality critic.\gap
-\textcolor{blue}{Rising blue:} actual policy value.\gap
-\textcolor{blue!70!black}{Blue steps:} critic fitted to an earlier policy.\gap
-\textcolor{red!70!black}{Red:} optimal value.
+\column{.70\textwidth}\includegraphics[width=\linewidth]{actor-tracking.png}
+\column{.28\textwidth}\small
+\textcolor{blue}{Rising blue}: current policy value.\gap
+\textcolor{red!70!black}{Red}: optimal value.\gap
+\textcolor{pink}{Solid pink}: optimistic $Q^*$ critic.\gap
+Dashed pink: its greedy policy value.\gap
+Lower blue steps: stale $Q^\pi$ critic.
 \end{columns}
 \pause\gap
-The old evaluation target misses subsequent policy changes. Rare switching alone does not control this error.
-\src{Paper's conceptual illustration, not experimental data. Vertical dotted lines are critic updates; horizontal axis is episode count.}
+The bound compares against the policy at the last critic update. The rust area is the improvement since then that the bound fails to account for.
+\src{ICML 2025, conceptual illustration. Horizontal axis: episode count. Vertical dotted lines: critic changes. The stale-policy term can be linear in $T$.}
 \end{frame}
 
-\begin{frame}{Change the regression target to optimality}
+\begin{frame}{Use an optimality target instead}
 \begin{align*}
-\text{Policy evaluation:}\qquad y^\pi &= r+\sum_b\pi(b\mid s')f_{h+1}(s',b).\\[4mm]
-\uncover<2->{\text{Optimality:}\qquad y^* &= r+\max_b f_{h+1}(s',b).}
+\text{Evaluate the current policy:}\quad y_t^\pi &= r+\sum_b\pi_t(b\mid s')f_{h+1}(s',b).\\[4mm]
+\uncover<2->{\text{Target the optimal value:}\quad y^* &= r+\max_b f_{h+1}(s',b).}
 \end{align*}
-\uncover<2->{The new target asks for the best next action, rather than averaging under the current actor.}
-\uncover<3->{\gap
-Its complexity depends on the critic class, without the growing class of actors:
+\uncover<2->{The second target still depends on the critic, but no longer on the actor.}
+\uncover<3->{\gap For any two critics $f,g$,
 \[
-\left|\max_b f(s',b)-\max_b g(s',b)\right|\leq \|f-g\|_\infty.
+\left|\max_b f(s',b)-\max_b g(s',b)\right|\leq\|f-g\|_\infty.
 \]}
-\uncover<3->{Here $f,g$ are any two critic functions. Taking a maximum does not amplify their difference.}
+\uncover<3->{A cover of the critic class therefore controls these targets. We no longer need the growing policy cover.}
 \end{frame}
 
-\begin{frame}{The actor still has to approach the greedy policy}
+\begin{frame}{Why this also fixes the optimism problem}
+Let $\T_h f$ be the expected optimality target, and $\T_h^\pi f$ the expected policy-evaluation target.
+\pause
+\[
+\underbrace{f_h}_{\text{optimistic critic}}
+\ \geq\ \underbrace{\T_h f_{h+1}}_{\text{best next action}}
+\ \geq\ \underbrace{\T_h^{\pi_t}f_{h+1}}_{\text{current actor}}.
+\]
+The second inequality holds for every policy: an average cannot exceed a maximum.
+\pause\gap
+The actor can change while the critic is fixed. We do not lose optimism just because the policy changed.
+\src{The confidence-set construction gives the first inequality on the paper's high-probability event. The optimality operator is fixed; its input critic can still change.}
+\end{frame}
+
+\begin{frame}{The actor must track the greedy policy}
 The critic now targets optimal values. Our actor still takes softmax steps.
 \[
 \underbrace{\max_a f_{t,h}(s,a)}_{\text{greedy choice}}
@@ -206,16 +239,16 @@ The critic now targets optimal values. Our actor still takes softmax steps.
 \]
 \pause
 \begin{center}\begin{tikzpicture}
-\node[box,text width=3.1cm] (a) {Critic changes\\preferred action may change};
+\node[box,text width=3.1cm] (a) {Critic changes\\best action may change};
 \node[box,text width=3.1cm,right=7mm of a] (b) {Reset actor\\uniform action probabilities};
-\node[box,text width=3.1cm,right=7mm of b] (c) {Hold critic fixed\\actor approaches greedy};
+\node[box,text width=3.4cm,right=5mm of b] (c) {Hold critic fixed\\softmax steps toward the greedy policy};
 \draw[arr] (a)--(b);\draw[arr] (b)--(c);
 \end{tikzpicture}\end{center}
 \pause
-Resetting prevents the new preferred action from starting with an arbitrarily small probability.
+After a reset, every action has probability $1/|\A|$. This bounds the cost of moving toward the new greedy policy.
 \end{frame}
 
-\begin{frame}{Rare resets make the tracking cost manageable}
+\begin{frame}{How much do policy resets cost?}
 Let $K$ be the number of critic changes. The actor contribution is bounded by
 \[
 \underbrace{\eta H^3T}_{\text{update error}}
@@ -237,7 +270,7 @@ The switching rule gives $K=O(dH\log T)$.
 \begin{frame}{Alg. 2: change the critic when data reject its fit}
 \begin{center}\begin{tikzpicture}[node distance=7mm]
 \node[box,text width=3.0cm] (a) {Collect an episode\\add transitions to the data};
-\node[box,text width=3.1cm,right=of a] (b) {Test current critic\\excess regression loss};
+\node[box,text width=3.1cm,right=of a] (b) {Test critic\\excess squared error};
 \node[box,text width=3.2cm,right=of b] (c) {If rejected: refit optimistic critic and reset actor};
 \draw[arr] (a)--(b);\draw[arr] (b)--(c);
 \node[box,below=13mm of b,text width=4.5cm] (d) {Update actor using the retained critic};
@@ -246,10 +279,10 @@ The switching rule gives $K=O(dH\log T)$.
 \end{tikzpicture}\end{center}
 \pause
 The test compares the current squared error with the best regression fit to the same optimality targets.
-\gap Reuse all collected data. Do not refit merely because the actor changed.
+\gap We retain all transitions and refit only when the current critic fails this test.
 \end{frame}
 
-\begin{frame}{What the guarantee requires}
+\begin{frame}{Regret guarantee}
 \begin{enumerate}
 \item The critic class contains the optimal action-value function $Q^*$.
 \pause\item Bellman regression targets can be represented by the regression class.
@@ -266,7 +299,7 @@ $\mathcal N$ covers the critic and optimality-target classes at resolution $1/T$
 \src{The result concerns sample efficiency. Optimizing over the confidence set can be computationally difficult.}
 \end{frame}
 
-\begin{frame}{The simpler update can work better in an easy case}
+\begin{frame}{Online experiment: Tetris}
 \begin{center}\begin{tikzpicture}
 \node[inner sep=0] (p) {\includegraphics[width=12.6cm]{actor-regret.jpg}};
 % Source's y-axis says Reward despite the plot and manuscript describing cumulative regret.
@@ -275,7 +308,7 @@ $\mathcal N$ covers the critic and optimality-target classes at resolution $1/T$
 \end{tikzpicture}\end{center}
 Tetris, linear critics, 30 trials. Alg. 1 uses the current-policy target; Alg. 2 uses rare updates and resets.
 \pause\gap
-Alg. 1 performs best here. The extra machinery buys a broader guarantee, not uniformly better finite-sample performance.
+Alg. 1 performs best here. The additional resets are needed for the general guarantee. They do not improve this experiment.
 \src{Paper's online experiment. LSVI-UCB is an optimistic value-iteration baseline; shaded bands are reproduced from the paper.}
 \end{frame}
 
@@ -291,33 +324,32 @@ Alg. 1 performs best here. The extra machinery buys a broader guarantee, not uni
 With enough offline data covering an optimal policy, the same paper gives variants that omit optimistic optimization.
 \pause\gap
 Coverage means that critic errors along an optimal policy are controlled by errors on the offline data.
-\gap Arbitrary offline data do not satisfy this condition.
+\gap The result needs this coverage condition and enough offline samples.
 \end{frame}
 
-\begin{frame}{Neural hybrid variants retain approximate optimism}
-\begin{columns}[c]
-\column{.61\textwidth}
-\includegraphics[width=\linewidth,height=4.7cm,keepaspectratio,trim=594 0 0 0,clip]{actor-hybrid.jpg}
-\column{.36\textwidth}
-AntMaze medium-diverse.\gap
-Blue: Alg. 2H, optimality target.\\
-Red: Alg. 1H, evaluation target.\\
-Green: Cal-QL baseline.
-\pause\gap
-Alg. 2H reaches higher evaluation return in this experiment.
-\end{columns}
-\gap First 1,000 steps are offline pretraining. Horizontal axis: training steps; vertical axis: evaluation return.
-\src{Paper's experiment, reproduced evaluation panel. Neural implementation uses approximate optimism via action sampling; it is not the theoretical confidence-set algorithm.}
-\end{frame}
-
-\begin{frame}{What the actor--critic argument establishes}
+\begin{frame}{Hybrid experiment: AntMaze}
 \begin{center}\begin{tikzpicture}
-\node[box,text width=3.2cm] (a) {Optimality regression\\controls the target class};
-\node[box,text width=3.2cm,right=7mm of a] (b) {Rare updates and resets\\control actor tracking};
-\node[box,text width=3.2cm,right=7mm of b] (c) {$\sqrt T$ regret\\under complexity assumptions};
-\draw[arr] (a)--(b);\draw[arr] (b)--(c);
+\node[inner sep=0] (p) {\includegraphics[height=5.1cm,trim=610bp 15bp 25bp 85bp,clip]{actor-hybrid.jpg}};
+\node[rotate=90,font=\small] at ($(p.west)+(-.4,0)$) {Evaluation return};
 \end{tikzpicture}\end{center}
+Blue: Alg. 2H, optimality target. Red: Alg. 1H, policy evaluation. Green: Cal-QL.
 \pause\gap
-So far, the state has been observed. Many statistical models instead describe a state we cannot directly measure.
-\gap We now turn to estimating those models from observations.
+Alg. 2H reaches higher evaluation return on AntMaze medium-diverse.
+\src{ICML 2025 hybrid experiment. First 1,000 training steps: offline pretraining. Both neural variants approximate optimism by action sampling, rather than solving the theoretical confidence-set problem. Full comparison in backup.}
+\end{frame}
+
+\begin{frame}{What changed in the actor--critic?}
+\begin{columns}[T]
+\column{.47\textwidth}
+\textbf{Critic}\gap
+Fit $r+\max_a f(s',a)$ rather than $r+\E_{a\sim\pi}f(s',a)$.
+\gap The target class no longer grows with the actor's history.
+\pause
+\column{.47\textwidth}
+\textbf{Actor}\gap
+Keep taking softmax steps. Reset to uniform when the critic changes.
+\gap Rare critic updates limit how often we restart.
+\end{columns}
+\pause\gap\bigskip
+We have assumed that the state is observed. Next: fitting a model when it is hidden.
 \end{frame}

@@ -21,7 +21,7 @@ The excess loss of a candidate critic $f$ is
 L_{t,h}(f_h,f)-\inf_{g\in\mathcal G_h}L_{t,h}(g,f).
 \]
 Alg. 2 switches if this exceeds $5H^2\beta$ for some step $h$.\gap
-The refitted confidence set requires excess loss at most $H^2\beta$ at every step. Select an optimistic member and reset the actor.
+The refitted confidence set requires excess loss at most $H^2\beta$ at every step. Take the pointwise supremum over this set to form the critic, and reset the actor.
 \src{$\beta$ is the confidence width defined on the next slide. Constants follow the paper's normalization.}
 \end{frame}
 
@@ -86,7 +86,7 @@ At $\alpha=1$,
 \E\|\widehat S_{J,1}-S\|_2^2\lesssim pG'(\theta)^2\min\{N^2,N^3/J\}.
 \]
 Observations fixed, multinomial resampling, $J\geq2$, $\theta=\phi$. Constants depend on the model and stability bounds, not $N,J,\alpha$.
-\src{Current DMOP source, \texttt{thm:mop-biasvar}, Git blob \texttt{25fbafb7351c10f62118a17b8ddb72e4799fd855}.}
+\src{DMOP manuscript, error bounds for DMOP-$\alpha$.}
 \end{frame}
 
 \begin{frame}{Backup: two conditions for derivative stability}
@@ -117,8 +117,8 @@ The displayed error theorem uses the after-resampling estimate. The two construc
 
 \begin{frame}{Backup: sources}
 \small
-\textbf{Actor--critic.} Kevin Tan, Jianqing Fan, Yuting Wei. Actor-Critics Can Achieve Optimal Sample Efficiency. ICML 2025.\gap
-\textbf{Differentiable filtering.} Kevin Tan, A. J. Abkemeier, Kunyang He, Giles Hooker, Edward Ionides. Automatic Differentiation for Inference on Partially Observed Markov Process Models. Current manuscript.\gap
+\textbf{Actor--critic.} Kevin Tan, Wei Fan, Yuting Wei. Actor-Critics Can Achieve Optimal Sample Efficiency. ICML 2025.\gap
+\textbf{Differentiable filtering.} Kevin Tan, A. J. Abkemeier, Kunyang He, Giles Hooker, Edward L. Ionides. Automatic Differentiation for Inference on Partially Observed Markov Process Models. Current manuscript.\gap
 \textbf{Control illustration.} Kevin Tan and Ziping Xu. From POMDP Theory to Deep RL with Particle Filters. NeurIPS 2026.\gap
-Exact source paths, manuscript versions, figure mappings, and figure modifications are recorded in \texttt{provenance/SOURCES.md}.
+
 \end{frame}

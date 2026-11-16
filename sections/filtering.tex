@@ -1,29 +1,23 @@
 
 \renewcommand{\stage}{2. Estimating a partially observed model}
-\begin{frame}{2. Estimating a partially observed model}
+\begin{frame}{2. Differentiable particle filters}
 {\Large Automatic Differentiation for Inference\\on Partially Observed Markov Process Models}\gap
-Kevin Tan, A. J. Abkemeier, Kunyang He,\\Giles Hooker, Edward Ionides
-\vspace{7mm}
-\eqbox{We can simulate a model. How do we fit it when its likelihood is unavailable?}
-\src{JRSS-B, revise and resubmit.}
+Joint work: Kevin Tan, A. J. Abkemeier, Kunyang He,\\Giles Hooker, Edward L. Ionides.
+\gap JRSS-B, revise and resubmit.\par
+\vspace{6mm}
+We can simulate the model, but cannot evaluate its likelihood directly. How do we estimate its parameters?
 \end{frame}
 
-\begin{frame}{Reported cases do not reveal the full disease state}
-\begin{center}\begin{tikzpicture}
-\node[box] (s) {Susceptible};\node[box,right=22mm of s] (i) {Infected};
-\node[box,right=22mm of i] (r) {Recovered};
-\draw[arr] (s)--node[above,font=\small]{infection}(i);
-\draw[arr] (i)--node[above,font=\small]{recovery}(r);
-\node[box,below=15mm of i] (y) {Reported cases};
-\draw[arr] (i)--node[right,font=\small]{partial, noisy reporting}(y);
-\end{tikzpicture}\end{center}
-\pause
-Different hidden trajectories can produce similar reported counts.
-\gap We want to estimate parameters such as recovery and transmission rates.
-\src{Schematic motivation. The Dhaka cholera model used later includes additional compartments and reporting mechanisms.}
+\begin{frame}{Fitting the Dhaka cholera model}
+\begin{center}\includegraphics[width=.94\linewidth,height=3.1cm,keepaspectratio]{cholera.png}\end{center}
+$S$: susceptible. $I$: infected. $R_1,R_2,R_3$: stages of immunity.\\
+$P$: total population. $M$: cholera deaths.
+\pause\gap
+We observe monthly deaths, not the compartment sizes. We want to estimate parameters such as the recovery rate $\gamma$.
+\src{King et al. (2008), diagram reproduced in the DMOP manuscript. Arrows: infection $\lambda(t)$, recovery $\gamma$, waning immunity $k\epsilon$ ($k=3$), cholera deaths $m$, other deaths $\delta$, and population change $dP$.}
 \end{frame}
 
-\begin{frame}{A model specifies hidden dynamics and observations}
+\begin{frame}{A partially observed model}
 \begin{center}\begin{tikzpicture}[node distance=18mm]
 \node[box] (x0) {$X_{n-1}$};\node[box,right=of x0] (x1) {$X_n$};
 \node[box,right=of x1] (x2) {$X_{n+1}$};
@@ -52,7 +46,7 @@ p_\theta(y_n\mid y_{1:n-1})
 \]
 \pause
 \begin{center}\begin{tikzpicture}
-\node[box,text width=3cm] (p) {Predict hidden state};
+\node[box,text width=3cm] (p) {Predict $X_n$};
 \node[box,text width=3cm,right=7mm of p] (s) {Score new observation};
 \node[box,text width=3cm,right=7mm of s] (u) {Update state distribution};
 \draw[arr] (p)--(s);\draw[arr] (s)--(u);
@@ -128,8 +122,8 @@ Simulation and weighting may be differentiable. Resampling makes a discrete choi
 \begin{frame}{Run a baseline filter, then keep its ancestors fixed}
 Use $\phi$ for the baseline parameter and $\theta$ for the parameter we differentiate.
 \begin{center}\begin{tikzpicture}
-\node[box,text width=3.5cm] (a) {Run ordinary filter at $\phi$\\save randomness and ancestors};
-\node[box,text width=3.5cm,right=16mm of a] (b) {Vary $\theta$\\recompute states and weights};
+\node[box,text width=3.5cm] (a) {Filter at $\phi$\\save draws and ancestors};
+\node[box,text width=3.5cm,right=16mm of a] (b) {Change $\theta$\\reuse draws and ancestors};
 \draw[arr] (a)--(b);
 \end{tikzpicture}\end{center}
 \pause
@@ -138,7 +132,7 @@ Use $\phi$ for the baseline parameter and $\theta$ for the parameter we differen
 X_n^{\theta,j}=\widetilde X_n^{\theta,A_n^j}.
 \]
 The simulator draws $U_n^j$ and ancestor indices $A_n^j$ stay fixed.
-\pause\gap Now the paths are differentiable. We still need to correct for baseline resampling.
+\pause\gap We can differentiate these paths. But the ancestors were sampled at $\phi$, so their probabilities need a correction.
 \end{frame}
 
 \begin{frame}{Correct the weights for the parameter change}
@@ -157,7 +151,7 @@ $0\leq\alpha\leq1$ controls how much previous correction is retained.
 \end{frame}
 
 
-\begin{frame}{The correction cancels baseline resampling probabilities}
+\begin{frame}{Why the weight correction works}
 At the first observation, previous correction weights equal one. Write $g^{\theta,j}$ for particle $j$'s observation weight.
 \pause
 \[
@@ -182,16 +176,13 @@ w(\theta)=\frac{g^\theta}{g^\phi}.
 \]
 \pause
 \[
-w(\phi)=1,\qquad
-\left.\nabla_\theta w(\theta)\right|_{\theta=\phi}
-=\frac{\nabla_\theta g^\theta|_{\theta=\phi}}{g^\phi}.
+\underbrace{w(\phi)=1}_{\text{unit correction weight}},\qquad
+\underbrace{\left.\nabla_\theta w(\theta)\right|_{\theta=\phi}
+=\frac{\nabla_\theta g^\theta|_{\theta=\phi}}{g^\phi}}_{\text{correction to the derivative}}.
 \]
-The baseline denominator is a constant, not a second copy of the numerator's computation.
-\pause
-\begin{center}\begin{tikzpicture}
-\node[box,text width=4.3cm] (a) {Forward values at $\phi$\\ordinary particle filter};
-\node[box,text width=4.3cm,right=12mm of a] (b) {Derivatives at $\phi$\\include weight corrections};
-\end{tikzpicture}\end{center}
+\pause\gap
+The baseline denominator stays fixed while we differentiate the numerator.
+\gap So the forward calculation agrees with the ordinary filter, but its derivative includes the correction for resampling.
 \end{frame}
 
 \begin{frame}{Differentiate the corrected likelihood estimate}
@@ -212,7 +203,7 @@ The resulting score estimate is
 \gap Automatic differentiation follows the fixed-ancestor paths and corrected weights.
 \end{frame}
 
-\begin{frame}{Discounting limits how far derivatives accumulate}
+\begin{frame}{Discounting reduces the weight of earlier corrections}
 Take logarithms of the correction update:
 \[
 \log w_n^j=\alpha\log w_{n-1}^{A_n^j}
@@ -229,7 +220,7 @@ Along a lineage, earlier contributions receive successive factors of $\alpha$:
 $\alpha=1$ retains the full correction history. Smaller $\alpha$ reduces its influence, at the cost of bias.
 \end{frame}
 
-\begin{frame}{The error has a particle term and a discounting term}
+\begin{frame}{Error in the score estimate}
 The target is the full likelihood score $S(\theta)=\nabla_\theta\ell(\theta)$.
 \gap Under the regularity and stability conditions on the next slide, for $\alpha<1$,
 \[
@@ -241,7 +232,7 @@ The target is the full likelihood score $S(\theta)=\nabla_\theta\ell(\theta)$.
 Here $H_N(\alpha)=\sum_{r=0}^{N-1}\alpha^r$ measures retained history.
 \pause\gap
 More particles reduce the first term. They do not remove discount bias.
-\src{Current manuscript, error bounds for DMOP-$\alpha$. Display suppresses the common factor $pG'(\theta)^2$ and model-dependent constants. Expectation is over filter randomness, with observations fixed.}
+\src{DMOP error theorem. Model-dependent constants and derivative bounds suppressed; full statement in backup. Expectation is over filter randomness, with observations fixed.}
 \end{frame}
 
 \begin{frame}{State mixing alone is not enough for this bound}
@@ -249,8 +240,8 @@ The model needs bounded, positive transition and observation densities, and smoo
 \pause\gap
 We also need to control \textbf{simulated derivatives}, in one of two ways:
 \begin{center}\begin{tikzpicture}
-\node[box,text width=4.7cm] (a) {Effect of an earlier state on later measurement derivatives decays geometrically};
-\node[box,text width=4.7cm,right=12mm of a] (b) {The joint process of state and parameter derivative satisfies a mixing condition};
+\node[box,text width=4.7cm] (a) {Sensitivity of a later log measurement to an earlier state decays geometrically};
+\node[box,text width=4.7cm,right=12mm of a] (b) {The state and its parameter derivative jointly satisfy a mixing condition};
 \node at ($(a.east)!.5!(b.west)$) {or};
 \end{tikzpicture}\end{center}
 \pause
@@ -267,10 +258,10 @@ All three approximations agree in value at the baseline.
 \pause\gap
 Their slopes and curvature differ. We use these derivatives locally, then update the baseline.
 \end{columns}
-\src{DMOP manuscript, Figure 1A. Dashed cyan: reference likelihood. Yellow: $\alpha=1$; pink: $\alpha=.97$; green: $\alpha=0$. The plot does not display raw discontinuous particle-filter evaluations.}
+\src{DMOP manuscript, Figure 1A. Dashed cyan: reference likelihood. Yellow: $\alpha=1$; pink: $\alpha=.97$; green: $\alpha=0$. }
 \end{frame}
 
-\begin{frame}{An intermediate discount improves score estimation here}
+\begin{frame}{Bias and variance of the estimated score}
 \begin{columns}[c]
 \column{.61\textwidth}\picturefit[5.2cm]{dmop-biasvar.png}
 \column{.36\textwidth}
@@ -279,13 +270,13 @@ Blue: mean squared error.\\Yellow: squared bias.\\Pink: variance.
 \pause\gap
 In this example, bias dominates near zero and variance rises near one.
 \end{columns}
-\src{DMOP manuscript, Figure 1B. This illustrates a model-specific tradeoff, not a universal choice of $\alpha$.}
+\src{DMOP manuscript, Figure 1B. MSE of the recovery-rate score, with observations fixed.}
 \end{frame}
 
-\begin{frame}{Use these derivatives for likelihood optimization}
+\begin{frame}{Fitting the model}
 \begin{center}\begin{tikzpicture}
-\node[box,text width=3.0cm] (a) {Iterated filtering\\find a promising region};
-\node[box,text width=3.0cm,right=8mm of a] (b) {DMOP score\\estimate local gradient};
+\node[box,text width=3.0cm] (a) {Iterated filtering\\initialize parameters};
+\node[box,text width=3.0cm,right=8mm of a] (b) {DMOP\\estimate gradient};
 \node[box,text width=3.0cm,right=8mm of b] (c) {Adam update\\move parameters};
 \draw[arr] (a)--(b);\draw[arr] (b)--(c);
 \draw[arr] (c.south)--++(0,-.7)-|(b.south);
@@ -308,14 +299,17 @@ IFAD with $\alpha=.97$ attains higher likelihoods in this comparison.
 \src{DMOP manuscript, comparable-time panel. Timing excludes per-iteration diagnostic likelihood calls. Log-likelihoods below $-3800$ are omitted. Dotted red line: best-known fitted likelihood.}
 \end{frame}
 
-\begin{frame}{What differentiable filtering provides}
-\begin{center}\begin{tikzpicture}
-\node[box,text width=3.2cm] (a) {Ordinary particle filter\\same forward values};
-\node[box,text width=3.2cm,right=7mm of a] (b) {Fixed ancestors and corrections\\differentiable local estimate};
-\node[box,text width=3.2cm,right=7mm of b] (c) {Discounting\\bias--variance control};
-\draw[arr] (a)--(b);\draw[arr] (b)--(c);
-\end{tikzpicture}\end{center}
+\begin{frame}{What did we change in the particle filter?}
+For differentiation, we retain the ancestor indices $A_n^j$ and use
+\[
+X_n^{\theta,j}=F_\theta(X_{n-1}^{\theta,A_n^j},U_n^{A_n^j}),
+\qquad
+w_n^j=(w_{n-1}^{A_n^j})^\alpha
+\frac{g_n^{\theta,A_n^j}}{g_n^{\phi,A_n^j}}.
+\]
+Fixed ancestors make the simulated paths differentiable. Weight ratios correct for sampling those ancestors at $\phi$.
 \pause\gap
-The algorithm uses a differentiable simulator and observation density, without evaluating a transition density.
-\gap This gives a way to fit a model that we can then use for prediction or control.
+$\alpha$ discounts earlier weight corrections. It trades bias against variance in the estimated score.
+\pause\par\bigskip
+We have fitted the dynamics. How can we use them to choose actions when the state is hidden?
 \end{frame}
