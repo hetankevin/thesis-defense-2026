@@ -1,0 +1,48 @@
+
+% 3 frames, 5 minutes
+\begin{frame}[plain]{}\leavevmode
+{\color{blue!50!black}\LARGE\bfseries Statistical and computational efficiency\\[2mm]in sequential decision making\par}
+\vspace{9mm}
+\begin{tikzpicture}
+\node[box,text width=4.6cm] (a) {Learning which actions to take};
+\node[box,text width=4.6cm,right=12mm of a] (b) {Learning a model from incomplete observations};
+\draw[arr] (a) -- (b);
+\end{tikzpicture}
+\gap Thesis defense
+\end{frame}
+
+\begin{frame}{Decisions change the data we get}
+\begin{center}
+\begin{tikzpicture}[node distance=14mm]
+\node[box] (s) {System now};
+\node[box,right=of s] (a) {Choose an action};
+\node[box,right=of a] (n) {System later};
+\draw[arr] (s)--(a);\draw[arr] (a)--(n);
+\node[smallbox,below=13mm of a] (d) {Observations};
+\draw[arr] (n.south) |- (d.east);
+\draw[arr] (d.west) -| (s.south);
+\end{tikzpicture}
+\end{center}
+\pause
+\gap Trying an action costs data. Its consequences may appear much later.
+\pause
+\gap We may also observe only part of the system we want to control.
+\end{frame}
+
+\begin{frame}{Two questions for this talk}
+\begin{columns}[T]
+\column{.47\textwidth}
+{\Large\color{blue}1. Learning a policy}\gap
+How can regression and policy updates learn to act with limited interaction?
+\gap\textbf{Actor--critic methods}\\
+Work with Jianqing Fan and Yuting Wei.
+\column{.47\textwidth}
+\pause
+{\Large\color{green}2. Estimating a model}\gap
+How can we differentiate a likelihood estimated using particles?
+\gap\textbf{Differentiable particle filtering}\\
+Work with A. J. Abkemeier, Kunyang He, Giles Hooker, and Edward Ionides.
+\end{columns}
+\pause\gap\medskip
+At the end: how these two problems meet in control with hidden states.
+\end{frame}

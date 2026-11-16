@@ -1,0 +1,55 @@
+
+\renewcommand{\stage}{From inference to control}
+\begin{frame}{A filtered state distribution can guide an action}
+Suppose we measure a cart's position but not its velocity.
+\begin{center}\begin{tikzpicture}
+\draw[thick] (-1,0)--(9,0);
+\foreach \x in {1,6}{\draw[fill=blue!15] (\x,.15) rectangle ++(1,.5);\fill (\x+.2,.1) circle(.1);\fill (\x+.8,.1) circle(.1);}
+\draw[arr,pink] (1.5,1)--(.2,1);\draw[arr,blue] (6.5,1)--(7.8,1);
+\node[above] at (1.5,1.2) {Moving left};\node[above] at (6.5,1.2) {Moving right};
+\node[below] at (1.5,-.2) {Brake with force to the right};\node[below] at (6.5,-.2) {Brake with force to the left};
+\end{tikzpicture}\end{center}
+\pause
+These are two possible hidden velocities at the same measured position.
+\gap Previous positions help infer velocity. A filter represents the remaining uncertainty.
+\end{frame}
+
+\begin{frame}{Full belief planning is expensive}
+A belief $b$ is the distribution of hidden state given past observations and actions.
+\begin{center}\begin{tikzpicture}[x=.75cm,y=.75cm]
+\node[box] (b) at (0,1) {Current belief};
+\foreach \x in {-2,2}{\node[circle,draw=blue,inner sep=3pt] (a\x) at (\x,0) {};\draw[arr] (b)--(a\x);}
+\foreach \x/\p in {-3/-2,-1/-2,1/2,3/2}{\node[circle,draw=pink,inner sep=3pt] (o\x) at (\x,-1) {};\draw[arr] (a\p)--(o\x);}
+\node[align=left,right] at (4,1) {Choose an action};
+\node[align=left,right] at (4,0) {Consider possible observations};
+\node[align=left,right] at (4,-1) {Update beliefs and branch again};
+\end{tikzpicture}\end{center}
+\pause
+QMDP avoids this future belief tree by assuming the state becomes observed after the first action:
+\[
+Q_{\mathrm{QMDP}}(b,a)=\E_{X\sim b}\bigl[Q^*_{\mathrm{fully\ observed}}(X,a)\bigr].
+\]
+\pause
+It saves computation, but ignores future information gathering. A short belief tree before a QMDP terminal value partly addresses this.
+\end{frame}
+
+\begin{frame}{Use particles to connect estimation and planning}
+\picturefit[4.5cm]{control-pipeline.pdf}
+\gap $\bar\theta$: fitted parameters. $b^J$: belief represented by $J$ particles.\\$Q^*$: fully observed action value. $H_t$: observation--action history.
+\src{Particle-based control manuscript, original PF-MCTQ pipeline illustration. Tan and Xu, From POMDP Theory to Deep RL with Particle Filters, NeurIPS 2026.}
+\end{frame}
+
+\begin{frame}{Two contributions to learning from sequential data}
+\begin{columns}[T]
+\column{.47\textwidth}
+{\large\color{blue}\textbf{Learning a policy}}\gap
+Optimality regression avoids a growing policy class in the critic's concentration argument.\gap
+Rare updates and resets control the actor's tracking error.
+\column{.47\textwidth}
+{\large\color{green}\textbf{Estimating a model}}\gap
+Fixed ancestors and corrected weights allow differentiation through particle filtering.\gap
+Discounting controls the cost of retaining a long derivative history.
+\end{columns}
+\pause\gap\medskip
+Together, these address how we estimate sequential systems and use those estimates to choose actions.
+\end{frame}

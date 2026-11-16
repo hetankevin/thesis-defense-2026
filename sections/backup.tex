@@ -1,0 +1,124 @@
+
+\begin{frame}{Backup: actor--critic assumptions}
+A finite-horizon Markov decision process has transition kernels $P_h$, rewards in $[0,1]$, and finite action set $\A$.
+\gap The optimality operator is
+\[
+(\T_h f_{h+1})(s,a)=r_h(s,a)+\E_{s'\sim P_h(\cdot\mid s,a)}\max_b f_{h+1}(s',b).
+\]
+Realizability: $Q^*\in\F$.\gap
+Generalized completeness: an auxiliary regression class $\mathcal G_h$ contains $\T_h\F_{h+1}$.\gap
+Critics are bounded by $H$. Sequential complexity is measured by the Dirac-type Bellman eluder dimension $d$ at scale $1/\sqrt T$.
+\src{\paperac}
+\end{frame}
+
+\begin{frame}{Backup: the regression test and confidence set}
+For the data $D_{t,h}$ collected before episode $t$, define
+\[
+L_{t,h}(q,f)=\sum_{(s,a,r,s')\in D_{t,h}}\left[q(s,a)-r-\max_b f_{h+1}(s',b)\right]^2.
+\]
+The excess loss of a candidate critic $f$ is
+\[
+L_{t,h}(f_h,f)-\inf_{g\in\mathcal G_h}L_{t,h}(g,f).
+\]
+Alg. 2 switches if this exceeds $5H^2\beta$ for some step $h$.\gap
+The refitted confidence set requires excess loss at most $H^2\beta$ at every step. Select an optimistic member and reset the actor.
+\src{$\beta$ is the confidence width defined on the next slide. Constants follow the paper's normalization.}
+\end{frame}
+
+\begin{frame}{Backup: full regret bound}
+With probability at least $1-\delta$, Alg. 2 satisfies
+\[
+\Reg(T)=O\!\left(
+\sqrt{dH^5T\log T\log|\A|}+dH^3\log T
++\sqrt{\beta H^4T\,\mathrm{SEC}(\F,\Pi,T)}\right).
+\]
+\[
+\beta=\Theta\!\left(\log\frac{HT^2\mathcal N_{\F,\T\F}(1/T)}{\delta}\right).
+\]
+$\mathcal N_{\F,\T\F}$ is the maximum covering number of the critic and optimality-backup classes.\gap
+$\Pi$ is the induced policy class. SEC is the sequential extrapolation coefficient, controlling accumulated Bellman error along collected trajectories.\gap
+Under the stated Bellman-eluder condition, $\mathrm{SEC}\lesssim d\log T$.
+\src{\paperac}
+\end{frame}
+
+\begin{frame}{Backup: why the reset bounds actor tracking}
+Let $\pi^f$ choose an action maximizing the current critic $f$.\gap
+Within one interval with fixed critic, mirror ascent compares the actor with $\pi^f$ through a relative-entropy term.
+\[
+\KL\!\left(\pi^f(\cdot\mid s)\,\middle\|\,\operatorname{Unif}(\A)\right)\leq\log|\A|.
+\]
+Resetting supplies this bound at every critic change.\gap
+Without a reset, the new greedy action could have arbitrarily small probability under the previous actor, giving a large initial divergence.\gap
+The switch-count bound limits how often we pay this cost.
+\end{frame}
+
+\begin{frame}{Backup: coverage in the optimism-free hybrid result}
+Let $\mu_h$ be the offline state--action distribution, and $d_h^{\pi^*}$ the optimal policy's occupancy distribution.\gap
+The single-policy transfer condition controls average Bellman errors under $d_h^{\pi^*}$ by their squared error under $\mu_h$.
+\[
+c_{\mathrm{off}}^*(\F)=
+\max_h\sup_{f\in\F}
+\frac{\bigl(\E_{d_h^{\pi^*}}[\T_h f_{h+1}-f_h]\bigr)^2}
+{\E_{\mu_h}[(\T_h f_{h+1}-f_h)^2]}.
+\]
+With $N_{\mathrm{off}}$ offline samples, the extra regret term is
+\[
+O\!\left(\sqrt{\beta H^4 c_{\mathrm{off}}^*(\F)T^2/N_{\mathrm{off}}}\right).
+\]
+A bounded coefficient and offline sample size proportional to $T$ preserve the $\sqrt T$ dependence.
+\end{frame}
+
+\begin{frame}{Backup: full hybrid experiment}
+\picturefit[4.9cm]{actor-hybrid.jpg}
+\gap Left: rewards while collecting data. Right: evaluation return. Both use training steps on the horizontal axis.
+\src{\paperac\ AntMaze medium-diverse, reproduced full comparison.}
+\end{frame}
+
+\begin{frame}{Backup: DMOP error bounds and normalization}
+Write $p=\dim\theta$ and let $G'(\theta)$ bound the relevant log-measurement derivatives along simulated paths. For $\alpha<1$,
+\[
+\E\|\widehat S_{J,\alpha}-S\|_2^2\lesssim pG'(\theta)^2
+\left[\left\{\frac{N(1+\log J)^2}{J}+\frac{N^2}{J^2}\right\}
+H_N(\alpha)^2+N^2(1-\alpha)^2\right].
+\]
+At $\alpha=1$,
+\[
+\E\|\widehat S_{J,1}-S\|_2^2\lesssim pG'(\theta)^2\min\{N^2,N^3/J\}.
+\]
+Observations fixed, multinomial resampling, $J\geq2$, $\theta=\phi$. Constants depend on the model and stability bounds, not $N,J,\alpha$.
+\src{Current DMOP source, \texttt{thm:mop-biasvar}, Git blob \texttt{25fbafb7351c10f62118a17b8ddb72e4799fd855}.}
+\end{frame}
+
+\begin{frame}{Backup: two conditions for derivative stability}
+\textbf{Pathwise condition (A6).} Holding simulator draws fixed, the effect of an earlier state $x_m$ on a later log measurement obeys
+\[
+\left\|\nabla_{x_m}\log g_\theta(y_n\mid X_n^\theta)\right\|_2
+\leq C\kappa^{n-m},\qquad 0<\kappa<1.
+\]
+This is uniform in the relevant states, draws, and parameters near $\phi$. Local simulator and measurement parameter derivatives are bounded.\gap
+\textbf{Alternative (A6-J).} The joint process
+$(X_n^\theta,\partial_\theta X_n^\theta)$ satisfies the manuscript's uniform mixing condition relative to a common finite measure.\gap
+These are additional conditions beyond mixing of the physical state.
+\end{frame}
+
+\begin{frame}{Backup: before- and after-resampling increments}
+Before resampling,
+\[
+\widehat L_n^B(\theta;\phi)=
+\frac{\sum_j g_n^{\theta,j}\widetilde w_n^j}{\sum_j\widetilde w_n^j}.
+\]
+After resampling,
+\[
+\widehat L_n^A(\theta;\phi)=L_n^\phi\frac{\sum_j w_n^j}{\sum_j\widetilde w_n^j}.
+\]
+Both agree with the ordinary filter increment at $\theta=\phi$.\gap
+The displayed error theorem uses the after-resampling estimate. The two constructions need not give identical Monte Carlo derivatives.
+\end{frame}
+
+\begin{frame}{Backup: sources}
+\small
+\textbf{Actor--critic.} Kevin Tan, Jianqing Fan, Yuting Wei. Actor-Critics Can Achieve Optimal Sample Efficiency. ICML 2025.\gap
+\textbf{Differentiable filtering.} Kevin Tan, A. J. Abkemeier, Kunyang He, Giles Hooker, Edward Ionides. Automatic Differentiation for Inference on Partially Observed Markov Process Models. Current manuscript.\gap
+\textbf{Control illustration.} Kevin Tan and Ziping Xu. From POMDP Theory to Deep RL with Particle Filters. NeurIPS 2026.\gap
+Exact source paths, manuscript versions, figure mappings, and figure modifications are recorded in \texttt{provenance/SOURCES.md}.
+\end{frame}

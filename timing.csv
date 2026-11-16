@@ -1,0 +1,49 @@
+slide,section,title,seconds
+1,opening,Title,30
+2,opening,Decisions change the data we get,120
+3,opening,Two questions for this talk,150
+4,actor-critic,1. Learning a policy,20
+5,actor-critic,An action can be useful because of what happens next,60
+6,actor-critic,"We estimate future reward, not just immediate reward",80
+7,actor-critic,An actor--critic alternates two operations,75
+8,actor-critic,The critic update is a regression problem,95
+9,actor-critic,The actor increases the odds of higher-value actions,75
+10,actor-critic,Regression alone does not tell us where to explore,70
+11,actor-critic,We want the cost of learning to grow like $\sqrt T$,65
+12,actor-critic,The actor stores all previous critics,75
+13,actor-critic,A growing target class weakens the statistical bound,80
+14,actor-critic,Why not update the critic less often?,65
+15,actor-critic,A stale policy-evaluation critic leaves uncontrolled error,90
+16,actor-critic,Change the regression target to optimality,100
+17,actor-critic,The actor still has to approach the greedy policy,80
+18,actor-critic,Rare resets make the tracking cost manageable,95
+19,actor-critic,Alg. 2: change the critic when data reject its fit,75
+20,actor-critic,What the guarantee requires,90
+21,actor-critic,The simpler update can work better in an easy case,60
+22,actor-critic,Offline data can also reduce the need for optimism,70
+23,actor-critic,A neural implementation of the hybrid extension,60
+24,actor-critic,What the actor--critic argument establishes,20
+25,filtering,2. Estimating a partially observed model,20
+26,filtering,Reported cases do not reveal the full disease state,60
+27,filtering,A model specifies hidden dynamics and observations,90
+28,filtering,Likelihood requires averaging over hidden states,95
+29,filtering,Particle filtering: simulate candidate states,50
+30,filtering,Particle filtering: weight by the observation,60
+31,filtering,Particle filtering: resample before continuing,70
+32,filtering,Why not differentiate the particle filter directly?,85
+33,filtering,"Run a baseline filter, then keep its ancestors fixed",90
+34,filtering,Correct the weights for the parameter change,105
+35,filtering,A weight can equal one and still have a derivative,90
+36,filtering,Differentiate the corrected likelihood estimate,95
+37,filtering,Discounting limits how far derivatives accumulate,80
+38,filtering,The error has a particle term and a discounting term,105
+39,filtering,State mixing alone is not enough for this bound,95
+40,filtering,Discounting changes local likelihood approximations,70
+41,filtering,An intermediate discount improves score estimation here,70
+42,filtering,Use these derivatives for likelihood optimization,75
+43,filtering,Likelihood searches for the Dhaka cholera model,70
+44,filtering,What differentiable filtering provides,25
+45,closing,A filtered state distribution can guide an action,60
+46,closing,Full belief planning is expensive,100
+47,closing,Use particles to connect estimation and planning,90
+48,closing,Two contributions to learning from sequential data,50
