@@ -24,3 +24,5 @@ The reviewer found the revised explanations describe actual operations and recom
 All 61 handout pages were rendered and inspected, including backup. Changed pages were rendered again after fixes. Representative intermediate reveals checked: pointwise optimism, the Bellman inequality, correction weights, unit weight derivative, and filtering recap. Layouts use plain equations and diagrams; repeated rounded colored text boxes were removed.
 
 51 main slides plus 10 backups. Timing allocation remains 60 minutes: 5 opening, 25 actor-critic, 25 DMOP, 5 control/closing. This has not been rehearsed.
+
+Final builds: 142 overlay pages and 61 handout pages locally and on Overleaf. No local layout or undefined-reference warnings. Both downloaded live PDFs match local page text. Selected live pages were rendered and inspected after the last fixes.

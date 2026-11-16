@@ -30,12 +30,12 @@ Sources and scientific checks: `provenance/SOURCES.md`. Independent review: `pro
 
 Latest live source was downloaded before editing and again at approximately 17:48 Eastern. All 37 tracked files matched linked GitHub commit 423cc73. No intervening Overleaf edits were found. The original proposal is untouched.
 
-Final local builds succeed: 142 overlay pages and 61 handout pages, with no overfull, underfull, undefined-reference, or TeX errors. Source JPEG DPI and imported PDF-version warnings remain benign. Final targeted pages and representative reveals were rendered and inspected. Live synchronization is pending; older `thesis-defense-overleaf-*` files must not be treated as revised until replaced.
+Final local builds succeed: 142 overlay pages and 61 handout pages, with no overfull, underfull, undefined-reference, or TeX errors. Source JPEG DPI and imported PDF-version warnings remain benign. Final targeted pages and representative reveals were rendered and inspected. Reviewed source commit `3ee12ce` is pushed and merged in Overleaf. Both live XeLaTeX builds succeeded: 142 overlay pages and 61 handout pages. Downloaded live exports match the local PDFs page by page after whitespace normalization of extracted text. Live pages 16, 27, 37, and 46 were rendered and checked. Both `thesis-defense-overleaf-*` exports now contain the revision.
 
 ## Build
 
 Run `bash build.sh` with Tectonic. On Overleaf use XeLaTeX / TeX Live 2026. Open `main.tex` for overlays and `handout.tex` for one page per frame before compiling; the open standalone file can override the configured main-document choice. Restore main.tex after exporting.
 
-## Remaining delivery steps
+## Delivery
 
-Finish final render checks, commit/push canonical source, pull into Overleaf, compile both live versions, download and compare them with local builds, update this status, and deliver the revised handout plus examples.
+Reviewed PDFs and source ZIP are under `output/`. `slide-16.png`, `slide-27.png`, `slide-37.png`, and `slide-46.png` are previews rendered from the downloaded live handout. This revision is ready for Kevin to review. A rehearsal is still needed to validate pacing. Do not treat compilation or an independent review as approval of voice or presentation quality.
