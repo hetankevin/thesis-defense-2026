@@ -156,6 +156,25 @@ $0\leq\alpha\leq1$ controls how much previous correction is retained.
 \gap At $\theta=\phi$, all correction weights equal one, starting from $w_0^j=1$.
 \end{frame}
 
+
+\begin{frame}{The correction cancels baseline resampling probabilities}
+At the first observation, previous correction weights equal one. Write $g^{\theta,j}$ for particle $j$'s observation weight.
+\pause
+\[
+\E_{A\sim\overline g^\phi}\!\left[\frac{g^{\theta,A}}{g^{\phi,A}}\right]
+=\sum_{j=1}^J\underbrace{\frac{g^{\phi,j}}{\sum_m g^{\phi,m}}}_{\text{selection}}
+\underbrace{\frac{g^{\theta,j}}{g^{\phi,j}}}_{\text{correction}}
+=\frac{\sum_j g^{\theta,j}}{\sum_j g^{\phi,j}}.
+\]
+\pause
+Multiplying by the baseline increment $L^\phi=J^{-1}\sum_j g^{\phi,j}$ gives
+\[
+L^\phi\,\E_{A\sim\overline g^\phi}\!\left[\frac{g^{\theta,A}}{g^{\phi,A}}\right]
+=\frac1J\sum_j g^{\theta,j}.
+\]
+This recovers the average observation weight at $\theta$, conditional on predicted particles. Later steps also carry the earlier corrections.
+\end{frame}
+
 \begin{frame}{A weight can equal one and still have a derivative}
 For one observation-weight ratio,
 \[
@@ -281,12 +300,12 @@ Iterated filtering perturbs model parameters within a particle filter to search 
 \begin{columns}[c]
 \column{.67\textwidth}\picturefit[5.2cm]{dmop-searches.pdf}
 \column{.30\textwidth}
-Each distribution summarizes repeated optimization runs.\gap
+100 searches per method, with similar wall-clock budgets.\gap
 IF2: iterated filtering.\\IFAD: warm start, then gradient updates.
 \pause\gap
-At comparable effort, IFAD with $\alpha=.97$ attains higher likelihoods in this comparison.
+IFAD with $\alpha=.97$ attains higher likelihoods in this comparison.
 \end{columns}
-\src{DMOP manuscript, raincloud plot, comparable-effort panel. Log-likelihoods below $-3800$ are omitted. Dotted red line: best-known fitted likelihood.}
+\src{DMOP manuscript, comparable-time panel. Timing excludes per-iteration diagnostic likelihood calls. Log-likelihoods below $-3800$ are omitted. Dotted red line: best-known fitted likelihood.}
 \end{frame}
 
 \begin{frame}{What differentiable filtering provides}

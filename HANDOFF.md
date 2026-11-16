@@ -1,44 +1,37 @@
-# Current delivery status — November 16
-
-Overleaf: https://www.overleaf.com/project/6afb7b39d9eebab656f22483
-Canonical linked private GitHub repository: https://github.com/hetankevin/thesis-defense-2026
-
-Both Overleaf XeLaTeX builds succeeded: 131 overlay pages, 58 handout pages. Live exports downloaded into `output/thesis-defense-overleaf-overlays.pdf` and `output/thesis-defense-overleaf-handout.pdf`. All 58 normalized handout page texts match the reviewed local build. Representative live rendered equation/reveal pages inspected. Full local deck was visually inspected in the prior turn.
-
-Initial Overleaf GitHub export `734ec33` was cloned and every one of the 35 source files compared byte for byte with the reviewed local source: no differences. Repository visibility verified PRIVATE. The proposal-repository copy is now archival; make future slide edits in the linked thesis repository or Overleaf, and reconcile live edits first.
-
-Overleaf may compile the currently open standalone TeX file even when the main-document setting names another file. Open `handout.tex` explicitly for handouts, `main.tex` explicitly for overlays. Use XeLaTeX. No source edits were needed for live compilation.
-
-Completion audit: two main topics and short control return; 48 main plus 10 backup; timing.csv sums to 3600 seconds; current manuscript claims and figure provenance recorded; local and live PDFs verified; Overleaf and private GitHub linked. Rehearsal is still needed to validate the timing allocation in delivery. No independent-agent review is claimed.
-
----
-
 # Thesis defense handoff
 
-2026-11-16. Separate deck, leaving proposal source unchanged. 48 main frames + 10 backup. Target 60 minutes in 90-minute slot. Timing.csv totals 3600 seconds: 5/25/25/5 minutes. Not rehearsed.
+Updated November 16, 2026.
 
-Main selection: only ICML actor-critic paper and its own hybrid extension in RL; DMOP for second main topic; four-slide return to control/closing. Other dissertation projects are not silently added. Audience is broad statistics.
+## Canonical project
 
-## Changes
+Overleaf: https://www.overleaf.com/project/6afb7b39d9eebab656f22483
+Linked private GitHub repository: https://github.com/hetankevin/thesis-defense-2026
+The proposal-defense repository copy is archival. Preserve live edits by exporting and comparing before future changes.
 
-Rebuilt from definitions through actual operations. RL starts from sequential rewards, values, regression and softmax updates, then covers growing critic history, rare-switching failure, optimality targets, resets, tracking and the guarantee. DMOP starts from hidden disease states, develops particle prediction/weighting/resampling, then fixed ancestors, correction weights, derivatives, discounting and fitting.
+## Scope and pacing
 
-Notation, source assumptions and qualifications are on slides. No speaker notes required. Includes original tracking, DMOP and control pipeline figures. Current manuscript title and error theorem verified against GitHub. Source map in provenance/SOURCES.md.
+49 main frames plus 10 backup frames. Target 60 minutes in a 90-minute slot: opening 5, actor-critic 25, filtering 25, control/closing 5. `timing.csv` totals 3600 seconds. This is an allocation, not a rehearsal.
 
-## Verification
+RL uses only Tan, Fan, Wei's ICML 2025 actor-critic paper and its own hybrid extension. The second topic is DMOP. Four closing frames connect filtering to control and summarize the two contributions. The other proposal projects are not included. Audience: broad statistics, with definitions and essential explanations on slides and no required speaker notes.
 
-Both overlay and handout builds compiled with Tectonic. Full initial handout rendered and all 58 pages visually inspected. Corrected title-page parsing, diagram widths/labels, hybrid panel clipping, current DMOP source figure, and current title. Representative overlays and final changed pages inspected before export. No overfull hbox/vbox warnings in final builds. Benign source JPEG DPI and imported PDF version warnings remain.
+## Sources and argument
 
-## Sync and next work
+See `provenance/SOURCES.md` for manuscript and figure provenance. RL develops values, regression, policy updates, growing critic history, stale optimism, optimality targets, rare updates/resets, tracking, and the guarantee. It distinguishes the optimism-free hybrid theorem from the approximate-optimism neural experiment.
 
-Source ZIP is suitable for a new Overleaf project, with XeLaTeX and main.tex selected. Preserve any subsequent live edits by downloading/comparing before next sync. Publication and live compile status are appended after delivery verification.
+Filtering develops hidden states, likelihood, prediction/weighting/resampling, fixed ancestors, correction weights, their first-step cancellation, informative derivatives, discounting, and optimization. The current manuscript's error theorem and derivative-stability assumptions replace older versions. Control preserves the original PF-MCTQ diagram and explains QMDP's computational motivation.
 
-A rehearsal remains necessary to check the 60-minute allocation. No independent-agent review has been claimed for this new deck.
+## Review and verification
 
-## Delivery verification
+Independent slides-alone review completed. See `provenance/REVIEW.md`. Findings addressed: observation feedback arrow, theorem/experiment distinction, missing correction cancellation, runtime matching description, and MCTS expansion. The follow-up found no material comprehension issue; its remaining underbrace-label spacing issue was fixed and visually checked.
 
-Final local exports: 131 overlay pages, 58 handout pages (48 main + 10 backup). No overfull/underfull/undefined warnings. All main pages and backups reviewed in rendered contact sheets; dense figures and final changed pages inspected separately. Representative reveals inspected for frames 16, 34, 35. Later QMDP revision replaces a text block with a branching diagram.
+Both final local versions compile: 134 overlay pages and 59 handout pages. No overfull, underfull, or undefined warnings. Benign source JPEG DPI and imported PDF version warnings remain. All initial pages were visually inspected, then every revised frame was re-rendered and checked. Representative intermediate reveals were checked for stable positioning.
 
-GitHub: source added through a clean checkout of current remote main, commit e8640ce, preserving all remote proposal edits. A follow-up commit records this status.
+The preceding live Overleaf exports had 131/58 pages and matched the preceding local handout text on every page. Before this review update, a new Overleaf source download was compared against all 36 tracked files in linked GitHub commit b01df96: no differences. The final review update is ready for live compilation and export.
 
-Overleaf: Safari reached the authenticated project list. Two CUA calls timed out on project creation; no upload or new project was verified. Existing proposal project was not changed. `output/thesis-defense-2026-source.zip` is ready for upload to a new project (XeLaTeX, main.tex). This blocker was resolved in the subsequent continuation below.
+## Build and delivery
+
+Overleaf: XeLaTeX, TeX Live 2026. Open `handout.tex` explicitly before compiling handouts and `main.tex` before overlays: Overleaf may compile the open standalone file even when the main-document setting names another file. Restore main.tex when finished.
+
+Local build: `bash build.sh` with Tectonic. PDFs and source ZIP are under `output/`. Files prefixed `thesis-defense-overleaf-` are downloaded live exports. Refresh those after syncing review fixes.
+
+Next: synchronize the reviewed commit, verify both live builds and downloaded handout text, then record final delivery. A rehearsal remains necessary to validate delivery pace.

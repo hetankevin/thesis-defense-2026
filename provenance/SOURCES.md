@@ -20,12 +20,12 @@ Current GitHub `pypomp/dmop` source fetched 2026-11-16:
 - Author order follows manuscript: K. Tan, A. J. Abkemeier, K. He, G. Hooker, E. L. Ionides.
 - JRSS-B revise-and-resubmit status follows Kevin's explicit report; no acceptance inferred.
 
-Main slides 25-44 use the current after-resampling score construction and `thm:mop-biasvar`, including the N^2(1-alpha)^2 discount-bias term and A6/A6-J derivative-stability requirements. These replace older versions of the error bound. Mathematical notation is simplified locally: tilde means predicted particles/weights, no tilde means after resampling.
+Main slides 25-45 use the current after-resampling score construction and `thm:mop-biasvar`, including the N^2(1-alpha)^2 discount-bias term and A6/A6-J derivative-stability requirements. These replace older versions of the error bound. Mathematical notation is simplified locally: tilde means predicted particles/weights, no tilde means after resampling.
 
 Figures checked against current repository blobs:
 - `dmop-local.png`: `imgs/095/mop.png`, Figure 1A (`fig:biasvar` left), blob `b6ff1d09496238e0d92cee7d8842f3e9d7f4e473`. Downloaded current figure because it differs from proposal asset. The reference likelihood is smooth; raw discontinuous PF evaluations are not plotted.
 - `dmop-biasvar.png`: `imgs/095/biasvar.png`, Figure 1B, blob `22eceed644c42ea351780eae2c7deb3a60d4d3a7`. Existing asset exactly matches current blob.
-- `dmop-searches.pdf`: `imgs/precise_raincloud.pdf`, comparable-effort panel of `fig:boxplot`, blob `336d1ce3926bbca1117e136b39e1d951d962df7f`. Existing asset exactly matches current blob. Values below -3800 omitted in source. No runtime numbers invented.
+- `dmop-searches.pdf`: `imgs/precise_raincloud.pdf`, comparable-effort panel of `fig:boxplot`, blob `336d1ce3926bbca1117e136b39e1d951d962df7f`. Existing asset exactly matches current blob. Values below -3800 omitted in source. This panel uses 100 searches per method with similar wall-clock budgets; timing excludes per-iteration diagnostic likelihood calls.
 
 ## Return to control
 

@@ -21,7 +21,7 @@ slide,section,title,seconds
 20,actor-critic,What the guarantee requires,90
 21,actor-critic,The simpler update can work better in an easy case,60
 22,actor-critic,Offline data can also reduce the need for optimism,70
-23,actor-critic,A neural implementation of the hybrid extension,60
+23,actor-critic,Neural hybrid variants retain approximate optimism,60
 24,actor-critic,What the actor--critic argument establishes,20
 25,filtering,2. Estimating a partially observed model,20
 26,filtering,Reported cases do not reveal the full disease state,60
@@ -32,18 +32,19 @@ slide,section,title,seconds
 31,filtering,Particle filtering: resample before continuing,70
 32,filtering,Why not differentiate the particle filter directly?,85
 33,filtering,"Run a baseline filter, then keep its ancestors fixed",90
-34,filtering,Correct the weights for the parameter change,105
-35,filtering,A weight can equal one and still have a derivative,90
-36,filtering,Differentiate the corrected likelihood estimate,95
-37,filtering,Discounting limits how far derivatives accumulate,80
-38,filtering,The error has a particle term and a discounting term,105
-39,filtering,State mixing alone is not enough for this bound,95
-40,filtering,Discounting changes local likelihood approximations,70
-41,filtering,An intermediate discount improves score estimation here,70
-42,filtering,Use these derivatives for likelihood optimization,75
-43,filtering,Likelihood searches for the Dhaka cholera model,70
-44,filtering,What differentiable filtering provides,25
-45,closing,A filtered state distribution can guide an action,60
-46,closing,Full belief planning is expensive,100
-47,closing,Use particles to connect estimation and planning,90
-48,closing,Two contributions to learning from sequential data,50
+34,filtering,Correct the weights for the parameter change,70
+35,filtering,The correction cancels baseline resampling probabilities,50
+36,filtering,A weight can equal one and still have a derivative,90
+37,filtering,Differentiate the corrected likelihood estimate,80
+38,filtering,Discounting limits how far derivatives accumulate,80
+39,filtering,The error has a particle term and a discounting term,105
+40,filtering,State mixing alone is not enough for this bound,95
+41,filtering,Discounting changes local likelihood approximations,70
+42,filtering,An intermediate discount improves score estimation here,70
+43,filtering,Use these derivatives for likelihood optimization,75
+44,filtering,Likelihood searches for the Dhaka cholera model,70
+45,filtering,What differentiable filtering provides,25
+46,closing,A filtered state distribution can guide an action,60
+47,closing,Full belief planning is expensive,100
+48,closing,Use particles to connect estimation and planning,90
+49,closing,Two contributions to learning from sequential data,50

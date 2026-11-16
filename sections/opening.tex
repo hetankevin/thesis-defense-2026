@@ -20,11 +20,11 @@
 \draw[arr] (s)--(a);\draw[arr] (a)--(n);
 \node[smallbox,below=13mm of a] (d) {Observations};
 \draw[arr] (n.south) |- (d.east);
-\draw[arr] (d.west) -| (s.south);
+\draw[arr] (d.north) -- (a.south);
 \end{tikzpicture}
 \end{center}
 \pause
-\gap Trying an action costs data. Its consequences may appear much later.
+\gap Collecting data requires acting on the system. Consequences may appear much later.
 \pause
 \gap We may also observe only part of the system we want to control.
 \end{frame}
