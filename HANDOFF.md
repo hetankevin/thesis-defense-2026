@@ -1,3 +1,18 @@
+# Current delivery status — November 16
+
+Overleaf: https://www.overleaf.com/project/6afb7b39d9eebab656f22483
+Canonical linked private GitHub repository: https://github.com/hetankevin/thesis-defense-2026
+
+Both Overleaf XeLaTeX builds succeeded: 131 overlay pages, 58 handout pages. Live exports downloaded into `output/thesis-defense-overleaf-overlays.pdf` and `output/thesis-defense-overleaf-handout.pdf`. All 58 normalized handout page texts match the reviewed local build. Representative live rendered equation/reveal pages inspected. Full local deck was visually inspected in the prior turn.
+
+Initial Overleaf GitHub export `734ec33` was cloned and every one of the 35 source files compared byte for byte with the reviewed local source: no differences. Repository visibility verified PRIVATE. The proposal-repository copy is now archival; make future slide edits in the linked thesis repository or Overleaf, and reconcile live edits first.
+
+Overleaf may compile the currently open standalone TeX file even when the main-document setting names another file. Open `handout.tex` explicitly for handouts, `main.tex` explicitly for overlays. Use XeLaTeX. No source edits were needed for live compilation.
+
+Completion audit: two main topics and short control return; 48 main plus 10 backup; timing.csv sums to 3600 seconds; current manuscript claims and figure provenance recorded; local and live PDFs verified; Overleaf and private GitHub linked. Rehearsal is still needed to validate the timing allocation in delivery. No independent-agent review is claimed.
+
+---
+
 # Thesis defense handoff
 
 2026-11-16. Separate deck, leaving proposal source unchanged. 48 main frames + 10 backup. Target 60 minutes in 90-minute slot. Timing.csv totals 3600 seconds: 5/25/25/5 minutes. Not rehearsed.
@@ -26,4 +41,4 @@ Final local exports: 131 overlay pages, 58 handout pages (48 main + 10 backup). 
 
 GitHub: source added through a clean checkout of current remote main, commit e8640ce, preserving all remote proposal edits. A follow-up commit records this status.
 
-Overleaf: Safari reached the authenticated project list. Two CUA calls timed out on project creation; no upload or new project was verified. Existing proposal project was not changed. `output/thesis-defense-2026-source.zip` is ready for upload to a new project (XeLaTeX, main.tex). Live Overleaf compilation and GitHub linkage of that new project remain pending. Do not describe those as completed.
+Overleaf: Safari reached the authenticated project list. Two CUA calls timed out on project creation; no upload or new project was verified. Existing proposal project was not changed. `output/thesis-defense-2026-source.zip` is ready for upload to a new project (XeLaTeX, main.tex). This blocker was resolved in the subsequent continuation below.

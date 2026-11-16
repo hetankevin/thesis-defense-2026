@@ -11,3 +11,7 @@ Use XeLaTeX on Overleaf, main document `main.tex` (overlays) or `handout.tex` (o
 Locally, run `bash build.sh` with Tectonic installed. PDFs are written to `output/`.
 
 See `HANDOFF.md`, `timing.csv`, and `provenance/SOURCES.md`.
+
+## Live project
+
+[Overleaf](https://www.overleaf.com/project/6afb7b39d9eebab656f22483) is linked to the private [thesis-defense-2026 repository](https://github.com/hetankevin/thesis-defense-2026). This is the canonical location for future revisions. Open the desired standalone TeX file before compiling.
