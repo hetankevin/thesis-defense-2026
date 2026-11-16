@@ -26,12 +26,12 @@ Independent slides-alone review completed. See `provenance/REVIEW.md`. Findings 
 
 Both final local versions compile: 134 overlay pages and 59 handout pages. No overfull, underfull, or undefined warnings. Benign source JPEG DPI and imported PDF version warnings remain. All initial pages were visually inspected, then every revised frame was re-rendered and checked. Representative intermediate reveals were checked for stable positioning.
 
-The preceding live Overleaf exports had 131/58 pages and matched the preceding local handout text on every page. Before this review update, a new Overleaf source download was compared against all 36 tracked files in linked GitHub commit b01df96: no differences. The final review update is ready for live compilation and export.
+Final Overleaf XeLaTeX builds succeeded: 134 overlay pages and 59 handout pages. Both downloaded PDFs match the corresponding local PDF text on every page, and the final live correction slide was rendered and inspected. Reviewed source commit c745164 is merged in Overleaf. Before syncing, a fresh Overleaf source download was compared against all 36 tracked files in linked GitHub commit b01df96: no differences or intervening edits.
 
 ## Build and delivery
 
 Overleaf: XeLaTeX, TeX Live 2026. Open `handout.tex` explicitly before compiling handouts and `main.tex` before overlays: Overleaf may compile the open standalone file even when the main-document setting names another file. Restore main.tex when finished.
 
-Local build: `bash build.sh` with Tectonic. PDFs and source ZIP are under `output/`. Files prefixed `thesis-defense-overleaf-` are downloaded live exports. Refresh those after syncing review fixes.
+Local build: `bash build.sh` with Tectonic. PDFs and source ZIP are under `output/`. Files prefixed `thesis-defense-overleaf-` are downloaded live exports. Both live exports contain the final review fixes.
 
-Next: synchronize the reviewed commit, verify both live builds and downloaded handout text, then record final delivery. A rehearsal remains necessary to validate delivery pace.
+Delivery is complete. A rehearsal remains necessary to validate delivery pace.
