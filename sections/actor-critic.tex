@@ -77,10 +77,10 @@ V_h^\pi(s)=\underbrace{\sum_{a\in\A}\pi_h(a\mid s)Q_h^\pi(s,a)}_{\text{average o
 \begin{center}\begin{tikzpicture}[x=1cm,y=1cm]
 \path[use as bounding box] (0,0) rectangle (12,3.6);
 \node[anchor=west] at (0,3.3) {Observed transition: $(s,a,r,s')$};
-\node[obj] (r) at (1,2) {$r$};\node[lab,below=2mm of r] {Observed reward};
+\node[obj] (r) at (1,2) {$r$};\node[lab,above=2mm of r] {Observed reward};
 \node[obj] (sp) at (4,2) {$s'$};
 \node (next) at (8,2) {$\sum_b\pi_{h+1}(b\mid s')f_{h+1}(s',b)$};
-\draw[arr] (sp)--(next);\node[lab,below=2mm of next] {Estimated remaining reward};
+\draw[arr] (sp)--(next);\node[lab,above=2mm of next] {Estimated remaining reward};
 \draw[arr,visible on=<2->] (r.south)--(1,.35)--(5.5,.35);
 \draw[arr,visible on=<2->] (next.south)--(8,.35)--(6.5,.35);
 \node[visible on=<2->] at (6,.35) {$y$};
@@ -177,9 +177,9 @@ Uniform initial policy $\pi_{1,h}$.
 \uncover<3->{Each $f_{\tau,h}$ lies in $\F_h$. Their sum need not lie in $\F_h$.}
 \end{frame}
 
-\begin{frame}{The regret bound hides a growing policy class}
-$\mathcal N_\F(\varepsilon)$: representatives approximating $\F$ to accuracy $\varepsilon$. $K$: distinct critics.
-\begin{center}\begin{tikzpicture}[x=1cm,y=1cm]
+\begin{frame}{Policy complexity grows with critic updates}
+$\mathcal N_\F(\varepsilon)$ counts representatives approximating $\F$ within $\varepsilon$. $K$: distinct critics.
+\begin{center}\begin{tikzpicture}[x=1cm,y=.85cm]
 \path[use as bounding box] (0,0) rectangle (12,3.0);
 \foreach \x/\lab in {1/1,4/2,7/K}{
 \draw (\x-.8,1.1) rectangle (\x+.8,2.7);
@@ -250,10 +250,10 @@ At the next state $s'$, write $f_i=f(s',a_i)$.
 \end{tikzpicture}\end{center}
 \uncover<2->{\[y_t^\pi=r+\E_{b\sim\pi_t}f(s',b)\quad\longrightarrow\quad y^*=r+\max_b f(s',b).\]}
 \uncover<3->{\[|\max_b f(s',b)-\max_b g(s',b)|\leq\|f-g\|_\infty.\]}
-\uncover<3->{A critic cover controls the new targets. The growing policy cover drops out.}
+\uncover<3->{Only the critic class enters this covering bound.}
 \end{frame}
 
-\begin{frame}{Why this also fixes the optimism problem}
+\begin{frame}{Optimism holds as the actor changes}
 $\T_h f$: expected optimality target. $\T_h^\pi f$: expected policy-evaluation target.
 \begin{center}\begin{tikzpicture}[x=1cm,y=1cm]
 \path[use as bounding box] (0,0) rectangle (12,4.5);
@@ -280,11 +280,11 @@ $\T_h f$: expected optimality target. $\T_h^\pi f$: expected policy-evaluation t
 \draw[fill=blue!20,draw=blue] (8.9,1) rectangle (9.6,1.3);\draw[fill=pink!20,draw=pink] (10.2,1) rectangle (10.9,3.1);
 \foreach \x in {2,6,10}{\node[lab] at (\x-.75,.6) {$a_1$};\node[lab] at (\x+.6,.6) {$a_2$};}
 \draw[arr] (3.4,2.2)--(4.4,2.2);\draw[arr] (7.4,2.2)--(8.4,2.2);
-\node[lab,text=pink] at (2,0) {New critic prefers $a_2$};
+\node[lab,text=pink] at (2,0) {$f(s,a_2)>f(s,a_1)$};
 \node[lab] at (6,0) {$\pi(a\mid s)=1/|\A|$};
 \node[lab] at (10,0) {Critic held fixed};
 \end{tikzpicture}\end{center}
-\pause A reset bounds the cost of learning an action whose old probability was tiny.
+\pause A reset limits the tracking error caused by very small initial action probabilities.
 \src{Bar heights: schematic action probabilities.}
 \end{frame}
 
@@ -308,7 +308,7 @@ $d$: number of new state--action locations needed to reveal unresolved critic er
 \src{Formally: Dirac-type Bellman eluder dimension at scale $T^{-1/2}$. Full definition and bound in backup.}
 \end{frame}
 
-\begin{frame}{Alg. 2: change the critic when data reject its fit}
+\begin{frame}{Alg. 2: test regression error before updating the critic}
 \begin{center}\begin{tikzpicture}[x=1cm,y=1cm]
 \path[use as bounding box] (0,0) rectangle (12,4.4);
 \node[obj] (data) at (1.5,3.5) {$D\cup\text{new episode}$};
@@ -387,7 +387,7 @@ Alg. 2H reaches higher evaluation return on AntMaze medium-diverse.
 \src{ICML 2025 hybrid experiment. First 1,000 training steps: offline pretraining. Both neural variants approximate optimism by action sampling, rather than solving the theoretical confidence-set problem. Full comparison in backup.}
 \end{frame}
 
-\begin{frame}{What changed in the actor--critic?}
+\begin{frame}{Actor--critic: optimality targets and policy resets}
 \begin{center}\begin{tikzpicture}[x=1cm,y=1cm]
 \path[use as bounding box] (0,0) rectangle (12,5.1);
 \node[anchor=west,text=blue,font=\large] at (0,4.8) {Critic};

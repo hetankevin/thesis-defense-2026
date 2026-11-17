@@ -11,19 +11,19 @@ slide,section,title,seconds
 10,actor-critic,Regression alone does not tell us where to explore,65
 11,actor-critic,How much reward do we lose while learning?,60
 12,actor-critic,The actor stores all previous critics,70
-13,actor-critic,The regret bound hides a growing policy class,75
+13,actor-critic,Policy complexity grows with critic updates,75
 14,actor-critic,Can we update the critic less often?,60
 15,actor-critic,The old-policy error can keep accumulating,85
 16,actor-critic,Use an optimality target instead,95
-17,actor-critic,Why this also fixes the optimism problem,60
+17,actor-critic,Optimism holds as the actor changes,60
 18,actor-critic,The actor must track the greedy policy,80
 19,actor-critic,How much do policy resets cost?,95
-20,actor-critic,Alg. 2: change the critic when data reject its fit,75
+20,actor-critic,Alg. 2: test regression error before updating the critic,75
 21,actor-critic,Regret guarantee,90
 22,actor-critic,Online experiment: Tetris,60
 23,actor-critic,Offline data can also reduce the need for optimism,70
 24,actor-critic,Hybrid experiment: AntMaze,60
-25,actor-critic,What changed in the actor--critic?,20
+25,actor-critic,Actor--critic: optimality targets and policy resets,20
 26,filtering,2. Differentiable particle filters,20
 27,filtering,Fitting the Dhaka cholera model,60
 28,filtering,A partially observed model,90
@@ -35,7 +35,7 @@ slide,section,title,seconds
 34,filtering,"Run a baseline filter, then keep its ancestors fixed",90
 35,filtering,Correct the weights for the parameter change,70
 36,filtering,Why the weight correction works,50
-37,filtering,A weight can equal one and still have a derivative,90
+37,filtering,Unit correction weights can have nonzero derivatives,90
 38,filtering,Differentiate the corrected likelihood estimate,80
 39,filtering,Discounting reduces the weight of earlier corrections,80
 40,filtering,Error in the score estimate,105
@@ -44,8 +44,8 @@ slide,section,title,seconds
 43,filtering,Bias and variance of the estimated score,70
 44,filtering,Fitting the model,75
 45,filtering,Likelihood searches for the Dhaka cholera model,70
-46,filtering,What did we change in the particle filter?,25
-47,closing,Position alone does not tell us how to brake,60
+46,filtering,Particle filtering: fixed ancestry and weight corrections,25
+47,closing,Braking requires velocity information,60
 48,closing,Full belief planning is expensive,100
 49,closing,Particle filtering and planning,90
 50,closing,Two contributions,30

@@ -43,3 +43,9 @@ Run `bash build.sh` with Tectonic. On Overleaf use XeLaTeX / TeX Live 2026. Open
 ## Delivery
 
 Local and verified live PDFs are under `output/`. `slide-07.png`, `slide-16.png`, `slide-17.png`, `slide-27.png`, `slide-32.png`, `slide-33.png`, `slide-37.png`, `slide-39.png`, and `slide-46.png` are rendered from the current live handout. Source ZIPs are refreshed from the linked repository. A rehearsal is still needed to validate pacing. Do not treat compilation or independent review as Kevin's approval of presentation quality.
+
+## Follow-up inspection: language and layout
+
+Inspected all 61 current server-rendered handout pages and read their slide text. Replaced vague or performative titles with the actual subject on 13, 17, 20, 25, 37, 46, and 47. Kept genuine explanatory questions such as the actor-critic introduction and the differentiation obstacle. Removed “hides,” “drops out,” “tiny,” and “critic prefers” phrasing. Clarified total reward and log likelihood on the roadmap, covering-number counts, and ancestor indices. Avoided using “score” for ordinary measurement-density evaluation because score later means a log-likelihood derivative.
+
+Moved slide 8 labels above the computation so arrows do not cross them. Cleared dashed guides from the fixed-ancestry label on 34. Re-rendered every changed frame. Technical equations, source figures, paper selection, Dhaka application, and timing are retained. Local builds: 144 overlays, 61 handout pages, no layout or undefined-reference warnings. Current live source was exported and compared with 5291bb6 before editing; all 39 files matched. Live export verification for this follow-up is pending.

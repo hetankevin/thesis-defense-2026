@@ -48,7 +48,7 @@ $\theta$: unknown parameters. Simulate $F_\theta$, evaluate $g_\theta$; no trans
 \foreach \y in {.4,1,1.6,2.2,2.8}{\fill[blue] (5,\y) circle(3pt);\draw[arr,blue!45] (hist.east)--(4.8,\y);\draw[arr,green!60] (5.2,\y)--(8,1.6);}
 \node at (9.8,1.6) {$p_\theta(y_n\mid y_{1:n-1})$};
 \node[lab] at (5,3.2) {Possible $X_n$};
-\node[lab] at (7.5,.3) {Score by $g_\theta(y_n\mid X_n)$};
+\node[lab] at (7.5,.3) {Evaluate $g_\theta(y_n\mid X_n)$};
 \end{tikzpicture}\end{center}
 \pause
 \[p_\theta(y_n\mid y_{1:n-1})=\int g_\theta(y_n\mid x)\,p_\theta(dx\mid y_{1:n-1}).\]
@@ -97,7 +97,7 @@ $\theta$: unknown parameters. Simulate $F_\theta$, evaluate $g_\theta$; no trans
 \node[fill=white,lab] at (5.5,2.4) {$A_n^{1:5}=(2,3,3,3,4)$};
 \end{tikzpicture}\end{center}
 \pause\[A_n^j\sim\operatorname{Cat}(\overline g_n^{1:J}),\qquad X_n^j=\widetilde X_n^{A_n^j}.\]
-\pause High-weight candidates receive more copies for the next simulation step.
+\pause $A_n^j$: ancestor copied for particle $j$. Higher weight means more copies on average.
 \end{frame}
 
 \begin{frame}{Why not differentiate the particle filter directly?}
@@ -130,7 +130,7 @@ $\phi$: baseline parameter. $\theta$: parameter we differentiate.
 \draw[dashed,black!35,visible on=<2->] (b\lab)--(t\lab);}
 \draw[arr,blue] (b0)--node[above,lab]{$U_1,A_1$}(b1);\draw[arr,blue] (b1)--node[above,lab]{$U_2,A_2$}(b2);
 \draw[arr,pink,visible on=<2->] (t0)--node[above,lab]{$U_1,A_1$}(t1);\draw[arr,pink,visible on=<2->] (t1)--node[above,lab]{$U_2,A_2$}(t2);
-\node[lab,visible on=<2->] at (6,2.2) {Same draws and ancestor indices};
+\node[lab,fill=white,inner sep=3pt,visible on=<2->] at (6,2.2) {Same draws and ancestor indices};
 \end{tikzpicture}\end{center}
 \uncover<2->{\[\widetilde X_n^{\theta,j}=F_\theta(X_{n-1}^{\theta,j},U_n^j),\qquad X_n^{\theta,j}=\widetilde X_n^{\theta,A_n^j}.\]}
 \uncover<3->{Paths are differentiable. Ancestors sampled at $\phi$ still need a weight correction.}
@@ -178,7 +178,7 @@ First observation: $w_0^j=1$. Condition on predicted particles.
 \src{Later observations also carry previous corrections. This is the first-step conditional cancellation, not an assertion of unbiased log-likelihood gradients.}
 \end{frame}
 
-\begin{frame}{A weight can equal one and still have a derivative}
+\begin{frame}{Unit correction weights can have nonzero derivatives}
 \begin{center}\begin{tikzpicture}[x=1cm,y=1cm]
 \path[use as bounding box] (0,0) rectangle (12,4.4);
 \node[obj] (th) at (1,3.1) {$\theta$};\node[obj] (g) at (4.3,3.1) {$g^\theta$};
@@ -196,7 +196,7 @@ First observation: $w_0^j=1$. Condition on predicted particles.
 \underbrace{\nabla_\theta w(\theta)|_{\theta=\phi}
 =\frac{\nabla_\theta g^\theta|_{\theta=\phi}}{g^\phi}}_{\text{generally nonzero}}.
 \]}
-\uncover<3->{Ordinary forward filter at $\phi$; corrected derivative at $\phi$.}
+\uncover<3->{Correction weights preserve the baseline filter's values at $\theta=\phi$.}
 \end{frame}
 
 \begin{frame}{Differentiate the corrected likelihood estimate}
@@ -328,7 +328,7 @@ IFAD with $\alpha=.97$ attains higher likelihoods in this comparison.
 \src{DMOP manuscript, comparable-time panel. Timing excludes per-iteration diagnostic likelihood calls. Log-likelihoods below $-3800$ are omitted. Dotted red line: best-known fitted likelihood.}
 \end{frame}
 
-\begin{frame}{What did we change in the particle filter?}
+\begin{frame}{Particle filtering: fixed ancestry and weight corrections}
 \begin{center}\begin{tikzpicture}[x=1cm,y=1cm]
 \path[use as bounding box] (0,0) rectangle (12,4.6);
 \node[lab,anchor=west] at (0,4.1) {Keep baseline draws $U_n^j$ and ancestors $A_n^j$};
