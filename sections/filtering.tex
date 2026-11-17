@@ -273,7 +273,7 @@ Bounded positive densities; smooth simulator and measurement operations.
 \end{frame}
 
 \begin{frame}{Discounting changes local likelihood approximations}
-{\small Illustration: before-resampling estimate with systematic resampling.}
+Here we average over weighted particles before resampling. This removes the noise from drawing ancestors for this likelihood increment.
 \begin{columns}[c]
 \column{.58\textwidth}\picturefit[4.9cm]{dmop-local-labeled.pdf}
 \column{.39\textwidth}
@@ -283,23 +283,30 @@ Same value at $\phi$,\\different slopes and curvature.
 \gap
 Update $\phi$ after each gradient step.
 \end{columns}
-\src{DMOP Figure 1A, saved curves. Cyan is a particle-filter estimate, not exact likelihood. The preceding theorem uses after-resampling estimates and multinomial resampling.}
+\src{DMOP Figure 1A, saved curves. Cyan is a particle-filter estimate, not exact likelihood. This plot uses systematic resampling. The theorem uses after-resampling increments and multinomial resampling.}
 \end{frame}
 
-\begin{frame}{Score dispersion around a zero reference}
-{\small Before-resampling estimate with systematic resampling, as in the previous illustration.}
-\begin{columns}[c]
-\column{.61\textwidth}\picturefit[4.5cm]{dmop-biasvar.png}
-\column{.36\textwidth}
-Gradient of mean log likelihood at fitted parameters.\gap
-10,000 particles;\\1,000 replicates per $\alpha$.
-\pause\gap
-Small $\alpha$: larger mean gradient.\gap
-$\alpha\approx1$: variance rises.
+\begin{frame}{How does discounting change the estimated score?}
+\begin{columns}[c,onlytextwidth]
+\column{.56\textwidth}
+\begin{tikzpicture}
+\node[inner sep=0,anchor=south west] (plot) at (0,0) {\includegraphics[width=\linewidth]{dmop-biasvar.png}};
+\begin{scope}[x={(plot.south east)},y={(plot.north west)}]
+% Replace the published labels in their original margins. Curves and ticks are unchanged.
+\fill[white] (.018,.20) rectangle (.074,.82);
+\node[rotate=90,font=\scriptsize] at (.05,.54) {Score moment};
+\fill[white] (.436,.772) rectangle (.78,.953);
+\foreach \y/\c in {.917/cyan,.865/gold,.813/pink}{\draw[\c,thick] (.451,\y)--(.502,\y);}
+\node[anchor=west,font=\scriptsize,inner sep=0pt] at (.516,.917) {Mean squared norm};
+\node[anchor=west,font=\scriptsize,inner sep=0pt] at (.516,.865) {Squared norm of mean};
+\node[anchor=west,font=\scriptsize,inner sep=0pt] at (.516,.813) {Variance};
+\end{scope}\end{tikzpicture}
+\column{.41\textwidth}
+At the fitted parameters, repeat the score estimate 1,000 times with 10,000 particles.
+\uncover<2->{\gap As $\alpha$ increases, the mean score shrinks. Near 1, the variance rises.}
+\uncover<3->{\gap A zero reference gives squared bias only at a stationary point.}
 \end{columns}
-\pause\medskip
-The plot uses zero as its reference. Interpreting deviation from zero as bias assumes a stationary fit.
-\src{DMOP Figure 1B. Source code sums across transformed-parameter coordinates and divides the log likelihood by $N$. It does not estimate the reference score independently.}
+\src{DMOP Figure 1B. Score of the mean log likelihood. Moments sum over coordinates. Same estimator and resampling scheme as on slide 42.}
 \end{frame}
 
 \begin{frame}{Fitting the model}

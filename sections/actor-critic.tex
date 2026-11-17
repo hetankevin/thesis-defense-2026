@@ -180,26 +180,32 @@ y=r+\sum_b\underbrace{\pi_{t+1}(b\mid s')}_{\text{depends on past critics}}f(s',
 \uncover<3->{We reuse data to choose the actor and fit the next critic.\\The regression bound must hold for every response this procedure can construct.}
 \end{frame}
 
-\begin{frame}{More critic updates enlarge the regression target class}
-$\Pi_T$: policies attainable by episode $T$. $K$: distinct critics.\\$\mathcal N_\F(\varepsilon)$: number of representatives needed to approximate $\F$ within $\varepsilon$.
-\begin{center}\begin{tikzpicture}[x=1cm,y=1cm]
-\path[use as bounding box] (0,0) rectangle (12,2.2);
-\foreach \x/\i in {1/1,4/2,7/K}{
-\draw (\x-.7,.5) rectangle (\x+.7,1.7);
-\foreach \dx/\dy in {-.3/.8,.3/.9,0/1.4}{\fill[blue] (\x+\dx,\dy) circle(2pt);}
-\node[lab] at (\x,.1) {critic $\i$};}
-\node at (5.5,1.1) {$\cdots$};\draw[arr] (8,1.1)--(9,1.1);
-\node[align=center] at (10.5,1.1) {$\mathcal N_\F^K$\\combinations};
-\end{tikzpicture}\end{center}
-\uncover<2->{\[
-\log\mathcal N_{\Pi_T}\ \lesssim\ K\log\mathcal N_\F
-\quad\longrightarrow\quad \beta_T:\text{ confidence threshold}.
-\]}
-\uncover<3->{\[
-K=T\quad\Longrightarrow\quad\sqrt{T\beta_T}\ \text{can grow as }T.
-\]}
-\uncover<3->{This general regret bound becomes vacuous. It does not prove the algorithm fails.}
-\src{Schematic dependence: covering scales, logarithmic terms, and other complexity factors suppressed.}
+\begin{frame}{How complicated is a sum of critics?}
+Unclipped linear critics with shared features $x$ sum to another linear critic.
+\[
+\sum_{t=1}^T f_t(x)=\sum_{t=1}^T x^\top w_t
+=x^\top\underbrace{\Big(\sum_{t=1}^T w_t\Big)}_{\text{one vector}}.
+\]
+\uncover<2->{\begin{columns}[c,onlytextwidth]
+\column{.51\textwidth}
+Now take $f_u(x)=\max(0,x-u)$ on $[0,1]$. Each critic has one bend.\\[2mm]
+Each new threshold adds a bend. The pink sum has two.
+\column{.47\textwidth}
+\centering\begin{tikzpicture}[x=4.2cm,y=1.55cm,font=\scriptsize]
+\draw[arr] (0,0)--(1.06,0) node[right] {$x$};
+\draw[arr] (0,0)--(0,1.13) node[above] {value};
+\draw[blue,dashed,thick] (0,0)--(.25,0)--(1,.75);
+\draw[green,dotted,very thick] (0,0)--(.75,0)--(1,.25);
+\draw[pink,thick] (0,0)--(.25,0)--(.75,.5)--(1,1);
+\foreach \x/\txt in {.25/{.25},.75/{.75},1/1}{\draw (\x,0)--(\x,-.05) node[below] {$\txt$};}
+\foreach \y in {.5,1}{\draw (0,\y)--(-.02,\y) node[left] {$\y$};}
+\draw[blue,dashed,thick] (.09,1)--(.21,1);\node[anchor=west] at (.22,1) {$f_{.25}$};
+\draw[green,dotted,very thick] (.09,.79)--(.21,.79);\node[anchor=west] at (.22,.79) {$f_{.75}$};
+\draw[pink,thick] (.09,.58)--(.21,.58);\node[anchor=west] at (.22,.58) {sum};
+\end{tikzpicture}
+\end{columns}}
+\uncover<3->{\gap Counting $M$ approximations for each of $K$ critic fits gives up to $M^K$ sequences.\\
+With a new fit each episode, the regret bound contains $\sqrt{T\log(M^T)}=T\sqrt{\log M}$.}
 \end{frame}
 
 \begin{frame}{Can we update the critic less often?}
@@ -221,48 +227,39 @@ K=T\quad\Longrightarrow\quad\sqrt{T\beta_T}\ \text{can grow as }T.
 \uncover<3->{Fewer critic updates reduce $K$, but optimism for an old policy need not hold for the new one.}
 \end{frame}
 
-\begin{frame}{Old-policy optimism does not control the current policy}
-$\tau$: last critic update. Hold $f$ fixed while $\pi_t$ changes.
-\[
-f_h\geq\mathcal T_h^{\pi_\tau}f_{h+1}
-\quad\not\Rightarrow\quad f_h\geq\mathcal T_h^{\pi_t}f_{h+1}.
-\]
-\begin{center}\begin{tikzpicture}[x=1cm,y=0.92cm]
-\path[use as bounding box] (0,-.4) rectangle (12,3.4);
-\draw[arr] (1,.3)--(8.2,.3) node[right,lab]{episode};
-\draw[arr] (1,.3)--(1,3.1) node[above,lab]{value under $f$};
-\fill[pink!18,visible on=<2->] (1.6,.9)--(7.4,.9)--(7.4,2.65) .. controls (4.9,2.6) and (4.5,1) .. (1.6,.9);
-\draw[blue,very thick] (1.6,.9) .. controls (4.5,1) and (4.9,2.6) .. (7.4,2.65);
-\draw[black!65,dashed,thick] (1.6,.9)--(7.4,.9);
-\foreach \x/\lab in {1.6/\tau,7.4/t}{\draw (\x,.2)--(\x,.4);\node[below,lab] at (\x,.15) {$\lab$};}
-\draw[blue,thick] (8.5,2.7)--(9.1,2.7);\node[anchor=west,lab] at (9.2,2.7) {$\langle f,\pi_t\rangle$};
-\draw[black!65,dashed,thick] (8.5,1.95)--(9.1,1.95);\node[anchor=west,lab] at (9.2,1.95) {$\langle f,\pi_\tau\rangle$};
-\draw[fill=pink!18,draw=none,visible on=<2->] (8.5,1.1) rectangle (9.1,1.4);
-\node[anchor=west,lab,visible on=<2->] at (9.2,1.25) {Uncontrolled gap};
+\begin{frame}{When does the old critic stop being optimistic?}
+Zero reward, one possible next state $s'$. The critic values actions $a_1,a_2$ at 0 and 1.
+Write $p=\pi(a_2\mid s')$. The evaluation target is $(1-p)\,0+p\,1=p$.
+\begin{center}\begin{tikzpicture}[x=.96cm,y=1cm]
+\draw[arr] (0,0)--(11,0) node[right,lab]{value};
+\foreach \x/\v in {0/0,2/.2,4/.4,8/.8,10/1}{\draw (\x,-.07)--(\x,.07);\node[below,lab] at (\x,-.1) {$\v$};}
+\draw[blue,thick] (2,.15)--(2,.8);\node[above,lab,text=blue] at (2,.82) {Old target};
+\draw[pink,very thick] (4,-.1)--(4,1.65);\node[above,lab,text=pink] at (4,1.65) {Fixed critic $f_h(s,a)$};
+\begin{scope}[visible on=<2->]
+\draw[arr,blue,thick] (2,.37)--(8,.37);\draw[blue,thick] (8,.14)--(8,.8);\node[above,lab,text=blue] at (8,.82) {New target};
+\end{scope}
 \end{tikzpicture}\end{center}
-$\langle f,\pi\rangle=\sum_a f(s,a)\pi(a\mid s)$ at a fixed state.
-\uncover<3->{\gap The bound compares with $\pi_\tau$, so it misses the actor's later improvements.\\That extra error can accumulate linearly in $T$.}
-\src{Schematic single update interval, adapted from the paper's tracking argument. Not an experimental curve.}
+\uncover<2->{As the actor shifts probability to $a_2$, its target rises from $.2$ to $.8$.}
+\uncover<3->{\gap The critic still predicts $.4$. Its old upper bound now falls short by $.4$.
+The regret analysis has to pay for that gap each episode it persists.}
 \end{frame}
 
 \begin{frame}{Use an optimality target instead}
-At the next state $s'$, write $f_i=f(s',a_i)$.
-\begin{center}\begin{tikzpicture}[x=1cm,y=1cm]
-\path[use as bounding box] (0,0) rectangle (12,2.8);
-\foreach \x/\i in {1/1,2.8/2,4.6/3}{\node[obj] (l\i) at (\x,2.2) {$f_\i$};}
-\node (avg) at (2.8,.8) {$\sum_i\pi_t(a_i\mid s')f_i$};
-\foreach \i in {1,2,3}{\draw[arr,blue] (l\i.south)--(avg.north);}
-\node[lab,text=blue] at (2.8,0) {Weighted by the actor};
-\begin{scope}[visible on=<2->]
-\foreach \x/\i in {7.4/1,9.2/2,11/3}{\node[obj] (r\i) at (\x,2.2) {$f_\i$};}
-\node (max) at (9.2,.8) {$\max_i f_i$};
-\foreach \i in {1,2,3}{\draw[arr,pink] (r\i.south)--(max.north);}
-\node[lab,text=pink] at (9.2,0) {No policy input};
-\end{scope}
-\end{tikzpicture}\end{center}
-\uncover<2->{\[y_t^\pi=r+\E_{b\sim\pi_t}f(s',b)\quad\longrightarrow\quad y^*=r+\max_b f(s',b).\]}
-\uncover<3->{\[|\max_b f(s',b)-\max_b g(s',b)|\leq\|f-g\|_\infty.\]}
-\uncover<3->{Only the critic class enters this covering bound.}
+Keep the same next-action values, $f(s',a_1)=0$ and $f(s',a_2)=1$.
+\begin{center}\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{lcc}
+\toprule
+Probability of $a_2$ & Evaluation target & \uncover<2->{Optimality target}\\
+\midrule
+$.2$ & $.8(0)+.2(1)=.2$ & \uncover<2->{$\max(0,1)=1$}\\
+$.8$ & $.2(0)+.8(1)=.8$ & \uncover<2->{$\max(0,1)=1$}\\
+\bottomrule
+\end{tabular}\end{center}
+\uncover<2->{In general, regress on $r+\max_b f(s',b)$. The actor no longer enters the response.}
+\uncover<3->{\[
+|\max_b f(s',b)-\max_b g(s',b)|\leq\|f-g\|_\infty .
+\]}
+\uncover<3->{A cover for the critics also approximates their maxima.}
 \end{frame}
 
 \begin{frame}{Optimism holds as the actor changes}
@@ -283,18 +280,21 @@ $\T_h f$: expected optimality target. $\T_h^\pi f$: expected policy-evaluation t
 \end{frame}
 
 \begin{frame}{The actor must track the greedy policy}
-\[\max_a f_{t,h}(s,a)-\sum_a\pi_{t,h}(a\mid s)f_{t,h}(s,a)\quad\text{is the actor's tracking error.}\]
-\begin{center}\begin{tikzpicture}[x=1cm,y=1cm]
+With probability $.8$ on $a_2$, the actor still falls short of the greedy value:
+\[
+\max_a f(s',a)-\sum_a\pi(a\mid s')f(s',a)=1-.8=.2 .
+\]
+\begin{center}\begin{tikzpicture}[x=1cm,y=.80cm]
 \path[use as bounding box] (0,0) rectangle (12,4.1);
-\foreach \x/\lab in {2/Previous actor,6/Reset,10/Softmax updates}{\node[lab] at (\x,3.8) {\lab};\draw[arr] (\x-1.2,1)--(\x+1.2,1);}
-\draw[fill=blue!20,draw=blue] (.9,1) rectangle (1.6,3.1);\draw[fill=pink!20,draw=pink] (2.2,1) rectangle (2.9,1.3);
+\foreach \x/\lab in {2/Before reset,6/Reset,10/After softmax updates}{\node[lab] at (\x,3.8) {\lab};\draw[arr] (\x-1.2,1)--(\x+1.2,1);}
+\draw[fill=blue!20,draw=blue] (.9,1) rectangle (1.6,2.92);\draw[fill=pink!20,draw=pink] (2.2,1) rectangle (2.9,1.48);
 \foreach \x in {4.9,6.2}{\draw[fill=black!10] (\x,1) rectangle (\x+.7,2.2);}
-\draw[fill=blue!20,draw=blue] (8.9,1) rectangle (9.6,1.3);\draw[fill=pink!20,draw=pink] (10.2,1) rectangle (10.9,3.1);
+\draw[fill=blue!20,draw=blue] (8.9,1) rectangle (9.6,1.48);\draw[fill=pink!20,draw=pink] (10.2,1) rectangle (10.9,2.92);
 \foreach \x in {2,6,10}{\node[lab] at (\x-.75,.6) {$a_1$};\node[lab] at (\x+.6,.6) {$a_2$};}
 \draw[arr] (3.4,2.2)--(4.4,2.2);\draw[arr] (7.4,2.2)--(8.4,2.2);
-\node[lab,text=pink] at (2,0) {New critic: $f(s,a_2)>f(s,a_1)$};
+\node[lab,text=pink] at (2,0) {New critic favors $a_2$};
 \node[lab] at (6,0) {$\pi(a\mid s)=1/|\A|$};
-\node[lab] at (10,0) {Critic held fixed};
+\node[lab] at (10,0) {Probability of $a_2$: $.8$};
 \end{tikzpicture}\end{center}
 \pause
 \[
@@ -372,13 +372,14 @@ Critics are bounded by $H$. Assume:
 \fill[white] (p.south west) rectangle ($(p.south west)+(.37,4.13)$);
 \node[rotate=90,font=\small] at ($(p.south west)+(.15,2.1)$) {Cumulative regret};
 \end{tikzpicture}\end{center}
-Linear critics, 30 trials. Alg. 1: $Q^\pi$ target. Alg. 2: rare updates and resets.\\Both use upper-confidence bonuses for exploration.
+Alg. 1 has the lowest cumulative regret over these 30 trials.
 \pause\gap
-Alg. 1 has the lowest regret here. Resets support the general guarantee, not an improvement in this experiment.
-\src{Paper's online experiment. LSVI-UCB is an optimistic value-iteration baseline; the paper does not identify the shaded-band statistic.}
+The Tetris implementation leaves the linear value estimates unclipped.
+Their sum still has one coefficient vector, as on slide 13.
+\src{Both algorithms use exploration bonuses. LSVI-UCB is an optimistic value-iteration baseline; the paper does not identify the shaded-band statistic.}
 \end{frame}
 
-\begin{frame}{Offline data can also reduce the need for optimism}
+\begin{frame}{When can Alg. 2 learn without optimism?}
 \begin{center}\begin{tikzpicture}[x=1cm,y=.65cm]
 \path[use as bounding box] (0,0) rectangle (12,4.2);
 \node[lab] at (2,3.9) {Offline transitions};\node[lab] at (2,1.3) {Online transitions};
@@ -391,14 +392,16 @@ Alg. 1 has the lowest regret here. Resets support the general guarantee, not an 
 \uncover<2->{\[
 \underbrace{\text{Error on offline data}}_{\text{squared Bellman error}}
 \ \xrightarrow{\ \text{coverage}\ }\ 
-\underbrace{\text{Error along }\pi^*}_{\text{optimal-policy error}}.
+\underbrace{\text{Bellman error along }\pi^*}_{\text{under the optimal policy}}.
 \]}
-\uncover<3->{Coverage must transfer Bellman error from offline data to states visited by $\pi^*$.
+\uncover<3->{For the optimality-target variant with $N_{\rm off}$ offline samples,
 \[
-\text{Additional regret}=O\!\left(\sqrt{\beta H^4 c_{\rm off}^*T^2/N_{\rm off}}\right).
+\text{additional regret from removing optimism}
+=O\!\left(\sqrt{\beta^* H^4 c_{\rm off}^*T^2/N_{\rm off}}\right).
 \]
-{\small $c_{\rm off}^*$: error-transfer coefficient. $N_{\rm off}$: offline sample count.\\Bounded $c_{\rm off}^*$ and $N_{\rm off}=\Omega(T)$ retain the $\sqrt T$ rate without optimism.}}
-\src{Same ICML paper, optimism-free hybrid variants. $L$: Bellman squared loss.}
+With bounded error-transfer coefficient $c_{\rm off}^*$ and $N_{\rm off}=\Omega(T)$,
+Alg. 2 retains $\widetilde O(\sqrt T)$ regret under its original complexity assumptions.}
+\src{$\beta^*$ is the confidence width for optimality targets. The policy-evaluation variant has a separate width that depends on the policy cover.}
 \end{frame}
 
 \begin{frame}{AntMaze: a neural implementation comparison}

@@ -1,9 +1,12 @@
 
 \begin{frame}[plain]{}\leavevmode
 {\color{blue!50!black}\LARGE\bfseries Statistical and computational efficiency\\[2mm]in sequential decision making\par}
-\vspace{10mm}
+\vspace{6mm}
 {\Large Kevin Tan}
-\gap Dissertation defense
+\par\smallskip Dissertation defense
+\par\vspace{6mm}
+{\small\textbf{Committee}\par\smallskip
+Yuting Wei (co-advisor)\qquad Giles Hooker (co-advisor)\qquad Enric Boix-Adserà\par}
 \end{frame}
 
 \begin{frame}{Learning from sequential data}
@@ -11,15 +14,14 @@
 \column{.47\textwidth}
 \textbf{Choosing actions}\par\medskip
 \begin{center}\includegraphics[height=2.8cm]{franka-photo.jpg}\end{center}
-A robot's actions determine both its progress and the data it collects.
+We observe the robot's state. We see the outcome only for the action we try.
 \pause
 \column{.47\textwidth}
 \textbf{Estimating hidden dynamics}\par\medskip
 \begin{center}\includegraphics[height=2.8cm]{cholera-culture.jpg}\end{center}
-Monthly deaths do not reveal the infected and immune populations.
+In Dhaka, we observe monthly cholera deaths. We infer how many people are infected or immune.
 \end{columns}
-\pause\gap
-Both problems require estimating how the system evolves.
+
 \src{Robot: Ims / Wikimedia Commons, CC BY-SA 4.0. Culture: CDC PHIL 3906, public domain.}
 \end{frame}
 

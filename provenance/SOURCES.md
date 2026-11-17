@@ -76,3 +76,9 @@ The existing PNG has the same curve geometry as cell 11's embedded output (diffe
 Checked `Downloads/dmop-main/code/global_search/precise_report.qmd`, `dmop_search.py`, `prep.py`, and `exports/final_estimates.csv`, `exports/timings.csv` against the existing panel and manuscript median values. Cohort: comparable effort, n_monitors=1 for final estimates; n_monitors=0 for timing. The plotting code filters below -3780 (not -3800 as in the manuscript caption). Omitted counts: IF2 2/100, IFAD-1 4/100, IFAD-0 2/100, IFAD-.97 0/100. The red line is the maximum among the displayed comparison, not a separately supplied best-known likelihood.
 
 The approximately 16-minute wall time is for the batch of 100 parallel searches per method, excluding diagnostic likelihood calls. It is not 16 minutes per individual search. Fit uses 5000 particles; retained run settings remain unchanged. The original panel is preserved, with the correct cutoff and omitted counts on the slide.
+
+### November 17 follow-up
+
+The Tetris implementation uses unclipped value estimates, as stated in the ICML paper, Numerical experiments. Slide 13's two-hinge example is an analytic illustration of lack of closure. It does not establish a regret or covering-number lower bound. The two-action numerical example on slides 15–18 illustrates the paper's old-policy optimism argument. Slide 23 uses the optimality-target variant of the non-optimistic hybrid theorem, with its own confidence width.
+
+Slide 42's before-resampling increment is the normalized weighted sum of predicted-particle measurement densities (DMOP, Algorithm 1). On slide 43, the original plotted pixels for all three curves are preserved. The legend uses mean squared norm, squared norm of mean, and variance for the empirical zero-reference decomposition; at a stationary parameter the first two have the MSE and squared-bias interpretations.

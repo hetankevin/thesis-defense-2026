@@ -11,9 +11,9 @@ slide,section,title,seconds
 10,actor-critic,Regression alone does not tell us where to explore,65
 11,actor-critic,How much reward do we lose while learning?,60
 12,actor-critic,The regression response depends on past critics,70
-13,actor-critic,More critic updates enlarge the regression target class,75
+13,actor-critic,How complicated is a sum of critics?,75
 14,actor-critic,Can we update the critic less often?,60
-15,actor-critic,Old-policy optimism does not control the current policy,85
+15,actor-critic,When does the old critic stop being optimistic?,85
 16,actor-critic,Use an optimality target instead,95
 17,actor-critic,Optimism holds as the actor changes,60
 18,actor-critic,The actor must track the greedy policy,80
@@ -21,7 +21,7 @@ slide,section,title,seconds
 20,actor-critic,Rare critic changes limit the cost of resets,95
 21,actor-critic,Regret guarantee,90
 22,actor-critic,Online experiment: Tetris,60
-23,actor-critic,Offline data can also reduce the need for optimism,70
+23,actor-critic,When can Alg. 2 learn without optimism?,70
 24,actor-critic,AntMaze: a neural implementation comparison,60
 25,actor-critic,Actor--critic: optimality targets and policy resets,20
 26,filtering,2. Differentiable particle filters,20
@@ -41,7 +41,7 @@ slide,section,title,seconds
 40,filtering,Error in the score estimate,105
 41,filtering,State mixing alone is not enough for this bound,95
 42,filtering,Discounting changes local likelihood approximations,70
-43,filtering,Score dispersion around a zero reference,70
+43,filtering,How does discounting change the estimated score?,70
 44,filtering,Fitting the model,75
 45,filtering,Likelihood searches for the Dhaka cholera model,70
 46,filtering,Particle filtering: fixed ancestry and weight corrections,25

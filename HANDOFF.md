@@ -15,7 +15,16 @@ The surrounding proposal repository is archival and divergent. Commit locally th
 
 Keep the Dhaka cholera statistical inference application and its figures. Observations are monthly deaths. Never replace Wei Fan with Jianqing Fan. Preserve personal acknowledgments and author order. No notes carrying essential explanations, cute titles, invented results, or new experiments. Number RL algorithms. Use diagrams of actual operations, defined notation, stable reveals, and readable evidence.
 
-## Current revision
+## Current slides, November 17 (afternoon revision)
+
+Title slide committee order: Yuting Wei (co-advisor), Giles Hooker (co-advisor), Enric Boix-Adserà. Slide 2 now introduces observed states and chosen actions in the robot example and monthly deaths and hidden populations in Dhaka.
+
+- Slide 13 contrasts the sum of unclipped linear critics with a family of shifted hinges. The two bends illustrate failure of closure. The general product-cover upper bound is a separate argument, not a lower bound from the drawing. Slide 22 returns to the unclipped Tetris implementation.
+- Slides 15–18 follow the same one-next-state example with zero reward, values 0 and 1, actor probabilities .2 and .8, and a fixed old critic of .4. Slide 23 gives the offline-data rate for the optimality-target variant.
+- Slides 42–43 explain the before-resampling increment and label the empirical moments against zero. The Beamer overlay replaces only the inherited labels on Figure 1B. Plot data are unchanged.
+- Rebuilt 51 handout frames and 133 overlay pages. Timing remains an allocation of 60 minutes. GitHub and local artifacts for this revision supersede the morning source. Safari was locked during the pre-sync check. Overleaf synchronization and server PDF verification are pending for this revision. The files named “overleaf” in output are the previous verified server build.
+
+## Previous revision and review
 
 Implemented the cold review rather than leaving flags unresolved:
 
