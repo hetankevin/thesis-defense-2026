@@ -8,7 +8,7 @@ slide,section,title,seconds
 7,actor-critic,What is an actor--critic?,70
 8,actor-critic,The critic update is a regression problem,90
 9,actor-critic,Updating the policy,70
-10,actor-critic,Regression alone does not tell us where to explore,65
+10,actor-critic,Exploring rarely tried actions,65
 11,actor-critic,How much reward do we lose while learning?,60
 12,actor-critic,The regression response depends on past critics,70
 13,actor-critic,How complicated is a sum of critics?,75

@@ -15,7 +15,11 @@ The surrounding proposal repository is archival and divergent. Commit locally th
 
 Keep the Dhaka cholera statistical inference application and its figures. Observations are monthly deaths. Never replace Wei Fan with Jianqing Fan. Preserve personal acknowledgments and author order. No notes carrying essential explanations, cute titles, invented results, or new experiments. Number RL algorithms. Use diagrams of actual operations, defined notation, stable reveals, and readable evidence.
 
-## Current slides, November 17 (afternoon revision)
+## Concision pass, November 17
+
+Revised prose across the opening, both technical sections and closing. Slide 13 puts the linear identity and hinge counterexample side by side; slide 15's diagram now carries the change from .2 to .8. Updated artifacts have 51 handout pages and 131 overlay pages. Rendered the whole handout and inspected staged reveals on slides 13, 15 and 43. Timing allocation is unchanged. Pre-edit Overleaf export matched d437646 across tracked files.
+
+## November 17 afternoon revision
 
 Title slide committee order: Yuting Wei (co-advisor), Giles Hooker (co-advisor), Enric Boix-Adserà. Slide 2 now introduces observed states and chosen actions in the robot example and monthly deaths and hidden populations in Dhaka.
 

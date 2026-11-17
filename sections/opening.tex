@@ -14,12 +14,12 @@ Yuting Wei (co-advisor)\qquad Giles Hooker (co-advisor)\qquad Enric Boix-Adserà
 \column{.47\textwidth}
 \textbf{Choosing actions}\par\medskip
 \begin{center}\includegraphics[height=2.8cm]{franka-photo.jpg}\end{center}
-We observe the robot's state. We see the outcome only for the action we try.
+State observed. Outcome observed only for the chosen action.
 \pause
 \column{.47\textwidth}
 \textbf{Estimating hidden dynamics}\par\medskip
 \begin{center}\includegraphics[height=2.8cm]{cholera-culture.jpg}\end{center}
-In Dhaka, we observe monthly cholera deaths. We infer how many people are infected or immune.
+Monthly deaths observed. Infected and immune populations hidden.
 \end{columns}
 
 \src{Robot: Ims / Wikimedia Commons, CC BY-SA 4.0. Culture: CDC PHIL 3906, public domain.}
@@ -44,5 +44,5 @@ In Dhaka, we observe monthly cholera deaths. We infer how many people are infect
 \draw[arr] (x3)--(7,.85);\draw[arr] (9,.85)--node[above,lab]{differentiate}(10,.85);
 \end{scope}
 \end{tikzpicture}\end{center}
-\uncover<3->{Then: choosing actions when the state is only partially observed.}
+\uncover<3->{Finally, choosing actions from a partially observed state.}
 \end{frame}

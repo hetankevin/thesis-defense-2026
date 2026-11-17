@@ -9,7 +9,7 @@ Joint work: Kevin Tan, Wei Fan, Yuting Wei.\gap ICML 2025
 \column{.44\textwidth}
 \includegraphics[width=\linewidth]{section-warehouse.png}
 \end{columns}
-\gap Can actor--critic methods learn efficiently without assuming the system is already well explored?
+\gap Can an actor--critic learn efficiently when it has to explore?
 \end{frame}
 
 \begin{frame}{Actions affect later rewards}
@@ -29,7 +29,7 @@ Joint work: Kevin Tan, Wei Fan, Yuting Wei.\gap ICML 2025
 \end{scope}
 \end{tikzpicture}\end{center}
 \uncover<3->{One episode: $H$ decisions. Goal: maximize $\E[\sum_{h=1}^H r_h]$.}
-\src{Finite action set $\A$. Robot example illustrates the decision sequence.}
+\src{Finite action set $\A$.}
 \end{frame}
 
 \begin{frame}{Estimating total reward}
@@ -50,7 +50,7 @@ Q_h^\pi(s,a)=\E\!\left[\sum_{k=h}^{H}r_k\;\middle|\;s_h=s,a_h=a,\text{ then }\pi
 \]
 \pause
 \[
-V_h^\pi(s)=\underbrace{\sum_{a\in\A}\pi_h(a\mid s)Q_h^\pi(s,a)}_{\text{average over the first action as well}}.
+V_h^\pi(s)=\underbrace{\sum_{a\in\A}\pi_h(a\mid s)Q_h^\pi(s,a)}_{\text{average over the first action}}.
 \]
 \end{frame}
 
@@ -69,8 +69,8 @@ V_h^\pi(s)=\underbrace{\sum_{a\in\A}\pi_h(a\mid s)Q_h^\pi(s,a)}_{\text{average o
 \draw[arr,visible on=<2->] (3.8,3.7)--node[above,lab]{estimated values}(6.9,3.7);
 \draw[arr,visible on=<3->] (9.5,1.7)--(9.5,.8)--node[below,lab]{new transitions $(s,a,r,s')$}(2,.8)--(2,1.7);
 \end{tikzpicture}\end{center}
-\uncover<2->{The actor increases the relative odds of higher-valued actions.}
-\src{Schematic regression and action probabilities; not experimental data.}
+\uncover<2->{Higher estimated value raises an action's odds.}
+
 \end{frame}
 
 \begin{frame}{The critic update is a regression problem}
@@ -91,7 +91,7 @@ y=r+\sum_b\pi_{h+1}(b\mid s')f_{h+1}(s',b).
 \uncover<3->{\[
 \widehat f_h\in\arg\min_{f_h\in\F_h}\sum_{(s,a,r,s')\in D_h}(f_h(s,a)-y)^2.
 \]}
-\uncover<3->{$D_h$: transitions at step $h$. $\F_h$: regression class.\\Bellman regression uses another value estimate in its response.}
+\uncover<3->{$D_h$: transitions at step $h$. $\F_h$: regression class.}
 \end{frame}
 
 \begin{frame}{Updating the policy}
@@ -116,7 +116,7 @@ e^{\eta\underbrace{[f_{t,h}(s,a)-f_{t,h}(s,b)]}_{\text{estimated advantage}}}.
 \]}
 \end{frame}
 
-\begin{frame}{Regression alone does not tell us where to explore}
+\begin{frame}{Exploring rarely tried actions}
 \begin{center}\begin{tikzpicture}[x=1cm,y=1cm]
 \path[use as bounding box] (0,0) rectangle (12,3.6);
 \node[obj,circle] (s) at (1,1.8) {$s$};
@@ -135,7 +135,7 @@ f_h(s,a)=\sup_{q\in\mathcal C}q_h(s,a),\qquad
 \mathcal C=\{\text{critics consistent with Bellman regression data}\}.
 \]}
 \uncover<3->{Alg. 1: policy-evaluation target $+$ pointwise optimism $+$ softmax update.}
-\src{Schematic uncertainty intervals, not computed confidence intervals.}
+\src{Illustrative intervals.}
 \end{frame}
 
 \begin{frame}{How much reward do we lose while learning?}
@@ -158,7 +158,7 @@ f_h(s,a)=\sup_{q\in\mathcal C}q_h(s,a),\qquad
 \frac{\Reg(T)}{T}=\widetilde O(T^{-1/2}).
 \]
 Fixed starting state $s_1$.
-\src{Schematic gaps, not a learning curve. $\widetilde O$ hides logarithms; $H$ and model complexity also enter.}
+\src{$\widetilde O$ hides logarithms. The rate also depends on $H$ and model complexity.}
 \end{frame}
 
 \begin{frame}{The regression response depends on past critics}
@@ -177,21 +177,22 @@ From a uniform initial policy,
 \uncover<2->{\[
 y=r+\sum_b\underbrace{\pi_{t+1}(b\mid s')}_{\text{depends on past critics}}f(s',b).
 \]}
-\uncover<3->{We reuse data to choose the actor and fit the next critic.\\The regression bound must hold for every response this procedure can construct.}
+\uncover<3->{Reusing the data requires a uniform bound over these responses.}
 \end{frame}
 
 \begin{frame}{How complicated is a sum of critics?}
-Unclipped linear critics with shared features $x$ sum to another linear critic.
+\begin{columns}[T,onlytextwidth]
+\column{.47\textwidth}
+\textbf{Unclipped linear critics}\par\medskip
+Shared features $x$, coefficients $w_t$:
 \[
-\sum_{t=1}^T f_t(x)=\sum_{t=1}^T x^\top w_t
+\sum_{t=1}^T x^\top w_t
 =x^\top\underbrace{\Big(\sum_{t=1}^T w_t\Big)}_{\text{one vector}}.
 \]
-\uncover<2->{\begin{columns}[c,onlytextwidth]
-\column{.51\textwidth}
-Now take $f_u(x)=\max(0,x-u)$ on $[0,1]$. Each critic has one bend.\\[2mm]
-Each new threshold adds a bend. The pink sum has two.
-\column{.47\textwidth}
-\centering\begin{tikzpicture}[x=4.2cm,y=1.55cm,font=\scriptsize]
+\column{.50\textwidth}
+\uncover<2->{\textbf{Hinge critics}\par\medskip
+$f_u(x)=\max(0,x-u)$\par\smallskip
+\centering\begin{tikzpicture}[x=4.7cm,y=1.75cm,font=\scriptsize]
 \draw[arr] (0,0)--(1.06,0) node[right] {$x$};
 \draw[arr] (0,0)--(0,1.13) node[above] {value};
 \draw[blue,dashed,thick] (0,0)--(.25,0)--(1,.75);
@@ -202,10 +203,14 @@ Each new threshold adds a bend. The pink sum has two.
 \draw[blue,dashed,thick] (.09,1)--(.21,1);\node[anchor=west] at (.22,1) {$f_{.25}$};
 \draw[green,dotted,very thick] (.09,.79)--(.21,.79);\node[anchor=west] at (.22,.79) {$f_{.75}$};
 \draw[pink,thick] (.09,.58)--(.21,.58);\node[anchor=west] at (.22,.58) {sum};
-\end{tikzpicture}
-\end{columns}}
-\uncover<3->{\gap Counting $M$ approximations for each of $K$ critic fits gives up to $M^K$ sequences.\\
-With a new fit each episode, the regret bound contains $\sqrt{T\log(M^T)}=T\sqrt{\log M}$.}
+\end{tikzpicture}\par
+Each new threshold adds a bend.}
+\end{columns}
+\uncover<3->{\gap $M$ approximations per fit, $K$ fits $\ \Longrightarrow\ $ up to $M^K$ sequences.
+\[
+K=T\quad\Longrightarrow\quad
+\underbrace{\sqrt{T\log(M^T)}}_{\text{regret term}}=T\sqrt{\log M}.
+\]}
 \end{frame}
 
 \begin{frame}{Can we update the critic less often?}
@@ -224,12 +229,12 @@ With a new fit each episode, the regret bound contains $\sqrt{T\log(M^T)}=T\sqrt
 \end{tikzpicture}\end{center}
 \uncover<2->{\[y_t^\pi=r+\sum_b\pi_t(b\mid s')f_{h+1}(s',b).\]}
 \uncover<2->{$\mathcal T_h^{\pi_t}f_{h+1}=\E[y_t^\pi\mid s,a]$: expected regression response.\par}\medskip
-\uncover<3->{Fewer critic updates reduce $K$, but optimism for an old policy need not hold for the new one.}
+\uncover<3->{Between critic updates, does the old upper bound still hold?}
 \end{frame}
 
 \begin{frame}{When does the old critic stop being optimistic?}
-Zero reward, one possible next state $s'$. The critic values actions $a_1,a_2$ at 0 and 1.
-Write $p=\pi(a_2\mid s')$. The evaluation target is $(1-p)\,0+p\,1=p$.
+Zero reward. One next state $s'$ with action values $(0,1)$.
+\[p=\pi(a_2\mid s'),\qquad y^\pi=(1-p)\,0+p\,1=p.\]
 \begin{center}\begin{tikzpicture}[x=.96cm,y=1cm]
 \draw[arr] (0,0)--(11,0) node[right,lab]{value};
 \foreach \x/\v in {0/0,2/.2,4/.4,8/.8,10/1}{\draw (\x,-.07)--(\x,.07);\node[below,lab] at (\x,-.1) {$\v$};}
@@ -239,13 +244,11 @@ Write $p=\pi(a_2\mid s')$. The evaluation target is $(1-p)\,0+p\,1=p$.
 \draw[arr,blue,thick] (2,.37)--(8,.37);\draw[blue,thick] (8,.14)--(8,.8);\node[above,lab,text=blue] at (8,.82) {New target};
 \end{scope}
 \end{tikzpicture}\end{center}
-\uncover<2->{As the actor shifts probability to $a_2$, its target rises from $.2$ to $.8$.}
-\uncover<3->{\gap The critic still predicts $.4$. Its old upper bound now falls short by $.4$.
-The regret analysis has to pay for that gap each episode it persists.}
+\uncover<3->{The shortfall is $.8-.4=.4$ each episode this gap persists.}
 \end{frame}
 
 \begin{frame}{Use an optimality target instead}
-Keep the same next-action values, $f(s',a_1)=0$ and $f(s',a_2)=1$.
+
 \begin{center}\renewcommand{\arraystretch}{1.5}
 \begin{tabular}{lcc}
 \toprule
@@ -255,11 +258,11 @@ $.2$ & $.8(0)+.2(1)=.2$ & \uncover<2->{$\max(0,1)=1$}\\
 $.8$ & $.2(0)+.8(1)=.8$ & \uncover<2->{$\max(0,1)=1$}\\
 \bottomrule
 \end{tabular}\end{center}
-\uncover<2->{In general, regress on $r+\max_b f(s',b)$. The actor no longer enters the response.}
+\uncover<2->{Regression target $r+\max_b f(s',b)$, independent of the actor.}
 \uncover<3->{\[
 |\max_b f(s',b)-\max_b g(s',b)|\leq\|f-g\|_\infty .
 \]}
-\uncover<3->{A cover for the critics also approximates their maxima.}
+\uncover<3->{The same cover works for the maxima.}
 \end{frame}
 
 \begin{frame}{Optimism holds as the actor changes}
@@ -276,11 +279,11 @@ $\T_h f$: expected optimality target. $\T_h^\pi f$: expected policy-evaluation t
 \node[lab,text=green,visible on=<2->] at (6,3) {Best next action};
 \end{tikzpicture}\end{center}
 \uncover<3->{\[f_h\geq\T_h f_{h+1}\geq\T_h^{\pi_t}f_{h+1}\qquad\text{for every actor }\pi_t.\]}
-\src{Schematic order at one state--action pair. The second inequality is average $\leq$ maximum. The critic can stay fixed while the actor changes.}
+\src{At each $(s,a)$, a policy average is at most the maximum.}
 \end{frame}
 
 \begin{frame}{The actor must track the greedy policy}
-With probability $.8$ on $a_2$, the actor still falls short of the greedy value:
+Tracking error at $\pi(a_2\mid s')=.8$:
 \[
 \max_a f(s',a)-\sum_a\pi(a\mid s')f(s',a)=1-.8=.2 .
 \]
@@ -305,7 +308,7 @@ With probability $.8$ on $a_2$, the actor still falls short of the greedy value:
 \end{frame}
 
 \begin{frame}{Alg. 2: update the critic when its regression error grows}
-For retained transitions $D_{t,h}$, use the same optimality targets in both losses:
+On retained step-$h$ transitions $D_{t,h}$,
 \[
 L_{t,h}(q,f)=\sum_{(s,a,r,s')\in D_{t,h}}[q(s,a)-r-\max_b f_{h+1}(s',b)]^2.
 \]
@@ -321,12 +324,12 @@ L_{t,h}(q,f)=\sum_{(s,a,r,s')\in D_{t,h}}[q(s,a)-r-\max_b f_{h+1}(s',b)]^2.
 \draw[arr,visible on=<3->] (test.west)-|node[above,pos=.3,lab]{no}(keep.north);
 \draw[arr,visible on=<3->] (test.east)-|node[above,pos=.3,lab]{yes}(new.north);
 \end{tikzpicture}\end{center}
-\uncover<2->{$\beta$: confidence threshold.}\par\uncover<3->{The refitted set keeps candidates with excess loss at most $H^2\beta$ at every step.}
-\src{Algorithm 2, ICML 2025. Refit comparator follows the manuscript's $\F_h$.}
+\uncover<2->{$\beta$: confidence threshold.}\par\uncover<3->{Refit cutoff: excess loss $\le H^2\beta$ at every step.}
+
 \end{frame}
 
 \begin{frame}{Rare critic changes limit the cost of resets}
-$d$: sequential complexity of Bellman errors. It controls how often new data reveal errors not resolved by earlier data.
+$d$ measures how often new data reveal a previously undetected Bellman error.
 \begin{center}\begin{tikzpicture}[x=1cm,y=1cm]
 \path[use as bounding box] (0,0) rectangle (12,1.5);
 \draw[arr] (.5,.6)--(11.5,.6);
@@ -342,8 +345,8 @@ $d$: sequential complexity of Bellman errors. It controls how often new data rev
 \eta\asymp\sqrt{\frac{d\log T\log|\A|}{HT}}
 \quad\Longrightarrow\quad\text{tracking cost}=\widetilde O(\sqrt{dH^5T}+dH^3).
 \]}
-\uncover<3->{Choose the learning rate to balance update error and relearning after resets.}
-\src{$d$: Dirac-type Bellman eluder dimension at scale $T^{-1/2}$. Bounds require controlled $d$.}
+
+\src{$d$: Dirac-type Bellman eluder dimension at scale $T^{-1/2}$.}
 \end{frame}
 
 \begin{frame}{Regret guarantee}
@@ -361,8 +364,8 @@ Critics are bounded by $H$. Assume:
 +\underbrace{\sqrt{dH^4T\log\mathcal N}}_{\text{critic error}}\right).
 \]}
 \uncover<2->{$\mathcal N$: covering number of critics and expected optimality targets at scale $1/T$.}
-\uncover<3->{\gap $\sqrt T$ dependence for controlled complexity.\\This is a sample-efficiency result; confidence-set optimization can be expensive.}
-\src{$\delta$: failure probability. Logarithms in $H,T,1/\delta$ suppressed. $\mathcal G$ is the target class from generalized completeness.}
+\uncover<3->{\gap $\sqrt T$ dependence for controlled complexity.\\Computing the confidence set can be expensive.}
+\src{$\mathcal G$: auxiliary regression class. Logarithms in $H,T,1/\delta$ suppressed.}
 \end{frame}
 
 \begin{frame}{Online experiment: Tetris}
@@ -372,11 +375,10 @@ Critics are bounded by $H$. Assume:
 \fill[white] (p.south west) rectangle ($(p.south west)+(.37,4.13)$);
 \node[rotate=90,font=\small] at ($(p.south west)+(.15,2.1)$) {Cumulative regret};
 \end{tikzpicture}\end{center}
-Alg. 1 has the lowest cumulative regret over these 30 trials.
+Alg. 1 has the lowest regret (30 trials).
 \pause\gap
-The Tetris implementation leaves the linear value estimates unclipped.
-Their sum still has one coefficient vector, as on slide 13.
-\src{Both algorithms use exploration bonuses. LSVI-UCB is an optimistic value-iteration baseline; the paper does not identify the shaded-band statistic.}
+Tetris uses unclipped linear critics. Their sum still fits in one vector.
+\src{Both use exploration bonuses. LSVI-UCB: optimistic value iteration. Band statistic unspecified.}
 \end{frame}
 
 \begin{frame}{When can Alg. 2 learn without optimism?}
@@ -390,18 +392,17 @@ Their sum still has one coefficient vector, as on slide 13.
 \draw[arr] (3.5,3.3)--(fit);\draw[arr] (3.5,.7)--(fit);\draw[arr] (fit)--(actor);
 \end{tikzpicture}\end{center}
 \uncover<2->{\[
-\underbrace{\text{Error on offline data}}_{\text{squared Bellman error}}
+\text{Offline squared Bellman error}
 \ \xrightarrow{\ \text{coverage}\ }\ 
-\underbrace{\text{Bellman error along }\pi^*}_{\text{under the optimal policy}}.
+\text{Bellman error under }\pi^*.
 \]}
-\uncover<3->{For the optimality-target variant with $N_{\rm off}$ offline samples,
+\uncover<3->{Alg. 2 with optimality targets and $N_{\rm off}$ offline samples:
 \[
-\text{additional regret from removing optimism}
+\text{Additional regret}
 =O\!\left(\sqrt{\beta^* H^4 c_{\rm off}^*T^2/N_{\rm off}}\right).
 \]
-With bounded error-transfer coefficient $c_{\rm off}^*$ and $N_{\rm off}=\Omega(T)$,
-Alg. 2 retains $\widetilde O(\sqrt T)$ regret under its original complexity assumptions.}
-\src{$\beta^*$ is the confidence width for optimality targets. The policy-evaluation variant has a separate width that depends on the policy cover.}
+Bounded coverage coefficient $c_{\rm off}^*$ and $N_{\rm off}=\Omega(T)$ preserve the $\widetilde O(\sqrt T)$ rate under Alg. 2's complexity assumptions.}
+\src{$\beta^*$: confidence width for optimality targets. Policy evaluation also requires a policy cover.}
 \end{frame}
 
 \begin{frame}{AntMaze: a neural implementation comparison}
@@ -417,7 +418,7 @@ Alg. 2 retains $\widetilde O(\sqrt T)$ regret under its original complexity assu
 \textcolor{green}{Cal-QL}: hybrid RL baseline.
 \end{columns}
 \pause\gap
-Alg. 2H reaches higher return here.\\These neural updates differ from the theoretical algorithms.
+Alg. 2H reaches the highest return here.
 \src{AntMaze medium-diverse-v2. First 1,000 training steps: offline pretraining. Curves exponentially smoothed. ICML 2025.}
 \end{frame}
 
@@ -437,5 +438,5 @@ Alg. 2H reaches higher return here.\\These neural updates differ from the theore
 \node[lab] at (7,.5) {Softmax steps; rare critic changes};
 \end{scope}
 \end{tikzpicture}\end{center}
-\uncover<3->{So far: observed state. Next: likelihood inference when the state is hidden.}
+\uncover<3->{Next, how do we fit a model when the state is hidden?}
 \end{frame}

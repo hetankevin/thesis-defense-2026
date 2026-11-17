@@ -5,7 +5,7 @@
 Joint work: Kevin Tan, A. J. Abkemeier, Kunyang He,\\Giles Hooker, Edward L. Ionides.
 \gap JRSS-B, revise and resubmit.\par
 \vspace{6mm}
-We can simulate the model, but cannot evaluate its likelihood directly. How do we estimate its parameters?
+How do we estimate parameters from a simulator and partial observations?
 \end{frame}
 
 \begin{frame}{Fitting the Dhaka cholera model}
@@ -19,7 +19,7 @@ We can simulate the model, but cannot evaluate its likelihood directly. How do w
 \node[lab,visible on=<2->] (fit) at (9,-.1) {Estimate rates, e.g. recovery $\gamma$};
 \draw[arr,visible on=<2->] (y)--node[above,lab]{likelihood}(fit);
 \end{tikzpicture}\end{center}
-\src{King et al. (2008), DMOP model diagram. Infection $\lambda(t)$; recovery $\gamma$; waning immunity $k\epsilon$ ($k=3$); cholera deaths $m$; other deaths $\delta$; population change $dP$. Compartment sizes are hidden.}
+\src{King et al. (2008). Infection $\lambda(t)$; recovery $\gamma$; waning immunity $k\epsilon$ ($k=3$); cholera deaths $m$; other deaths $\delta$; population change $dP$.}
 \end{frame}
 
 \begin{frame}{A partially observed model}
@@ -37,7 +37,7 @@ We can simulate the model, but cannot evaluate its likelihood directly. How do w
 \pause
 \[X_n=F_\theta(X_{n-1},U_n),\qquad Y_n\mid X_n\sim g_\theta(\cdot\mid X_n).\]
 \pause
-$\theta$: unknown parameters. Simulate $F_\theta$, evaluate $g_\theta$; no transition-density evaluation required.
+$\theta$: unknown parameters. Fitting needs only draws from $F_\theta$ and evaluations of $g_\theta$.
 \end{frame}
 
 \begin{frame}{Likelihood requires averaging over hidden states}
@@ -52,7 +52,7 @@ $\theta$: unknown parameters. Simulate $F_\theta$, evaluate $g_\theta$; no trans
 \end{tikzpicture}\end{center}
 \pause
 \[p_\theta(y_n\mid y_{1:n-1})=\int g_\theta(y_n\mid x)\,p_\theta(dx\mid y_{1:n-1}).\]
-\pause Approximate this average with $J$ simulated particles.
+\pause Approximate the integral with $J$ particles.
 \end{frame}
 
 \begin{frame}{Particle filtering: simulate candidate states}
@@ -67,7 +67,7 @@ $\theta$: unknown parameters. Simulate $F_\theta$, evaluate $g_\theta$; no trans
 \end{tikzpicture}\end{center}
 \pause\[\widetilde X_n^j=F_\theta(X_{n-1}^j,U_n^j),\qquad j=1,\ldots,J.\]
 \pause Predicted particles approximate $p_\theta(x_n\mid y_{1:n-1})$.
-\src{Five particles shown schematically. Each particle is a complete candidate state.}
+\src{Each particle is one candidate state.}
 \end{frame}
 
 \begin{frame}{Particle filtering: weight by the observation}
@@ -82,7 +82,7 @@ $\theta$: unknown parameters. Simulate $F_\theta$, evaluate $g_\theta$; no trans
 \pause
 \[\underbrace{\sum_j\overline g_n^j\delta_{\widetilde X_n^j}}_{\text{weighted state distribution}}\approx p_\theta(dx_n\mid y_{1:n}),\qquad
 \underbrace{\widehat L_n=\frac1J\sum_jg_n^j}_{\text{likelihood increment}}.\]
-\src{Circle size represents observation weight. $\delta_x$ is a point mass at $x$.}
+\src{Circle size gives observation weight. $\delta_x$ is a point mass at $x$.}
 \end{frame}
 
 \begin{frame}{Particle filtering: resample before continuing}
@@ -97,7 +97,7 @@ $\theta$: unknown parameters. Simulate $F_\theta$, evaluate $g_\theta$; no trans
 \node[fill=white,lab] at (5.5,2.4) {$A_n^{1:5}=(2,3,3,3,4)$};
 \end{tikzpicture}\end{center}
 \pause\[A_n^j\sim\operatorname{Cat}(\overline g_n^{1:J}),\qquad X_n^j=\widetilde X_n^{A_n^j}.\]
-\pause $A_n^j$: ancestor copied for particle $j$. Higher weight means more copies on average.
+\pause $A_n^j$: ancestor of particle $j$. Higher weights give more copies on average.
 \end{frame}
 
 \begin{frame}{Why not differentiate the particle filter directly?}
@@ -115,7 +115,7 @@ Goal: the score $\nabla_\theta\ell(\theta)$, where $\ell(\theta)=\log p_\theta(y
 \draw[<->,pink,thick] (5.5,2.7)--(6.6,2.7);\node[above,lab] at (6.05,2.7) {boundary moves with $\theta$};
 \end{scope}
 \end{tikzpicture}\end{center}
-\uncover<3->{Crossing a boundary changes the ancestor. The likelihood estimate can jump.\\Holding ancestors fixed omits their parameter-dependent selection probabilities.}
+\uncover<3->{A change of ancestor can make the likelihood estimate jump.\\Fixing the ancestor omits the change in its selection probability.}
 \end{frame}
 
 \begin{frame}{Run a baseline filter, then keep its ancestors fixed}
@@ -133,11 +133,11 @@ $\phi$: baseline parameter. $\theta$: parameter we differentiate.
 \node[lab,fill=white,inner sep=3pt,visible on=<2->] at (6,2.2) {Same draws and ancestor indices};
 \end{tikzpicture}\end{center}
 \uncover<2->{\[\widetilde X_n^{\theta,j}=F_\theta(X_{n-1}^{\theta,j},U_n^j),\qquad X_n^{\theta,j}=\widetilde X_n^{\theta,A_n^j}.\]}
-\uncover<3->{Assume the simulator and measurement density are differentiable.\\Fixed ancestors give differentiable paths, but need a weight correction.}
+\uncover<3->{A differentiable simulator and measurement density now give differentiable paths.}
 \end{frame}
 
 \begin{frame}{Correct the weights for the parameter change}
-$g_n^{\theta,j}=g_\theta(y_n\mid\widetilde X_n^{\theta,j})$; $w_{n-1}^j$: previous correction weight.\\$\alpha<1$ downweights older corrections to reduce variance, at a bias cost.
+$g_n^{\theta,j}=g_\theta(y_n\mid\widetilde X_n^{\theta,j})$; $w_{n-1}^j$: previous correction weight.\\$\alpha<1$ discounts earlier corrections.
 \begin{center}\begin{tikzpicture}[x=1cm,y=1cm]
 \path[use as bounding box] (0,0) rectangle (12,2.7);
 \node (prev) at (1.5,2) {$w_{n-1}^j$};
@@ -152,7 +152,7 @@ $g_n^{\theta,j}=g_\theta(y_n\mid\widetilde X_n^{\theta,j})$; $w_{n-1}^j$: previo
 w_n^j=\widetilde w_n^{A_n^j}\,
 \underbrace{\frac{g_n^{\theta,A_n^j}}{\underbrace{g_n^{\phi,A_n^j}}_{\text{held fixed}}}}_{\text{selection-probability correction}}.
 \]}
-\uncover<3->{$w_0^j=1$. At $\theta=\phi$, every correction weight remains one.}
+\uncover<3->{$w_0^j=1$. At $\theta=\phi$, $w_n^j=1$ for all $n,j$.}
 \end{frame}
 
 
@@ -175,7 +175,7 @@ First observation: $w_0^j=1$. Condition on predicted particles.
 \ \times\ \frac{\sum_jg^{\theta,j}}{\sum_jg^{\phi,j}}
 =\underbrace{\frac1J\sum_jg^{\theta,j}}_{\text{increment at }\theta}.
 \]}
-\src{Later observations also carry previous corrections. This is the first-step conditional cancellation, not an assertion of unbiased log-likelihood gradients.}
+\src{Later increments also carry previous corrections.}
 \end{frame}
 
 \begin{frame}{Unit correction weights can have nonzero derivatives}
@@ -196,7 +196,7 @@ First observation: $w_0^j=1$. Condition on predicted particles.
 \underbrace{\nabla_\theta w(\theta)|_{\theta=\phi}
 =\frac{\nabla_\theta g^\theta|_{\theta=\phi}}{g^\phi}}_{\text{generally nonzero}}.
 \]}
-\uncover<3->{Correction weights preserve the baseline filter's values at $\theta=\phi$.}
+
 \end{frame}
 
 \begin{frame}{Differentiate the corrected likelihood estimate}
@@ -217,7 +217,7 @@ Baseline increment: $L_n^\phi=J^{-1}\sum_jg_n^{\phi,j}$.
 \widehat S_{J,\alpha}(\phi)=
 \left.\nabla_\theta\sum_{n=1}^N\log\widehat L_n^\alpha(\theta;\phi)\right|_{\theta=\phi}.
 \]}
-\src{DMOP: Differentiated Measurement Off-Parameter particle filter. Automatic differentiation follows fixed-ancestor paths and corrected weights.}
+\src{DMOP: Differentiated Measurement Off-Parameter particle filter.}
 \end{frame}
 
 \begin{frame}{Discounting reduces the weight of earlier corrections}
@@ -233,11 +233,11 @@ Baseline increment: $L_n^\phi=J^{-1}\sum_jg_n^{\phi,j}$.
 \end{scope}
 \end{tikzpicture}\end{center}
 \uncover<3->{Discounting can reduce variance, but introduces score bias.}
-\src{Discounting acts on correction weights. The simulated state and its derivative still follow the dynamics.}
+\src{Only correction weights are discounted.}
 \end{frame}
 
 \begin{frame}{Error in the score estimate}
-Target: $S(\theta)=\nabla_\theta\ell(\theta)$. Observations fixed, expectation over particle-filter randomness. For $\alpha<1$:
+$S=\nabla_\theta\ell(\theta)$. For fixed observations and $\alpha<1$, averaging over filter draws gives
 \[
 \E\|\widehat S_{J,\alpha}-S\|^2\lesssim
 \underbrace{\left[\frac{N(1+\log J)^2}{J}+\frac{N^2}{J^2}\right]H_N(\alpha)^2}_{\text{particle approximation}}
@@ -251,14 +251,14 @@ Target: $S(\theta)=\nabla_\theta\ell(\theta)$. Observations fixed, expectation o
 \node[lab,visible on=<2->] at (9,.5) {Discount-bias bound decreases\\retained history increases};
 \end{tikzpicture}\end{center}
 $H_N(\alpha)=\sum_{r=0}^{N-1}\alpha^r$: retained history factor.
-\src{Model-dependent constants and derivative bounds suppressed. Requires the regularity and stability conditions on the next slide.}
+\src{Model constants suppressed. Conditions on the next slide.}
 \end{frame}
 
 \begin{frame}{State mixing alone is not enough for this bound}
 Bounded positive densities; smooth simulator and measurement operations.
 \begin{center}\begin{tikzpicture}[x=1cm,y=1cm]
 \path[use as bounding box] (0,0) rectangle (12,4.3);
-\node[anchor=west,lab] at (0,3.9) {Two sufficient ways to control simulated derivatives:};
+\node[anchor=west,lab] at (0,3.9) {Either condition suffices:};
 \node (x) at (1,2.9) {$x_m$};\node (xn) at (5,2.9) {$X_n^\theta$};\node (g) at (9.6,2.9) {$\log g_\theta(y_n\mid X_n^\theta)$};
 \draw[arr] (x)--node[above,lab]{fixed draws}(xn);\draw[arr] (xn)--(g);
 \node[lab] at (6,2.1) {Sensitivity to $x_m$ decays as $C\kappa^{n-m}$, $0<\kappa<1$};
@@ -269,21 +269,21 @@ Bounded positive densities; smooth simulator and measurement operations.
 \end{scope}
 \end{tikzpicture}\end{center}
 \uncover<3->{At $\alpha=1$ and fixed $N$: mean squared score error $\to0$ as $J\to\infty$.}
-\src{Multinomial resampling, $J\geq2$, $\theta=\phi$. Uniform local derivative bounds and the stated stability conditions are required.}
+\src{Multinomial resampling, $J\geq2$, $\theta=\phi$. Uniform local derivative bounds.}
 \end{frame}
 
 \begin{frame}{Discounting changes local likelihood approximations}
-Here we average over weighted particles before resampling. This removes the noise from drawing ancestors for this likelihood increment.
+Averaging before resampling avoids ancestor-draw noise in this increment.
 \begin{columns}[c]
 \column{.58\textwidth}\picturefit[4.9cm]{dmop-local-labeled.pdf}
 \column{.39\textwidth}
-Recovery rate near $\phi=18$.\\10,000 particles.
+10,000 particles at $\phi=18$.
 \pause\gap
 Same value at $\phi$,\\different slopes and curvature.
 \gap
 Update $\phi$ after each gradient step.
 \end{columns}
-\src{DMOP Figure 1A, saved curves. Cyan is a particle-filter estimate, not exact likelihood. This plot uses systematic resampling. The theorem uses after-resampling increments and multinomial resampling.}
+\src{DMOP Fig. 1A. Systematic resampling here. The theorem uses after-resampling increments and multinomial draws.}
 \end{frame}
 
 \begin{frame}{How does discounting change the estimated score?}
@@ -302,11 +302,11 @@ Update $\phi$ after each gradient step.
 \node[anchor=west,font=\scriptsize,inner sep=0pt] at (.516,.813) {Variance};
 \end{scope}\end{tikzpicture}
 \column{.41\textwidth}
-At the fitted parameters, repeat the score estimate 1,000 times with 10,000 particles.
-\uncover<2->{\gap As $\alpha$ increases, the mean score shrinks. Near 1, the variance rises.}
-\uncover<3->{\gap A zero reference gives squared bias only at a stationary point.}
+At the fitted parameters:\\1,000 runs of 10,000 particles.
+\uncover<2->{\gap Near $\alpha=1$, variance rises sharply.}
+\uncover<3->{\gap At a stationary point, the mean score's squared norm is squared bias.}
 \end{columns}
-\src{DMOP Figure 1B. Score of the mean log likelihood. Moments sum over coordinates. Same estimator and resampling scheme as on slide 42.}
+\src{DMOP Fig. 1B. Mean-log-likelihood score, summed moments over coordinates. Same estimator as Fig. 1A.}
 \end{frame}
 
 \begin{frame}{Fitting the model}
@@ -322,12 +322,12 @@ At the fitted parameters, repeat the score estimate 1,000 times with 10,000 part
 \draw[arr,visible on=<2->] (next)--(theta);
 \node[lab,visible on=<2->] at (2,1.1) {Update baseline\\$\phi\leftarrow\theta_{k+1}$};
 \end{tikzpicture}\end{center}
-\uncover<3->{IFAD combines iterated filtering with automatic differentiation.}
-\src{Iterated filtering perturbs parameters within a particle filter to search for high likelihood. $k$ indexes optimization iterations.}
+\uncover<3->{IFAD = iterated filtering followed by gradient updates.}
+\src{Iterated filtering perturbs parameters during filtering. $k$: optimization step.}
 \end{frame}
 
 \begin{frame}{Likelihood searches for the Dhaka cholera model}
-100 searches per method, run in parallel for about 16 minutes.
+100 parallel searches per method, about 16 minutes per batch.
 \begin{columns}[c]
 \column{.67\textwidth}\picturefit[5.2cm]{dmop-searches.pdf}
 \column{.30\textwidth}
@@ -336,7 +336,7 @@ IF2: iterated filtering.\\IFAD: IF2 warm start, then Adam.
 IFAD-$.97$ attains higher likelihoods here.
 \end{columns}
 Plot excludes log-likelihoods below $-3780$.
-\src{DMOP manuscript, comparable-time panel. Timing excludes diagnostic likelihood calls. Below $-3780$: IF2 2/100, IFAD-1 4/100, IFAD-0 2/100, IFAD-.97 0/100. Dotted red line: largest fitted likelihood in this comparison.}
+\src{Timing excludes diagnostic likelihood calls. Omitted (of 100): IF2 2, IFAD-1 4, IFAD-0 2, IFAD-.97 0. Red line: best fit.}
 \end{frame}
 
 \begin{frame}{Particle filtering: fixed ancestry and weight corrections}
