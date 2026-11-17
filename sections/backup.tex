@@ -42,14 +42,19 @@ Under the stated Bellman-eluder condition, $\mathrm{SEC}\lesssim d\log T$.
 \end{frame}
 
 \begin{frame}{Backup: why the reset bounds actor tracking}
-Let $\pi^f$ choose an action maximizing the current critic $f$.\gap
-Within one interval with fixed critic, mirror ascent compares the actor with $\pi^f$ through a relative-entropy term.
-\[
-\KL\!\left(\pi^f(\cdot\mid s)\,\middle\|\,\operatorname{Unif}(\A)\right)\leq\log|\A|.
-\]
-Resetting supplies this bound at every critic change.\gap
-Without a reset, the new greedy action could have arbitrarily small probability under the previous actor, giving a large initial divergence.\gap
-The switch-count bound limits how often we pay this cost.
+$\pi^f$: greedy policy for the new critic $f$. Let $a^*$ be its preferred action.
+\begin{center}\begin{tikzpicture}[x=1cm,y=1cm]
+\path[use as bounding box] (0,0) rectangle (12,3.5);
+\node[lab] at (3,3) {Previous actor};\node[lab] at (9,3) {After reset};
+\node at (3,2.1) {$\pi(a^*\mid s)=\varepsilon$};\node at (9,2.1) {$\pi(a^*\mid s)=1/|\A|$};
+\draw[arr] (5,2.1)--(7,2.1);
+\node at (3,.8) {$\KL(\pi^f\|\pi)=\log(1/\varepsilon)$};
+\node at (9,.8) {$\KL(\pi^f\|\operatorname{Unif}(\A))\leq\log|\A|$};
+\draw[arr] (3,1.7)--(3,1.2);\draw[arr] (9,1.7)--(9,1.2);
+\end{tikzpicture}\end{center}
+\pause Mirror ascent bounds tracking over each fixed-critic interval using this initial divergence.
+\gap Rare switches limit the number of intervals to $K=O(dH\log T)$.
+\src{Equality on the left uses a deterministic greedy action. With no reset, $\varepsilon$ can be arbitrarily small.}
 \end{frame}
 
 \begin{frame}{Backup: coverage in the optimism-free hybrid result}
@@ -102,17 +107,17 @@ These are additional conditions beyond mixing of the physical state.
 \end{frame}
 
 \begin{frame}{Backup: before- and after-resampling increments}
-Before resampling,
-\[
-\widehat L_n^B(\theta;\phi)=
-\frac{\sum_j g_n^{\theta,j}\widetilde w_n^j}{\sum_j\widetilde w_n^j}.
-\]
-After resampling,
-\[
-\widehat L_n^A(\theta;\phi)=L_n^\phi\frac{\sum_j w_n^j}{\sum_j\widetilde w_n^j}.
-\]
-Both agree with the ordinary filter increment at $\theta=\phi$.\gap
-The displayed error theorem uses the after-resampling estimate. The two constructions need not give identical Monte Carlo derivatives.
+\begin{center}\begin{tikzpicture}[x=1cm,y=1cm]
+\path[use as bounding box] (0,0) rectangle (12,4.3);
+\node[lab] at (3,3.8) {Before resampling};\node[lab] at (9,3.8) {After resampling};
+\node at (3,2.5) {$\displaystyle\widehat L_n^B=\frac{\sum_jg_n^{\theta,j}\widetilde w_n^j}{\sum_j\widetilde w_n^j}$};
+\node at (9,2.5) {$\displaystyle\widehat L_n^A=L_n^\phi\frac{\sum_jw_n^j}{\sum_j\widetilde w_n^j}$};
+\draw[arr] (5.2,2.5)--node[above,lab]{ancestors $A_n^j$}(6.9,2.5);
+\draw[arr] (3,1.8)--(6,.8);\draw[arr] (9,1.8)--(6,.8);
+\node at (6,.4) {$\theta=\phi:\quad\widehat L_n^B=\widehat L_n^A=L_n^\phi$};
+\end{tikzpicture}\end{center}
+\pause Same baseline value does not imply identical Monte Carlo derivatives.
+\gap The displayed score-error theorem uses the after-resampling estimate.
 \end{frame}
 
 \begin{frame}{Backup: sources}

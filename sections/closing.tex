@@ -1,60 +1,71 @@
 
 \renewcommand{\stage}{From inference to control}
 \begin{frame}{Position alone does not tell us how to brake}
-Suppose we want to stop a cart. We measure position, but not velocity.
-\begin{center}
-\begin{tikzpicture}[every node/.style={font=\small,align=center}]
-\foreach \x/\lab in {0/Moving right,6/Moving left}{
-\node at (\x,1.1) {\lab};
+Goal: stop the cart. Position measured; velocity hidden.
+\begin{center}\begin{tikzpicture}[every node/.style={font=\small,align=center}]
+\path[use as bounding box] (-2,-2.6) rectangle (8,1.8);
+\foreach \x in {0,6}{
 \draw[black!45] (\x-1.9,-.5)--(\x+1.9,-.5);
 \draw[fill=blue!10,draw=blue,thick] (\x-.5,-.3) rectangle (\x+.5,.3);
-\draw[dashed] (\x,-.5)--(\x,-1);
-\node at (\x,-1.2) {Position $x$};}
+\draw[dashed] (\x,-.5)--(\x,-1);\node at (\x,-1.2) {Same position $x$};}
 \draw[arr,blue] (.6,.5)--(1.9,.5) node[midway,above]{velocity};
-\draw[arr,pink] (-.6,-.1)--(-1.9,-.1) node[midway,above]{force};
+\draw[arr,pink,visible on=<2->] (-.6,-.1)--(-1.9,-.1) node[midway,above]{force};
 \draw[arr,blue] (5.4,.5)--(4.1,.5) node[midway,above]{velocity};
-\draw[arr,pink] (6.6,-.1)--(7.9,-.1) node[midway,above]{force};
-\end{tikzpicture}
-\end{center}
-\pause
-The same position reading permits either velocity. To brake, we need opposite forces.
-\pause\gap
-Changes in position help estimate velocity. A filter represents the uncertainty that remains.
+\draw[arr,pink,visible on=<2->] (6.6,-.1)--(7.9,-.1) node[midway,above]{force};
+\node[visible on=<3->] (hist) at (0,-2.3) {Position history};
+\node[visible on=<3->] (bel) at (6,-2.3) {Distribution of position and velocity};
+\draw[arr,visible on=<3->] (hist)--node[above]{filter}(bel);
+\end{tikzpicture}\end{center}
+\uncover<2->{Opposite velocities require opposite braking forces.}
 \end{frame}
 
 \begin{frame}{Full belief planning is expensive}
-In a partially observed Markov decision process (POMDP), a belief $b$ is the distribution of hidden state given past observations and actions.
-\begin{center}\begin{tikzpicture}[x=.75cm,y=.75cm]
-\node[box] (b) at (0,1) {Current belief};
-\foreach \x in {-2,2}{\node[circle,draw=blue,inner sep=3pt] (a\x) at (\x,0) {};\draw[arr] (b)--(a\x);}
-\foreach \x/\p in {-3/-2,-1/-2,1/2,3/2}{\node[circle,draw=pink,inner sep=3pt] (o\x) at (\x,-1) {};\draw[arr] (a\p)--(o\x);}
-\node[align=left,right] at (4,1) {Choose an action};
-\node[align=left,right] at (4,0) {Consider possible observations};
-\node[align=left,right] at (4,-1) {Update beliefs and branch again};
+POMDP: partially observed Markov decision process.\\Belief $b$: hidden-state distribution given past observations and actions.
+\begin{center}\begin{tikzpicture}[x=1cm,y=1cm]
+\path[use as bounding box] (0,0) rectangle (12,3.5);
+\node[lab] at (2.8,3.3) {Belief tree};\node[lab] at (9.2,3.3) {QMDP approximation};
+\node[obj] (b) at (2.8,2.6) {$b$};
+\foreach \x/\n in {1.4/l,4.2/r}{\node[circle,draw,inner sep=2pt] (\n) at (\x,1.6) {};\draw[arr] (b)--node[above,lab]{$a$}(\n);}
+\foreach \x/\n in {.6/l,2.2/l,3.4/r,5/r}{\draw[arr] (\n)--(\x,.6);\draw[arr,black!40] (\x,.6)--(\x-.3,.1);\draw[arr,black!40] (\x,.6)--(\x+.3,.1);}
+\node[lab] at (2.8,-.3) {Branch on future observations};
+\begin{scope}[visible on=<2->]
+\node[obj] (bq) at (8,2.6) {$b$};\node[obj] (a) at (10.4,2.6) {$a$};
+\draw[arr] (bq)--(a);\draw[arr] (a)--(10.4,1.3);
+\node[lab] at (9.4,.8) {Assume state observed\\after this action};
+\end{scope}
 \end{tikzpicture}\end{center}
-\pause
-QMDP avoids this future belief tree by assuming the state becomes observed after the first action:
-\[
-Q_{\mathrm{QMDP}}(b,a)=\E_{X\sim b}\bigl[Q^*_{\mathrm{fully\ observed}}(X,a)\bigr].
-\]
-\pause
-It saves computation, but ignores future information gathering. A short belief tree before a QMDP terminal value partly addresses this.
+\uncover<2->{\[Q_{\mathrm{QMDP}}(b,a)=\E_{X\sim b}[Q^*_{\mathrm{fully\ observed}}(X,a)].\]}
+\uncover<3->{Cheaper planning; ignores future information gathering.\\A short belief tree with QMDP leaves delays this approximation.}
 \end{frame}
 
 \begin{frame}{Particle filtering and planning}
-\picturefit[3.8cm]{control-pipeline.pdf}
-\gap $\bar\theta$: fitted parameters. $b^J$: belief represented by $J$ particles.\\$Q^*$: fully observed action value. $H_t$: observation--action history.\\MCTS: Monte Carlo tree search.\gap The analysis uses a belief tree. The experiments use state-level particle rollouts with learned actors and critics.
-\src{Particle-based control manuscript, original PF-MCTQ pipeline illustration. Joint work: Kevin Tan and Ziping Xu. From POMDP Theory to Deep RL with Particle Filters, NeurIPS 2026.}
+\picturefit[3.7cm]{control-pipeline.pdf}
+{\small $\bar\theta$: fitted parameters. $b^J$: $J$-particle belief. $Q^*$: fully observed action value.\\$H_t$: observation--action history. MCTS: Monte Carlo tree search.}
+\pause\medskip
+\begin{center}\begin{tikzpicture}[x=1cm,y=1cm]
+\path[use as bounding box] (0,0) rectangle (12,1.1);
+\node[lab] at (2.5,.9) {Analysis};\node[lab] at (8.7,.9) {Experiments};
+\node[lab] at (2.5,.3) {Depth-$d$ belief tree};\node[lab] at (8.7,.3) {$d=0$: state rollouts, learned actor and critic};
+\end{tikzpicture}\end{center}
+\src{Original PF-MCTQ figure. Kevin Tan and Ziping Xu, From POMDP Theory to Deep RL with Particle Filters, NeurIPS 2026.}
 \end{frame}
 
 \begin{frame}{Two contributions}
-\textbf{Actor--critic learning}\gap
-Target $Q^*$ to avoid the growing policy class. Rare critic updates and policy resets give $\sqrt T$ regret under the stated complexity conditions.
-\pause\par\bigskip
-\textbf{Likelihood-based inference}\gap
-Hold resampling choices fixed and correct their weights. This gives differentiable likelihood estimates, with a tunable bias--variance tradeoff in their derivatives.
-\pause\par\bigskip
-The control problem needs both: estimates of the hidden state and a rule for choosing actions from those estimates.
+\begin{center}\begin{tikzpicture}[x=1cm,y=1cm]
+\path[use as bounding box] (0,0) rectangle (12,5.1);
+\node[text=blue,font=\large] at (3,4.8) {Actor--critic learning};
+\node[text=green,font=\large] at (9.3,4.8) {Likelihood inference};
+\node at (3,3.8) {$r+\max_a f(s',a)$};
+\node[lab] at (3,3) {Fixed target class\\Rare updates; policy resets};
+\node at (9.3,3.8) {$A_n^j\text{ fixed},\quad g_n^\theta/g_n^\phi$};
+\node[lab] at (9.3,3) {Differentiate paths and corrections\\discount earlier corrections};
+\draw[arr,visible on=<2->] (3,2.5)--(3,1.7);\draw[arr,visible on=<2->] (9.3,2.5)--(9.3,1.7);
+\node[visible on=<2->] at (3,1.4) {$\widetilde O(\sqrt T)$ regret};
+\node[lab,visible on=<2->] at (9.3,1.4) {Likelihood gradients\\with a bias--variance tradeoff};
+
+\end{tikzpicture}\end{center}
+\uncover<3->{\centering Next problem: control with hidden states. Infer the state, then choose an action.\par}
+\src{Guarantees require the stated representation, complexity, regularity, and derivative-stability assumptions.}
 \end{frame}
 
 \begin{frame}{Thank you everyone!}

@@ -46,3 +46,7 @@ The Dhaka application is retained. Current DMOP Section 4 identifies observation
 Slide 37 distinguishes unit correction weights from observation weights. The error theorem remains the current after-resampling theorem, with model and derivative conditions attached. Empirical model performance is not presented as verification of the theorem's assumptions.
 
 Additional restored figures: `franka-photo.jpg` (Ims, Wikimedia Commons, CC BY-SA 4.0) and `cholera-culture.jpg` (CDC PHIL 3906, public domain), both copied from the proposal. The original compartment diagram is `cholera.png`, DMOP figure label `fig:tikz-cholera`.
+
+## Explanatory diagrams, November 16 evening
+
+New TikZ diagrams are schematic explanations of the operations in the same verified actor-critic, DMOP, and control manuscripts above. They are not new experimental results. Original plotted evidence remains unchanged. In particular, categorical boundaries illustrate ancestor selection, the correction graph holds the baseline denominator fixed during differentiation, and the discount timeline weights log correction ratios along a lineage. It does not truncate simulated-state derivatives. The actor graph describes relative odds, not an absolute action-probability ordering. The control closing labels a next problem rather than claiming a composed guarantee.

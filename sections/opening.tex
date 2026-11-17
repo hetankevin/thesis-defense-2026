@@ -24,18 +24,23 @@ Both problems require estimating how the system evolves.
 \end{frame}
 
 \begin{frame}{Two topics}
-{\Large\color{blue}1. Actor--critic methods}\gap
-Estimate action values from observed transitions, then update the policy.
-\[
-\text{Bellman regression}\quad\longrightarrow\quad\text{policy update}
-\]
-Can we learn efficiently with a general class of value estimates?
-\pause\par\bigskip
-{\Large\color{green}2. Differentiable particle filters}\gap
-Approximate likelihoods by simulating hidden states.
-\[
-\text{particle filter}\quad\longrightarrow\quad\text{likelihood gradient}
-\]
-How do we differentiate through discrete resampling choices?
-\pause\gap We will finish with a short return to control under partial observability.
+\begin{center}\begin{tikzpicture}[x=1cm,y=1cm]
+\path[use as bounding box] (0,-.2) rectangle (12,5.1);
+\node[anchor=west,text=blue,font=\large] at (0,4.9) {1. Actor--critic methods};
+\node[obj] (d) at (1.2,3.7) {Transitions};
+\node (q) at (5,3.7) {$f(s,a)$};\node[lab,above=2mm of q] {Estimated reward};
+\node (a) at (9.4,3.7) {$\pi(a\mid s)$};\node[lab,above=2mm of a] {Action probabilities};
+\draw[arr] (d)--node[above,lab]{regression}(q);
+\draw[arr] (q)--node[above,lab]{policy update}(a);
+\draw[arr] (a.south)--++(0,-.55)-|node[pos=.3,below,lab]{collect another episode}(d.south);
+\begin{scope}[visible on=<2->]
+\node[anchor=west,text=green,font=\large] at (0,2.1) {2. Differentiable particle filters};
+\foreach \x/\name in {1/x1,3/x2,5/x3}{\node[obj] (\name) at (\x,.85) {$X$};\node[below=3mm of \name,lab] {hidden};}
+\draw[arr] (x1)--(x2);\draw[arr] (x2)--(x3);
+\node at (8,.85) {$\widehat\ell(\theta)$};\node[lab] at (8,.15) {Likelihood};
+\node at (11,.85) {$\nabla_\theta\widehat\ell(\theta)$};\node[lab] at (11,.15) {Gradient};
+\draw[arr] (x3)--(7,.85);\draw[arr] (9,.85)--node[above,lab]{differentiate}(10,.85);
+\end{scope}
+\end{tikzpicture}\end{center}
+\uncover<3->{Then: choosing actions when the state is only partially observed.}
 \end{frame}

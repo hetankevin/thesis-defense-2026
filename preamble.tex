@@ -1,7 +1,7 @@
 \usetheme{Saarland}
 \usepackage{amsmath,amssymb,mathtools,booktabs,appendixnumberbeamer,pgfplots}
 \pgfplotsset{compat=1.18}
-\usetikzlibrary{arrows.meta,positioning,calc,fit}
+\usetikzlibrary{arrows.meta,positioning,calc,fit,decorations.pathreplacing}
 \setbeamersize{text margin left=9mm,text margin right=9mm}
 \setbeamertemplate{navigation symbols}{}
 \setbeamerfont{frametitle}{size=\Large}
@@ -28,3 +28,11 @@
 \newcommand{\paperac}{Tan, Fan, Wei. \emph{Actor-Critics Can Achieve Optimal Sample Efficiency}. ICML 2025.}
 \newcommand{\paperdmop}{Tan, Abkemeier, He, Hooker, Ionides. \emph{Automatic Differentiation for Inference on Partially Observed Markov Process Models}.}
 \setbeamercolor{block body}{fg=black,bg=blue!8}
+
+\tikzset{
+  obj/.style={draw=black!55,minimum size=9mm,inner sep=4pt,align=center},
+  lab/.style={font=\small,align=center},
+  invisible/.style={opacity=0,text opacity=0},
+  visible on/.style={alt={#1{}{invisible}}},
+  alt/.code args={<#1>#2#3}{\alt<#1>{\pgfkeysalso{#2}}{\pgfkeysalso{#3}}}
+}

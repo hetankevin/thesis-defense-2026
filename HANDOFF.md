@@ -22,15 +22,19 @@ Use direct titles, necessary definitions, actual method operations, equations an
 
 ## Changes in this revision
 
-Rebuilt opening, restored proposal examples and acknowledgments, corrected authors, replaced the starting-value description with pointwise optimism, restored the accumulated-critic/policy-cover calculation and optimism reasoning, clarified stale-policy error and resets, defined Dhaka compartments and observations, distinguished correction weights from observation weights, enlarged the AntMaze panel, and distinguished control theory from experimental rollouts. Removed rounded filled diagram styling and several redundant text-box diagrams.
+Replaced paragraph explanations across the deck with diagrams of actual operations: reward trajectories, critic regression and actor probabilities, accumulated critics and covering combinations, policy-evaluation versus optimality targets, resets and rejection tests, particle propagation/weighting/ancestry, moving categorical boundaries, fixed-ancestor differentiation, weight correction, discounting, and belief versus QMDP planning. Equations, assumptions, original experimental figures, Dhaka application, and personal acknowledgments remain.
+
+The independent reviewer identified notation corruption on slide 17, label collisions, missing confidence/regret labels, overstatement of discounting and bound monotonicity, an implied composed control guarantee, and the immediate-reward wording of the actor update. All were corrected. Slide 7 now describes relative odds. Slides 16, 20, 23, 33, 36, and 37 were specifically reviewed for whether diagrams explain operations rather than merely arrange prose.
 
 ## Verification
 
-Sources and scientific checks: `provenance/SOURCES.md`. Independent review: `provenance/REVIEW.md`. All handout pages inspected, then changed pages rechecked. Representative intermediate overlays inspected. No new experiments were run.
+Source checks remain recorded in `provenance/SOURCES.md`. All 61 handout pages were inspected in the diagram pass, then corrected pages were re-rendered. Representative intermediate reveals were inspected for slides 7, 16, 17, 32, 33, and 37. Independent findings and resolution are in `provenance/REVIEW.md`.
 
-Latest live source was downloaded before editing and again at approximately 17:48 Eastern. All 37 tracked files matched linked GitHub commit 423cc73. No intervening Overleaf edits were found. The original proposal is untouched.
+The latest Overleaf source was exported before editing at 18:01 Eastern and again at approximately 20:26 Eastern on November 16. All 39 tracked files matched linked commit e24c825 on both checks. No intervening live edits were found. The original proposal remains unchanged.
 
-Final local builds succeed: 142 overlay pages and 61 handout pages, with no overfull, underfull, undefined-reference, or TeX errors. Source JPEG DPI and imported PDF-version warnings remain benign. Final targeted pages and representative reveals were rendered and inspected. Reviewed source commit `3ee12ce` is pushed and merged in Overleaf. Both live XeLaTeX builds succeeded: 142 overlay pages and 61 handout pages. Downloaded live exports match the local PDFs page by page after whitespace normalization of extracted text. Live pages 16, 27, 37, and 46 were rendered and checked. Both `thesis-defense-overleaf-*` exports now contain the revision.
+Final local builds: 144 overlay pages and 61 handout pages. No overfull, underfull, undefined-reference, or TeX errors. Existing imported-image DPI and PDF-version warnings remain. Timing still totals 3600 seconds (60 minutes), without a rehearsal. No new experiments or result plots were introduced.
+
+Live synchronization and server PDF verification are pending for this diagram revision. Do not confuse the previous live exports with the current local PDFs until this line is updated.
 
 ## Build
 
@@ -38,4 +42,4 @@ Run `bash build.sh` with Tectonic. On Overleaf use XeLaTeX / TeX Live 2026. Open
 
 ## Delivery
 
-Reviewed PDFs and source ZIP are under `output/`. `slide-16.png`, `slide-27.png`, `slide-37.png`, and `slide-46.png` are previews rendered from the downloaded live handout. This revision is ready for Kevin to review. A rehearsal is still needed to validate pacing. Do not treat compilation or an independent review as approval of voice or presentation quality.
+Local PDFs are under `output/`. Final live PDF exports and previews will replace the previous versions after synchronization. A rehearsal is still needed to validate pacing. Do not treat compilation or independent review as Kevin's approval of presentation quality.
