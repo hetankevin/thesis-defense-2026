@@ -42,4 +42,4 @@ Independent reviewer used rendered slides alone. Original findings: `provenance/
 
 Run `bash build.sh` (Tectonic). Overleaf uses XeLaTeX/TeX Live 2026. Open main.tex for overlays or handout.tex for one page per frame; restore main.tex after exports. Build artifacts and previews are under `output/` (ignored by Git).
 
-Current source is ready for synchronization; server PDFs must be downloaded and compared with local builds before marking delivery complete. Preserve further live edits. The uncompiled old backup file is retained as historical source, not a delivery artifact.
+Source revision `8a89fde` is pushed and merged in Overleaf. Both server builds succeeded: 134 overlays and 51 handout pages. Downloaded PDFs match local page text after whitespace normalization. Live slides 15 and 43 were rendered and inspected. Current `output/thesis-defense-overleaf-*` PDFs contain this reviewed revision. Preserve further live edits. The uncompiled old backup file is retained as historical source, not a delivery artifact.
