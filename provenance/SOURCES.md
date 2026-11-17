@@ -50,3 +50,29 @@ Additional restored figures: `franka-photo.jpg` (Ims, Wikimedia Commons, CC BY-S
 ## Explanatory diagrams, November 16 evening
 
 New TikZ diagrams are schematic explanations of the operations in the same verified actor-critic, DMOP, and control manuscripts above. They are not new experimental results. Original plotted evidence remains unchanged. In particular, categorical boundaries illustrate ancestor selection, the correction graph holds the baseline denominator fixed during differentiation, and the discount timeline weights log correction ratios along a lineage. It does not truncate simulated-state derivatives. The actor graph describes relative odds, not an absolute action-probability ordering. The control closing labels a next problem rather than claiming a composed guarantee.
+
+## November 17: cold-review repairs (supersedes conflicting descriptions above)
+
+The talk now has 51 frames, no compiled backups. References to absent backups were removed. The source for Algorithm 2 compares its current regression loss with a refit in F_h, as shown in the actual algorithm. G is separately identified as the auxiliary class containing expected backup targets. The general policy-cover bound becoming vacuous is explicitly distinguished from algorithmic failure. The trigger now precedes the reset-cost bound.
+
+Slide 15 now uses a single-interval TikZ schematic of <f,pi_t> versus <f,pi_tau>, with one shaded missing term. This is explanatory geometry from the paper's old-policy tracking argument, not simulated or experimental data. The original actor-tracking image remains available but is not displayed.
+
+The AntMaze explanation was corrected against the manuscript's Numerical experiments section: Alg. 2H takes a maximum over 10 sampled actions and omits policy resets; Alg. 1H uses a policy-evaluation target. The previous claim that both variants approximate optimism by action sampling was wrong. Neural soft actor-critic updates are not presented as an exact implementation of the theoretical algorithms. The Tetris source does not define its shaded-band statistic; the slide says so rather than guessing a confidence interval.
+
+### Fig. 1A: actual reference and implementation
+
+Current pypomp/dmop `code/fig1a/README.md`, `plot.py`, `curves.csv`, and `figure.mplstyle` retrieved via GitHub on November 17. README blob 3a15792a84584d496b06e78ca7f9e3957d3a099e. It identifies the reference curve as a particle-filter estimate, not true likelihood, and the illustration as 10,000-particle, before-resampling MOP with systematic resampling. Original model/filter notebook: hetankevin/diffPomp `cholera_mop.ipynb`, commit ab31c911ae223aa91eb4e216d7d33710103050c3.
+
+`provenance/fig1a/` preserves the saved CSV and source plotting style. `plot.py` changes only labels, removes the large panel identifier, and uses five x ticks. It generates `figures/dmop-local-labeled.pdf`. No filtering experiment was rerun and no curve values were changed. Slide 42 names the estimator and resampling scheme prominently; it is not empirical verification of the after-resampling/multinomial theorem.
+
+### Fig. 1B: score vector, normalization, and zero reference
+
+Checked hetankevin/diffPomp `cholera_biasvar.ipynb` at both default commit 9e5aaa2b4dcdc453a94806967b5c9989c788b4bc and ab31c911ae223aa91eb4e216d7d33710103050c3. Cell 5 sets J=10000; cell 7 evaluates 1000 draws per alpha; cell 11 sums variance and squared means across score coordinates, and evaluates mean squared norm against ZERO. `optim.py` jgrad_mop differentiates mop_mean, which divides negative log likelihood by the number of observations. `filtering.py` mop_helper uses before-resampling increments and systematic resampling.
+
+The existing PNG has the same curve geometry as cell 11's embedded output (different pixel resolution); it was not redrawn. The manuscript caption's description as a recovery-rate score is inconsistent with the plotting code's sum across coordinates. Slide 43 therefore identifies the mean-log-likelihood gradient vector in transformed coordinates and the zero reference. Interpreting squared deviation as bias requires a stationary fit. This is not an independently estimated reference score, and the slide does not claim stationarity was numerically certified.
+
+### Comparable-time searches: correct cutoff, counts, and timing unit
+
+Checked `Downloads/dmop-main/code/global_search/precise_report.qmd`, `dmop_search.py`, `prep.py`, and `exports/final_estimates.csv`, `exports/timings.csv` against the existing panel and manuscript median values. Cohort: comparable effort, n_monitors=1 for final estimates; n_monitors=0 for timing. The plotting code filters below -3780 (not -3800 as in the manuscript caption). Omitted counts: IF2 2/100, IFAD-1 4/100, IFAD-0 2/100, IFAD-.97 0/100. The red line is the maximum among the displayed comparison, not a separately supplied best-known likelihood.
+
+The approximately 16-minute wall time is for the batch of 100 parallel searches per method, excluding diagnostic likelihood calls. It is not 16 minutes per individual search. Fit uses 5000 particles; retained run settings remain unchanged. The original panel is preserved, with the correct cutoff and omitted counts on the slide.

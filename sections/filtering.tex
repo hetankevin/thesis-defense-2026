@@ -133,13 +133,13 @@ $\phi$: baseline parameter. $\theta$: parameter we differentiate.
 \node[lab,fill=white,inner sep=3pt,visible on=<2->] at (6,2.2) {Same draws and ancestor indices};
 \end{tikzpicture}\end{center}
 \uncover<2->{\[\widetilde X_n^{\theta,j}=F_\theta(X_{n-1}^{\theta,j},U_n^j),\qquad X_n^{\theta,j}=\widetilde X_n^{\theta,A_n^j}.\]}
-\uncover<3->{Paths are differentiable. Ancestors sampled at $\phi$ still need a weight correction.}
+\uncover<3->{Assume the simulator and measurement density are differentiable.\\Fixed ancestors give differentiable paths, but need a weight correction.}
 \end{frame}
 
 \begin{frame}{Correct the weights for the parameter change}
-$g_n^{\theta,j}=g_\theta(y_n\mid\widetilde X_n^{\theta,j})$; $w_{n-1}^j$: previous correction weight.
+$g_n^{\theta,j}=g_\theta(y_n\mid\widetilde X_n^{\theta,j})$; $w_{n-1}^j$: previous correction weight.\\$\alpha<1$ downweights older corrections to reduce variance, at a bias cost.
 \begin{center}\begin{tikzpicture}[x=1cm,y=1cm]
-\path[use as bounding box] (0,0) rectangle (12,3.1);
+\path[use as bounding box] (0,0) rectangle (12,2.7);
 \node (prev) at (1.5,2) {$w_{n-1}^j$};
 \node (disc) at (5.3,2) {$\widetilde w_n^j=(w_{n-1}^j)^\alpha$};
 \node (sel) at (10,2) {$\widetilde w_n^{A_n^j}$};
@@ -206,7 +206,7 @@ Baseline increment: $L_n^\phi=J^{-1}\sum_jg_n^{\phi,j}$.
 \node at (2,2) {$L_n^\phi$};\node at (5.6,2) {$\displaystyle\frac{\sum_jw_n^j}{\sum_j\widetilde w_n^j}$};
 \node at (9.8,2) {$\widehat L_n^\alpha(\theta;\phi)$};
 \node at (3.6,2) {$\times$};\draw[arr] (7.1,2)--(8.2,2);
-\node[lab] at (2,1) {Fixed baseline};\node[lab] at (5.6,1) {Weight correction};\node[lab] at (9.8,1) {After resampling};
+\node[lab] at (2,1) {Fixed baseline};\node[lab] at (5.6,1) {Correction divided by\\incoming total weight};\node[lab] at (9.8,1) {After resampling};
 \end{tikzpicture}\end{center}
 \uncover<2->{\[
 \widehat L_1^\alpha,\ldots,\widehat L_N^\alpha
@@ -237,7 +237,7 @@ Baseline increment: $L_n^\phi=J^{-1}\sum_jg_n^{\phi,j}$.
 \end{frame}
 
 \begin{frame}{Error in the score estimate}
-Target: $S(\theta)=\nabla_\theta\ell(\theta)$. For $\alpha<1$, under the conditions next:
+Target: $S(\theta)=\nabla_\theta\ell(\theta)$. Observations fixed, expectation over particle-filter randomness. For $\alpha<1$:
 \[
 \E\|\widehat S_{J,\alpha}-S\|^2\lesssim
 \underbrace{\left[\frac{N(1+\log J)^2}{J}+\frac{N^2}{J^2}\right]H_N(\alpha)^2}_{\text{particle approximation}}
@@ -251,7 +251,7 @@ Target: $S(\theta)=\nabla_\theta\ell(\theta)$. For $\alpha<1$, under the conditi
 \node[lab,visible on=<2->] at (9,.5) {Discount-bias bound decreases\\retained history increases};
 \end{tikzpicture}\end{center}
 $H_N(\alpha)=\sum_{r=0}^{N-1}\alpha^r$: retained history factor.
-\src{Model-dependent constants and derivative bounds suppressed; full theorem in backup. Observations fixed; expectation over particle-filter randomness.}
+\src{Model-dependent constants and derivative bounds suppressed. Requires the regularity and stability conditions on the next slide.}
 \end{frame}
 
 \begin{frame}{State mixing alone is not enough for this bound}
@@ -269,33 +269,37 @@ Bounded positive densities; smooth simulator and measurement operations.
 \end{scope}
 \end{tikzpicture}\end{center}
 \uncover<3->{At $\alpha=1$ and fixed $N$: mean squared score error $\to0$ as $J\to\infty$.}
-\src{A2, A3, A5, and either A6 or A6-J. Multinomial resampling, $J\geq2$, $\theta=\phi$. State mixing alone does not control derivatives. Exact uniform bounds in backup.}
+\src{Multinomial resampling, $J\geq2$, $\theta=\phi$. Uniform local derivative bounds and the stated stability conditions are required.}
 \end{frame}
 
 \begin{frame}{Discounting changes local likelihood approximations}
+{\small Illustration: before-resampling estimate with systematic resampling.}
 \begin{columns}[c]
-\column{.58\textwidth}\picturefit[5.1cm]{dmop-local.png}
+\column{.58\textwidth}\picturefit[4.9cm]{dmop-local-labeled.pdf}
 \column{.39\textwidth}
-Recovery rate near $\phi=18$.\gap
-Same value at $\phi$.
+Recovery rate near $\phi=18$.\\10,000 particles.
 \pause\gap
-Different slopes and curvature.\gap
-Use local derivatives; update $\phi$.
+Same value at $\phi$,\\different slopes and curvature.
+\gap
+Update $\phi$ after each gradient step.
 \end{columns}
-\src{DMOP manuscript, Figure 1A. Dashed cyan: reference likelihood. Yellow: $\alpha=1$; pink: $\alpha=.97$; green: $\alpha=0$. }
+\src{DMOP Figure 1A, saved curves. Cyan is a particle-filter estimate, not exact likelihood. The preceding theorem uses after-resampling estimates and multinomial resampling.}
 \end{frame}
 
-\begin{frame}{Bias and variance of the estimated score}
+\begin{frame}{Score dispersion around a zero reference}
+{\small Before-resampling estimate with systematic resampling, as in the previous illustration.}
 \begin{columns}[c]
-\column{.61\textwidth}\picturefit[5.2cm]{dmop-biasvar.png}
+\column{.61\textwidth}\picturefit[4.5cm]{dmop-biasvar.png}
 \column{.36\textwidth}
-Dhaka recovery-rate score.\gap
-Blue: mean squared error.\\Yellow: squared bias.\\Pink: variance.
+Gradient of mean log likelihood at fitted parameters.\gap
+10,000 particles;\\1,000 replicates per $\alpha$.
 \pause\gap
-$\alpha\approx0$: bias dominates.\gap
+Small $\alpha$: larger mean gradient.\gap
 $\alpha\approx1$: variance rises.
 \end{columns}
-\src{DMOP manuscript, Figure 1B. MSE of the recovery-rate score, with observations fixed.}
+\pause\medskip
+The plot uses zero as its reference. Interpreting deviation from zero as bias assumes a stationary fit.
+\src{DMOP Figure 1B. Source code sums across transformed-parameter coordinates and divides the log likelihood by $N$. It does not estimate the reference score independently.}
 \end{frame}
 
 \begin{frame}{Fitting the model}
@@ -307,7 +311,7 @@ $\alpha\approx1$: variance rises.
 \node[lab] at (10,4.7) {DMOP score};
 \draw[arr] (init)--(theta);\draw[arr] (theta)--node[above,lab]{fresh filter}(score);
 \node[obj,visible on=<2->] (next) at (5.6,1.1) {$\theta_{k+1}$};
-\draw[arr,visible on=<2->] (score.south)|-node[pos=.7,below,lab]{Adam update}(next.east);
+\draw[arr,visible on=<2->] (score.south)|-node[pos=.7,below,lab]{gradient update (Adam)}(next.east);
 \draw[arr,visible on=<2->] (next)--(theta);
 \node[lab,visible on=<2->] at (2,1.1) {Update baseline\\$\phi\leftarrow\theta_{k+1}$};
 \end{tikzpicture}\end{center}
@@ -316,16 +320,16 @@ $\alpha\approx1$: variance rises.
 \end{frame}
 
 \begin{frame}{Likelihood searches for the Dhaka cholera model}
+100 searches per method, run in parallel for about 16 minutes.
 \begin{columns}[c]
 \column{.67\textwidth}\picturefit[5.2cm]{dmop-searches.pdf}
 \column{.30\textwidth}
-100 searches per method.\gap
-Matched wall-clock budgets.\gap
-IF2: iterated filtering.\\IFAD: warm start, then gradient updates.
+IF2: iterated filtering.\\IFAD: IF2 warm start, then Adam.
 \pause\gap
-IFAD with $\alpha=.97$ attains higher likelihoods in this comparison.
+IFAD-$.97$ attains higher likelihoods here.
 \end{columns}
-\src{DMOP manuscript, comparable-time panel. Timing excludes per-iteration diagnostic likelihood calls. Log-likelihoods below $-3800$ are omitted. Dotted red line: best-known fitted likelihood.}
+Plot excludes log-likelihoods below $-3780$.
+\src{DMOP manuscript, comparable-time panel. Timing excludes diagnostic likelihood calls. Below $-3780$: IF2 2/100, IFAD-1 4/100, IFAD-0 2/100, IFAD-.97 0/100. Dotted red line: largest fitted likelihood in this comparison.}
 \end{frame}
 
 \begin{frame}{Particle filtering: fixed ancestry and weight corrections}

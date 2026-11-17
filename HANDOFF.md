@@ -6,52 +6,40 @@ Updated November 17, 2026.
 
 Overleaf: https://www.overleaf.com/project/6afb7b39d9eebab656f22483
 Private GitHub: https://github.com/hetankevin/thesis-defense-2026
-Local working copy: this directory. Linked publication clone: `/tmp/thesis-defense-linked-20261116`. The surrounding proposal repo is archival and has divergent history; do not blindly push it.
+Working copy: this directory. Publication clone: `/tmp/thesis-defense-linked-20261116`.
+The surrounding proposal repository is archival and divergent. Commit locally there, but publish through the linked clone; do not blindly push the parent.
 
-## Current scope
+## Scope and standing corrections
 
-51 main frames, with no backup slides in either compiled version. 60-minute prepared talk in a 90-minute slot: opening 5, actor-critic 25, DMOP 25, control/closing 5. `timing.csv` totals 3600 seconds; this is an allocation, not a rehearsal. Actor-critic uses the single ICML paper and its hybrid extension. DMOP is the second topic. Control is a brief return to decision making, not a third full topic.
+51 main frames, no backup slides in either entry point. Title lines: Kevin Tan / Dissertation defense. Main research title unchanged. 60-minute prepared talk in the 90-minute slot: opening 5, actor–critic 25, DMOP 25, control/closing 5. This allocation is not a rehearsal. Actor–critic uses the ICML 2025 paper with Wei Fan and Yuting Wei, including its hybrid extension. DMOP is the other main topic; control is a short connection overview. Keep the original PF-MCTQ illustration.
 
-## User corrections that must persist
+Keep the Dhaka cholera statistical inference application and its figures. Observations are monthly deaths. Never replace Wei Fan with Jianqing Fan. Preserve personal acknowledgments and author order. No notes carrying essential explanations, cute titles, invented results, or new experiments. Number RL algorithms. Use diagrams of actual operations, defined notation, stable reveals, and readable evidence.
 
-The first thesis delivery was rejected for invented attribution and generic prose/layout. Kevin's coauthor is Wei Fan, not Jianqing Fan. Use original author order and joint-work attribution. Restore personal acknowledgments from the live proposal. Do not infer contributors from writing samples.
+## Current revision
 
-Keep the Dhaka cholera application and its figures. Kevin explicitly objected when the agent misread his frustration as a request to remove it. The observation model is monthly cholera deaths, not case counts. Explain the statistical inference problem without an unrelated application detour.
+Implemented the cold review rather than leaving flags unresolved:
 
-Use direct titles, necessary definitions, actual method operations, equations and manuscript figures. No cute summaries, mandatory three-box chains, generic research slogans, or notes carrying essential explanations. Proposed RL algorithms are numbered.
+- Slides 12–13 connect reuse of data and adaptive regression targets to the growing policy cover. The vacuous bound is not called an impossibility result.
+- Slide 15 uses a single fixed-critic interval and one missing tracking-error term, replacing the overloaded multi-curve illustration.
+- Defined expected Bellman response before using its operator, promoted the confidence event, and connected the reset diagram to its initial KL cost.
+- Regression test now comes before the rare-update/reset-cost bound. Comparator class is F_h as in the source algorithm. Target representability and computational scope are explicit on the guarantee slide.
+- Hybrid coverage and the additional regret term are defined. AntMaze is explicitly a neural implementation comparison; only Alg. 2H takes the maximum over 10 sampled actions, and it omits resets.
+- Differentiability and discounting motivations appear when used. Score-error randomness and normalization are explained.
+- Recovered plotting sources for DMOP figures. Corrected the particle-filter likelihood reference, vector rather than recovery-only score diagnostic, mean-log-likelihood normalization, zero reference, resampling/increment differences, search cutoff (-3780), omitted counts, and batched timing unit. Details in `provenance/SOURCES.md`.
+- Control closing identifies a connection overview; d=0 means no belief-tree lookahead. The original illustration remains.
 
-## Changes in this revision
+No additional results were generated. Fig. 1A was redrawn from saved curve values with corrected labels and fewer ticks; code, data, and style are under `provenance/fig1a/`.
 
-Replaced paragraph explanations across the deck with diagrams of actual operations: reward trajectories, critic regression and actor probabilities, accumulated critics and covering combinations, policy-evaluation versus optimality targets, resets and rejection tests, particle propagation/weighting/ancestry, moving categorical boundaries, fixed-ancestor differentiation, weight correction, discounting, and belief versus QMDP planning. Equations, assumptions, original experimental figures, Dhaka application, and personal acknowledgments remain.
+## Verification and review
 
-The independent reviewer identified notation corruption on slide 17, label collisions, missing confidence/regret labels, overstatement of discounting and bound monotonicity, an implied composed control guarantee, and the immediate-reward wording of the actor update. All were corrected. Slide 7 now describes relative odds. Slides 16, 20, 23, 33, 36, and 37 were specifically reviewed for whether diagrams explain operations rather than merely arrange prose.
+Fresh Overleaf exports before editing and before synchronization both matched publication commit f4b7d6e across all tracked files. Safari reused extraction folder `Downloads/Thesis_Defense_2026-6`; the final export main.tex timestamp is November 17 09:35 UTC. No intervening edits were found.
 
-## Verification
+Local builds: 134 overlay pages, 51 handout pages. Revised main slides and intermediate reveals for 12, 15, 19, and 43 were rendered and inspected. The latest build has no overfull/underfull, undefined-reference, or TeX errors. Existing image-resolution/PDF-version warnings persist. Timing remains 3600 seconds.
 
-Source checks remain recorded in `provenance/SOURCES.md`. All 61 handout pages were inspected in the diagram pass, then corrected pages were re-rendered. Representative intermediate reveals were inspected for slides 7, 16, 17, 32, 33, and 37. Independent findings and resolution are in `provenance/REVIEW.md`.
+Independent reviewer used rendered slides alone. Original findings: `provenance/COLD_STAT_AUDIENCE_REVIEW_2026-11-17.md`. Re-review and final verification: `provenance/REASONING_REWRITE_REVIEW_2026-11-17.md`. Verdict: core argument followable with normal narration, previous actor–critic blockers resolved, final three presentation issues addressed, no new layout blockers. This is an audience review, not a replacement for source verification or Kevin's judgment.
 
-The latest Overleaf source was exported before editing at 18:01 Eastern and again at approximately 20:26 Eastern on November 16. All 39 tracked files matched linked commit e24c825 on both checks. No intervening live edits were found. The original proposal remains unchanged.
+## Build and delivery
 
-Final local builds: 144 overlay pages and 61 handout pages. No overfull, underfull, undefined-reference, or TeX errors. Existing imported-image DPI and PDF-version warnings remain. Timing still totals 3600 seconds (60 minutes), without a rehearsal. No new experiments or result plots were introduced.
+Run `bash build.sh` (Tectonic). Overleaf uses XeLaTeX/TeX Live 2026. Open main.tex for overlays or handout.tex for one page per frame; restore main.tex after exports. Build artifacts and previews are under `output/` (ignored by Git).
 
-Reviewed source commit `33851e9` is pushed to GitHub and merged in Overleaf. Both live XeLaTeX builds succeeded: 144 overlay pages and 61 handout pages. Downloaded server PDFs match local page text after whitespace normalization. Live pages 16, 32, and 37 were rendered and visually checked. The current `thesis-defense-overleaf-*` files contain this diagram revision.
-
-## Build
-
-Run `bash build.sh` with Tectonic. On Overleaf use XeLaTeX / TeX Live 2026. Open `main.tex` for overlays and `handout.tex` for one page per frame before compiling; the open standalone file can override the configured main-document choice. Restore main.tex after exporting.
-
-## Delivery
-
-Local and verified live PDFs are under `output/`. `slide-07.png`, `slide-16.png`, `slide-17.png`, `slide-27.png`, `slide-32.png`, `slide-33.png`, `slide-37.png`, `slide-39.png`, and `slide-46.png` are rendered from the current live handout. Source ZIPs are refreshed from the linked repository. A rehearsal is still needed to validate pacing. Do not treat compilation or independent review as Kevin's approval of presentation quality.
-
-## Follow-up inspection: language and layout
-
-Inspected all 61 current server-rendered handout pages and read their slide text. Replaced vague or performative titles with the actual subject on 13, 17, 20, 25, 37, 46, and 47. Kept genuine explanatory questions such as the actor-critic introduction and the differentiation obstacle. Removed “hides,” “drops out,” “tiny,” and “critic prefers” phrasing. Clarified total reward and log likelihood on the roadmap, covering-number counts, and ancestor indices. Avoided using “score” for ordinary measurement-density evaluation because score later means a log-likelihood derivative.
-
-Moved slide 8 labels above the computation so arrows do not cross them. Cleared dashed guides from the fixed-ancestry label on 34. Re-rendered every changed frame. Technical equations, source figures, paper selection, Dhaka application, and timing are retained. Local builds: 144 overlays, 61 handout pages, no layout or undefined-reference warnings. Current live source was exported and compared with 5291bb6 before editing; all 39 files matched. Revision `4b801d3` is pushed and merged in Overleaf. Both server builds succeeded (144 overlay pages, 61 handout pages) and match local page text. Downloaded live pages 8, 13, and 37 were inspected. Updated previews and source ZIP are in `output/`.
-
-## November 17: title and no backups
-
-Kevin requested the title lines “Kevin Tan” and “Dissertation defense.” Updated those lines and removed the appendix input from both entry points. The old backup source is retained uncompiled. A fresh Overleaf export (`Thesis_Defense_2026-5`) matched all 39 tracked publication files before editing. Local builds produce 51 handout pages and 132 overlay pages. The title was visually inspected; pages 2–51 have unchanged extracted text. The independent review is in `provenance/COLD_STAT_AUDIENCE_REVIEW_2026-11-17.md`. It used slides alone and flags the causal chain on 12–21, overloaded slide 15, hybrid theory/implementation distinction on 23–24, and planning scope on 49. Particle-filter exposition is more followable. These findings are not yet implemented. The reviewer saw backups before the no-backup request arrived, disclosed that sequencing, and excluded backup-based findings.
-
-Source revision `94cefe5` is pushed and merged in Overleaf. Live builds show 132 overlay pages and 51 handout pages. No backups are included. The 60-minute main-talk allocation is unchanged.
+Current source is ready for synchronization; server PDFs must be downloaded and compared with local builds before marking delivery complete. Preserve further live edits. The uncompiled old backup file is retained as historical source, not a delivery artifact.

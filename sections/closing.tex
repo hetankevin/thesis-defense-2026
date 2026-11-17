@@ -38,14 +38,15 @@ POMDP: partially observed Markov decision process.\\Belief $b$: hidden-state dis
 \uncover<3->{Cheaper planning; ignores future information gathering.\\A short belief tree with QMDP leaves delays this approximation.}
 \end{frame}
 
-\begin{frame}{Particle filtering and planning}
-\picturefit[3.7cm]{control-pipeline.pdf}
-{\small $\bar\theta$: fitted parameters. $b^J$: $J$-particle belief. $Q^*$: fully observed action value.\\$H_t$: observation--action history. MCTS: Monte Carlo tree search.}
+\begin{frame}{Connecting inference to control}
+{\small Connection overview. Joint work with Ziping Xu, NeurIPS 2026.}
+\picturefit[3.8cm]{control-pipeline.pdf}
+{\small $\bar\theta$: fitted model. $b^J$: particle belief. $H_t$: data history.\\Planning uses Monte Carlo tree search with QMDP leaves.}
 \pause\medskip
 \begin{center}\begin{tikzpicture}[x=1cm,y=1cm]
 \path[use as bounding box] (0,0) rectangle (12,1.1);
 \node[lab] at (2.5,.9) {Analysis};\node[lab] at (8.7,.9) {Experiments};
-\node[lab] at (2.5,.3) {Depth-$d$ belief tree};\node[lab] at (8.7,.3) {$d=0$: state rollouts, learned actor and critic};
+\node[lab] at (2.5,.3) {Depth-$d$ belief tree};\node[lab] at (8.7,.3) {$d=0$: no belief-tree lookahead\\State rollouts with a learned actor and critic};
 \end{tikzpicture}\end{center}
 \src{Original PF-MCTQ figure. Kevin Tan and Ziping Xu, From POMDP Theory to Deep RL with Particle Filters, NeurIPS 2026.}
 \end{frame}
@@ -64,7 +65,7 @@ POMDP: partially observed Markov decision process.\\Belief $b$: hidden-state dis
 \node[lab,visible on=<2->] at (9.3,1.4) {Likelihood gradients\\with a bias--variance tradeoff};
 
 \end{tikzpicture}\end{center}
-\uncover<3->{\centering Next problem: control with hidden states. Infer the state, then choose an action.\par}
+\uncover<3->{\centering The control problem needs both: infer the hidden state, then choose an action.\par}
 \src{Guarantees require the stated representation, complexity, regularity, and derivative-stability assumptions.}
 \end{frame}
 
