@@ -34,7 +34,7 @@ The latest Overleaf source was exported before editing at 18:01 Eastern and agai
 
 Final local builds: 144 overlay pages and 61 handout pages. No overfull, underfull, undefined-reference, or TeX errors. Existing imported-image DPI and PDF-version warnings remain. Timing still totals 3600 seconds (60 minutes), without a rehearsal. No new experiments or result plots were introduced.
 
-Live synchronization and server PDF verification are pending for this diagram revision. Do not confuse the previous live exports with the current local PDFs until this line is updated.
+Reviewed source commit `33851e9` is pushed to GitHub and merged in Overleaf. Both live XeLaTeX builds succeeded: 144 overlay pages and 61 handout pages. Downloaded server PDFs match local page text after whitespace normalization. Live pages 16, 32, and 37 were rendered and visually checked. The current `thesis-defense-overleaf-*` files contain this diagram revision.
 
 ## Build
 
@@ -42,4 +42,4 @@ Run `bash build.sh` with Tectonic. On Overleaf use XeLaTeX / TeX Live 2026. Open
 
 ## Delivery
 
-Local PDFs are under `output/`. Final live PDF exports and previews will replace the previous versions after synchronization. A rehearsal is still needed to validate pacing. Do not treat compilation or independent review as Kevin's approval of presentation quality.
+Local and verified live PDFs are under `output/`. `slide-07.png`, `slide-16.png`, `slide-17.png`, `slide-27.png`, `slide-32.png`, `slide-33.png`, `slide-37.png`, `slide-39.png`, and `slide-46.png` are rendered from the current live handout. Source ZIPs are refreshed from the linked repository. A rehearsal is still needed to validate pacing. Do not treat compilation or independent review as Kevin's approval of presentation quality.
