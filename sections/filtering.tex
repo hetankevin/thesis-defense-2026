@@ -53,7 +53,7 @@ $L_n=p_\theta(y_n\mid y_{1:n-1})$ is the predictive density. The likelihood is $
 \node[fill=white] at (5.5,2.1) {simulate one month};
 \end{tikzpicture}\end{center}
 \pause\[\widetilde X_n^j\sim P_\theta(\cdot\mid X_{n-1}^j),\qquad j=1,\ldots,J.\]
-Each of the $J$ particles represents a possible state.
+We approximate the state distribution with $J$ simulated states.
 \end{frame}
 
 \begin{frame}{Which predictions fit the new death count?}
@@ -105,7 +105,7 @@ We need a likelihood gradient to fit the rates. Compare nearby rates using the s
 \uncover<3->{Switching parents can make the estimated likelihood jump.}
 \end{frame}
 
-\begin{frame}{Replay the same family tree}
+\begin{frame}{Keep the resampling choices fixed}
 Save the parents from a baseline run at $\phi$.
 \begin{center}\begin{tikzpicture}[x=.84cm,y=.78cm,font=\small]
 \path[use as bounding box] (-.3,-.5) rectangle (14.5,3.65);
@@ -137,7 +137,7 @@ In month one, average over the parent draw $A$, holding the candidates fixed:
 \]
 \end{frame}
 
-\begin{frame}{A likelihood curve through the baseline}
+\begin{frame}{Reweighting the likelihood}
 Start each lineage at $w_0=1$.
 \[
 w_{\rm new}=w_{\rm parent}\,\frac{g^\theta_{\rm parent}}{g^\phi_{\rm parent}} .
@@ -148,9 +148,9 @@ w_{\rm new}=w_{\rm parent}\,\frac{g^\theta_{\rm parent}}{g^\phi_{\rm parent}} .
 \widehat L_n(\theta;\phi)=\widehat L_n(\phi)\,
 \frac{\text{total corrected weight of the copies}}{\text{total incoming weight}} .
 \]
-The numerator sums over the selected copies, counting repeated parents each time.
+Sum the weights of the selected copies, including repeats.
 \pause\gap
-At $\theta=\phi$, the correction is 1, but its derivative is
+At $\theta=\phi$, the correction equals 1. Its derivative is
 \[
 \left.\partial_\theta\frac{g_j^\theta}{g_j^\phi}\right|_{\theta=\phi}
 =\left.\partial_\theta\log g_j^\theta\right|_{\theta=\phi}.
@@ -158,7 +158,7 @@ At $\theta=\phi$, the correction is 1, but its derivative is
 \src{Measurement Off-Parameter (MOP). Positive, differentiable measurement density and pathwise-differentiable simulator.}
 \end{frame}
 
-\begin{frame}{Take the slope of that curve}
+\begin{frame}{Differentiating the corrected likelihood}
 \begin{columns}[c,onlytextwidth]
 \column{.48\textwidth}\begin{tikzpicture}[x=.80cm,y=.81cm]
 \path[use as bounding box] (-.3,-.5) rectangle (6.7,4.6);
@@ -188,7 +188,7 @@ Vary one parameter, holding the baseline fixed.
 \src{Differentiated Measurement Off-Parameter (DMOP). At $\theta=\phi$ the ratio is one, but its numerator still varies with $\theta$.}
 \end{frame}
 
-\begin{frame}{How far back should a correction count?}
+\begin{frame}{Discounting earlier weight corrections}
 \[w_{\rm new}=w_{\rm parent}^{\alpha}\,(g^\theta_{\rm parent}/g^\phi_{\rm parent}),\qquad 0\le\alpha\le1.\]
 \begin{center}\begin{tikzpicture}[x=1cm,y=.85cm]
 \draw[arr] (.3,.6)--(11.8,.6) node[right,lab]{month};
@@ -206,7 +206,7 @@ Each month's log correction gets the weight shown. Discounting can reduce varian
 \column{.39\textwidth}
 Dhaka recovery rate, 10,000 particles.
 \pause\gap
-The curves nearly coincide at $\phi=18$, then diverge.
+The estimates agree closely at $\phi=18$, with different slopes.
 \end{columns}
 \src{Fig. 1A. Before-resampling estimates, systematic resampling.}
 \end{frame}
@@ -229,12 +229,12 @@ The curves nearly coincide at $\phi=18$, then diverge.
 \column{.41\textwidth}
 1,000 runs of 10,000 particles at the fitted parameters.
 \uncover<2->{\gap Variance rises near $\alpha=1$.}
-\uncover<3->{\gap Blue is mean squared error against zero, the score at a stationary point.}
+\uncover<3->{\gap The blue curve measures squared error relative to zero. This is score MSE at a stationary point.}
 \end{columns}
 \src{Fig. 1B. Gradient of log likelihood per observation, summed moments across coordinates. Same filter as Fig. 1A.}
 \end{frame}
 
-\begin{frame}{What can we guarantee about the slope?}
+\begin{frame}{Error in the estimated score}
 Fix the $N$ observations. The target is the score $S=\nabla_\theta\log p_\theta(y_{1:N})$ at $\theta=\phi$.
 \pause\gap
 $\alpha=1$: $\E\|\widehat S-S\|^2\to0$ as the particle count $J\to\infty$.

@@ -1,6 +1,6 @@
 \renewcommand{\stage}{From inference to control}
 
-\begin{frame}{Braking requires velocity information}
+\begin{frame}{Braking depends on velocity}
 We observe only position.
 \begin{center}\begin{tikzpicture}[every node/.style={font=\small,align=center}]
 \path[use as bounding box] (-2,-2.6) rectangle (8,1.8);
@@ -38,7 +38,7 @@ POMDP: partially observed Markov decision process.\\Belief $b$: hidden-state dis
 \uncover<3->{QMDP skips future observation branches. A short belief tree keeps the first few.}
 \end{frame}
 
-\begin{frame}{Choosing an action from a particle estimate of the state}
+\begin{frame}{Using the particle filter to choose actions}
 {\small Joint work with Ziping Xu, NeurIPS 2026.}
 \picturefit[4.1cm]{control-pipeline.pdf}
 {\small $\bar\theta$: fitted model. $b^J$: particle belief. $H_t$: observed history.}\par\smallskip
@@ -46,17 +46,17 @@ POMDP: partially observed Markov decision process.\\Belief $b$: hidden-state dis
 \uncover<2->{\gap\small Experiments use state rollouts with a learned actor and critic. Belief-tree depth $d=0$.}
 \end{frame}
 
-\begin{frame}{What connects these parts of my dissertation?}
+\begin{frame}{Two themes from my dissertation}
 \begin{columns}[T,onlytextwidth]
 \column{.47\textwidth}
 {\Large\color{blue}Learning to act}\gap
-The best-action target stays fixed as the policy improves.
+We fit the critic to the best next action so its target stays fixed while the policy changes.
 \pause
 \column{.47\textwidth}
 {\Large\color{green}Fitting a model}\gap
-Fix the parent choices and reweight the particles to estimate a likelihood gradient.
+We keep the parent choices fixed and reweight the particles to differentiate the likelihood.
 \end{columns}
-\uncover<3->{\gap The filter estimates the hidden state. The policy uses that estimate to act.}
+\uncover<3->{\gap In partially observed control, we estimate the state and then choose an action.}
 \end{frame}
 
 \begin{frame}{Thank you everyone!}

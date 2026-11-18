@@ -15,10 +15,10 @@ slide,section,title,seconds
 14,actor-critic,Can we update the critic less often?,75
 15,actor-critic,An improving actor can overtake the old critic,105
 16,actor-critic,Fit the critic to the best next action,120
-17,actor-critic,One upper estimate can cover every actor,75
+17,actor-critic,Optimism as the actor changes,75
 18,actor-critic,Give the actor time to catch up,100
 19,actor-critic,Alg. 2: update the critic when its regression error grows,95
-20,actor-critic,Rare critic changes limit the cost of resets,120
+20,actor-critic,Bounding the cost of resets,120
 21,actor-critic,Regret over $T$ episodes,110
 22,actor-critic,Online experiment: Tetris,75
 23,actor-critic,When can Alg. 2 learn without optimism?,85
@@ -32,19 +32,19 @@ slide,section,title,seconds
 31,filtering,Which predictions fit the new death count?,75
 32,filtering,Which particles continue to the next month?,55
 33,filtering,What goes wrong if we change the recovery rate?,75
-34,filtering,Replay the same family tree,65
+34,filtering,Keep the resampling choices fixed,65
 35,filtering,Reweight each selected parent,75
-36,filtering,A likelihood curve through the baseline,65
-37,filtering,Take the slope of that curve,90
-38,filtering,How far back should a correction count?,65
+36,filtering,Reweighting the likelihood,65
+37,filtering,Differentiating the corrected likelihood,90
+38,filtering,Discounting earlier weight corrections,65
 39,filtering,Likelihood near the baseline recovery rate,65
 40,filtering,How does discounting change the estimated score?,85
-41,filtering,What can we guarantee about the slope?,90
+41,filtering,Error in the estimated score,90
 42,filtering,Fitting the model,50
 43,filtering,Likelihood searches for the Dhaka cholera model,65
 44,filtering,Running the Dhaka particle filter on a GPU,55
-45,closing,Braking requires velocity information,45
+45,closing,Braking depends on velocity,45
 46,closing,Full belief planning is expensive,75
-47,closing,Choosing an action from a particle estimate of the state,75
-48,closing,What connects these parts of my dissertation?,90
+47,closing,Using the particle filter to choose actions,75
+48,closing,Two themes from my dissertation,90
 49,closing,Thank you everyone!,15

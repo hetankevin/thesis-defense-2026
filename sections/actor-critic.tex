@@ -249,7 +249,7 @@ Between fits, next-action scores $f_{h+1}(s',b)$ stay fixed. The actor changes t
 \end{scope}
 \draw[<->,thick,visible on=<3->] (9.55,2.53)--(9.55,3.70);
 \end{tikzpicture}\end{center}
-\uncover<3->{The weighted average can rise above the old upper estimate.}
+\uncover<3->{As the policy improves, the old critic can underestimate its target.}
 \end{frame}
 
 \begin{frame}{Fit the critic to the best next action}
@@ -272,7 +272,7 @@ Same transition $(s,a,r,s')$, same next-action scores.
 A cover of the critics also covers their maxima.}
 \end{frame}
 
-\begin{frame}{One upper estimate can cover every actor}
+\begin{frame}{Optimism as the actor changes}
 Suppose the critic upper-bounds the expected best-action target.
 \begin{center}\begin{tikzpicture}[x=1cm,y=.84cm]
 \path[use as bounding box] (0,0) rectangle (12,4.68);
@@ -289,7 +289,7 @@ Suppose the critic upper-bounds the expected best-action target.
 \fill[blue] (2.52,1.04) circle(2.7pt);\fill[blue] (9.56,2.87) circle(2.7pt);
 \end{scope}
 \end{tikzpicture}\end{center}
-\uncover<2->{Any actor averages scores below or equal to the maximum. The inequality holds in expectation.}
+\uncover<2->{The actor's average cannot exceed the maximum, even after taking expectations.}
 \end{frame}
 
 \begin{frame}{Give the actor time to catch up}
@@ -339,8 +339,8 @@ L_{t,h}(q,f)=\sum_{(s,a,r,s')\in D_{t,h}}[q(s,a)-r-\max_b f_{h+1}(s',b)]^2.
 
 \end{frame}
 
-\begin{frame}{Rare critic changes limit the cost of resets}
-Bellman error = critic estimate $-$ expected target. The dimension $d$ counts how often new data can expose a new error.
+\begin{frame}{Bounding the cost of resets}
+Bellman error = critic estimate $-$ expected target. The dimension $d$ measures how many independent errors we must learn.
 \begin{center}\begin{tikzpicture}[x=1cm,y=1cm]
 \path[use as bounding box] (0,0) rectangle (12,1.5);
 \draw[arr] (.5,.6)--(11.5,.6);
