@@ -200,10 +200,10 @@ $f_u(x)=\max(0,x-u)$\par\smallskip
 \draw[blue,dashed,thick] (0,0)--(.25,0)--(1,.75);
 \draw[green,dotted,very thick] (0,0)--(.75,0)--(1,.25);
 \draw[pink,thick] (0,0)--(.25,0)--(.75,.5)--(1,1);
-\foreach \x/\txt in {.25/{.25},.75/{.75},1/1}{\draw (\x,0)--(\x,-.05) node[below] {$\txt$};}
+\foreach \x/\txt in {.25/{u_1},.75/{u_2},1/1}{\draw (\x,0)--(\x,-.05) node[below] {$\txt$};}
 \foreach \y in {.5,1}{\draw (0,\y)--(-.02,\y) node[left] {$\y$};}
-\draw[blue,dashed,thick] (.09,1)--(.21,1);\node[anchor=west] at (.22,1) {$f_{.25}$};
-\draw[green,dotted,very thick] (.09,.79)--(.21,.79);\node[anchor=west] at (.22,.79) {$f_{.75}$};
+\draw[blue,dashed,thick] (.09,1)--(.21,1);\node[anchor=west] at (.22,1) {$f_{u_1}$};
+\draw[green,dotted,very thick] (.09,.79)--(.21,.79);\node[anchor=west] at (.22,.79) {$f_{u_2}$};
 \draw[pink,thick] (.09,.58)--(.21,.58);\node[anchor=west] at (.22,.58) {sum};
 \end{tikzpicture}\par
 Each new threshold adds a bend.}

@@ -96,3 +96,9 @@ Slides 35–38 extend the previous illustrative example. Nearby densities are (.
 For slide 37, the illustrative local density g_2(theta)=.12-.04(theta-phi) gives w=1-(theta-phi)/3, w(phi;phi)=1 and partial_theta w=-1/3. The endpoint theta-phi=1 matches .08. This is a teaching interpolation, not a measured or fitted Dhaka derivative. Slide 38 follows that correction along one fixed lineage: w3=r1^(alpha^2)r2^alpha r3, so its first log-weight contribution to the derivative at the baseline is -alpha^2/3. Full likelihood derivatives additionally use the weight-sum normalizers from slide 36.
 
 Source: current arXiv 2407.03085 v2, Section 3 and Algorithm 1 (https://arxiv.org/pdf/2407.03085), cross-checked against /tmp/defense-dmop-current.tex lines185–207 and 256–273. The slides use the after-resampling estimate. The derivative includes state-path dependence; discounting applies to inherited log-weight corrections.
+
+## November 18: replace numerical exercises with mechanism diagrams
+
+Supersedes the two numerical-example entries above. Slide 31 retains illustrative S/I/R counts and modeled deaths, but its normalized-weight profile is schematic and unnumbered. It displays no invented density or weight values. Slide 33 uses an unlabeled common uniform draw. Slides 35–36 use the actual density-ratio and weight-sum operations, without numerical substitutions. Slide 37 illustrates a generic correction passing through 1 at the baseline with a nonzero tangent; it does not posit a fitted or toy affine measurement model or a numerical derivative. Slide 38 shows symbolic discounting of inherited log corrections. The full likelihood still uses the after-resampling normalizer. The actor–critic hinge thresholds are u1/u2, with no new claims. All experimental figures and numerical findings are unchanged.
+
+Pre-edit Overleaf export `Downloads/Thesis_Defense_2026-12` matched publication source 0604e09 exactly.

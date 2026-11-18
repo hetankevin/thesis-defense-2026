@@ -29,13 +29,13 @@ slide,section,title,seconds
 28,filtering,The Dhaka cholera model,110
 29,filtering,One month of Bayes filtering,120
 30,filtering,Simulate one month for each possible population,60
-31,filtering,Weight each population by how well it explains the deaths,75
+31,filtering,Weight the populations using the observed deaths,75
 32,filtering,Resample the populations using their weights,55
 33,filtering,Changing the parameter can change which parent we copy,75
 34,filtering,Reuse the baseline parent choices at the nearby parameter,65
-35,filtering,Correct the weight of the parent we kept,75
-36,filtering,Combine the corrected copies to estimate the likelihood,65
-37,filtering,"The correction is 1 at the baseline, but its derivative is not",90
+35,filtering,Correct for selecting parents under the baseline model,75
+36,filtering,Each copy carries its parent's corrected weight,65
+37,filtering,Why unit correction weights still have derivatives,90
 38,filtering,Discount the corrections inherited from earlier months,65
 39,filtering,Likelihood near the baseline recovery rate,65
 40,filtering,How does discounting change the estimated score?,85

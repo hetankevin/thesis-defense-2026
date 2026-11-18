@@ -73,43 +73,49 @@ Each particle is one possible population: $S$ susceptible, $I$ infected, $R$ imm
 \src{Illustrative counts, $J=5$ particles. $R$ combines the immunity stages. The full state also tracks modeled deaths.}
 \end{frame}
 
-\begin{frame}{Weight each population by how well it explains the deaths}
+\begin{frame}{Weight the populations using the observed deaths}
 Observed this month: $y_n=12$ deaths.
-\begin{center}\begin{tikzpicture}[x=1cm,y=1cm,font=\small]
-\path[use as bounding box] (0,0) rectangle (12.4,3.5);
-\foreach \x/\label/\col in {1.1/S/blue,2.1/I/pink,3.1/R/green}{\node[text=\col] at (\x,3.15){$\label$};}
-\node[align=center] at (4.6,3.15){Modeled\\deaths};
-\node[align=center] at (7.15,3.15){Measurement density\\$g_n^j=g_\theta(12\mid\widetilde X_n^j)$};
-\node[align=center] at (10.65,3.15){Normalized weight\\$\overline g_n^j$};
-\foreach \j/\y/\s/\i/\r/\d/\g/\w in {
-1/2.55/880/65/50/5/.02/.05,
-2/2.0/820/95/75/10/.12/.30,
-3/1.45/760/130/95/15/.18/.45,
-4/.9/845/85/62/8/.07/.175,
-5/.35/905/45/47/3/.01/.025}{
-\node[left] at (.45,\y){$\j$};
-\foreach \x/\v/\col in {1.1/\s/blue,2.1/\i/pink,3.1/\r/green}{
+\begin{center}\begin{tikzpicture}[x=1cm,y=.9cm,font=\small]
+\path[use as bounding box] (0,-.6) rectangle (12.7,3.9);
+\foreach \x/\label/\col in {1/S/blue,2/I/pink,3/R/green}{\node[text=\col] at (\x,3.5){$\label$};}
+\node[align=center] at (4.4,3.5){Modeled\\deaths};
+\foreach \j/\y/\s/\i/\r/\d in {
+1/2.9/880/65/50/5,
+2/2.3/820/95/75/10,
+3/1.7/760/130/95/15,
+4/1.1/845/85/62/8,
+5/.5/905/45/47/3}{
+\node[left] at (.35,\y){$\j$};
+\foreach \x/\v/\col in {1/\s/blue,2/\i/pink,3/\r/green}{
 \node[fill=\col!10,minimum width=9mm,minimum height=5mm] at (\x,\y){\v};}
-\node at (4.6,\y){\d};
+\node at (4.4,\y){\d};}
 \begin{scope}[visible on=<2->]
-\draw[arr,black!40] (5.3,\y)--(6.3,\y);
-\node at (7.15,\y){$\g$};
-\draw[arr,black!40] (8,\y)--(8.8,\y);
-\fill[blue!65] (9.2,\y-.13) rectangle ({9.2+5*\w},\y+.13);
-\node[right] at ({9.35+5*\w},\y){$\w$};
-\end{scope}}
+\draw[arr,thick] (5.15,1.8)--(7.65,1.8);
+\node[align=center] at (6.4,2.65){Measurement density\\then normalize};
+\node at (6.4,1.15){$g_\theta(y_n\mid\widetilde X_n^j)$};
+\draw[arr] (8.1,.5)--(12.5,.5);
+\node at (10.3,-.4){Particle};
+\draw[arr] (8.1,.5)--(8.1,3.4);
+\node at (10.3,3.7){Normalized weight};
+\draw[blue,thick] (8.6,1.05)--(9.45,2.8)--(10.3,2.3)--(11.15,1.65)--(12,.85);
+\foreach \x/\y/\j in {8.6/1.05/1,9.45/2.8/2,10.3/2.3/3,11.15/1.65/4,12/.85/5}{
+\draw[blue!35] (\x,.5)--(\x,\y);\fill[blue] (\x,\y) circle(2.8pt);
+\draw (\x,.5)--(\x,.42);\node[below] at (\x,.4){$\j$};}
+\end{scope}
 \end{tikzpicture}\end{center}
-\uncover<2->{\[\overline g_n^j=\frac{g_n^j}{\sum_m g_n^m},\qquad
+\uncover<2->{\[
+\overline g_n^j=\frac{g_n^j}{\sum_m g_n^m},\qquad
 \underbrace{\sum_j\overline g_n^j\delta_{\widetilde X_n^j}}_{\text{updated state distribution}}\approx b_n,\qquad
-\underbrace{\widehat L_n=\frac1J\sum_jg_n^j}_{\text{likelihood increment}}.\]}
-\src{Illustrative particles and measurement densities. $\delta_x$ is a point mass at population $x$.}
+\underbrace{\widehat L_n=\frac1J\sum_jg_n^j}_{\text{likelihood increment}}.
+\]}
+\src{Illustrative compartment counts and schematic weights. $g_n^j=g_\theta(y_n\mid\widetilde X_n^j)$; $\delta_x$ is a point mass.}
 \end{frame}
 
 \begin{frame}{Resample the populations using their weights}
 \begin{center}\begin{tikzpicture}[x=1cm,y=1cm,font=\small]
 \path[use as bounding box] (0,0) rectangle (12.4,4.6);
 \foreach \j/\y/\r/\sir in {
-1/3.5/.0933/{(880,65,50)},2/2.8/.2286/{(820,95,75)},3/2.1/.28/{(760,130,95)},4/1.4/.1746/{(845,85,62)},5/.7/.066/{(905,45,47)}}{
+1/3.5/.135/{(880,65,50)},2/2.8/.28/{(820,95,75)},3/2.1/.248/{(760,130,95)},4/1.4/.198/{(845,85,62)},5/.7/.108/{(905,45,47)}}{
 \fill[blue] (4.3,\y) circle(\r);
 \node at (2,\y){$\sir$};\node[left] at (.55,\y){$\j$};}
 \foreach \j/\y/\py/\sir in {
@@ -143,14 +149,14 @@ Use the same resampling draw $u\sim\mathrm{Unif}(0,1)$ at baseline $\phi$ and ne
 \draw[thin] (1.6,\y-.25) rectangle (10.6,\y+.25);
 \end{scope}}
 \node at (8.1,4.05){Interval width = weight};
-\draw[dashed,thick] (4.3,1.45)--(4.3,3.6) node[above] {$u=0.30$};
+\draw[dashed,thick] (4.3,1.45)--(4.3,3.6) node[above] {same draw $u$};
 \node[right,text=green] at (10.65,3.15){copy 2};
 \node[right,text=pink,visible on=<2->] at (10.65,1.85){copy 3};
 \node[below] at (1.6,1.5){0};\node[below] at (10.6,1.5){1};
 \node[visible on=<2->] at (6.1,.5){Selected $(S,I,R)$:\quad $(820,95,75)$\quad$\longrightarrow$\quad near $(760,130,95)$};
 \end{tikzpicture}\end{center}
 \uncover<3->{The copied population jumps. Later simulations, and hence the likelihood estimate, can jump too.}
-\src{Illustration: parent 2's weight changes from $.30$ to $.20$; parent 3's from $.45$ to $.55$. Gray intervals contain parents 1, 4 and 5.}
+\src{Schematic selection intervals. Gray intervals contain the other parents.}
 \end{frame}
 
 \begin{frame}{Reuse the baseline parent choices at the nearby parameter}
@@ -178,109 +184,105 @@ The baseline run selected parent 2. Keep that choice when changing $\phi$ to $\t
 \src{Illustrative simulator outputs. Only parents 2 and 3 are shown. Fractional counts allow a differentiable simulation approximation.}
 \end{frame}
 
-\begin{frame}{Correct the weight of the parent we kept}
-Keep parent 2, and correct for its changed measurement density.
+\begin{frame}{Correct for selecting parents under the baseline model}
+Keep the parent choice. Reweight its contribution using the new measurement density.
 \begin{center}\begin{tikzpicture}[x=1cm,y=1cm,font=\small]
-\path[use as bounding box] (0,0) rectangle (12.4,3.35);
+\path[use as bounding box] (0,0) rectangle (12.4,3.3);
 \node[text=blue] at (2.5,3.05){Baseline $\phi$};
 \node[text=pink] at (9.6,3.05){Nearby $\theta$};
-\node[fill=green!8,minimum height=8mm] at (2.5,2.4){$(S,I,R)=(820,95,75)$};
-\node[fill=green!8,minimum height=8mm] at (9.6,2.4){$(819.8,95.7,74.5)$};
-\node at (2.5,1.65){$g_2^\phi=.12$};
-\node at (9.6,1.65){$g_2^\theta=.08$};
+\node[fill=green!8,minimum height=8mm] at (2.5,2.4){Parent 2: $(820,95,75)$};
+\node[fill=green!8,minimum height=8mm] at (9.6,2.4){Same parent, updated state};
+\node[text=blue] at (2.5,1.6){Saved density $g_2^\phi$};
+\node[text=pink] at (9.6,1.6){New density $g_2^\theta$};
 \begin{scope}[visible on=<2->]
-\draw[arr,blue] (3.4,1.55)--(5.4,.8);
-\draw[arr,pink] (8.7,1.55)--(6.8,.8);
-\node at (6.1,.45){Correction: $\displaystyle\frac{g_2^\theta}{g_2^\phi}=\frac{.08}{.12}=\frac23$};
+\draw[arr,blue] (3.9,1.5)--(5.4,.8);
+\draw[arr,pink] (8.1,1.5)--(6.8,.8);
+\node at (6.1,.45){Correction: $\displaystyle\frac{\textcolor{pink}{g_2^\theta}}{\textcolor{blue}{g_2^\phi}}$};
 \end{scope}
 \end{tikzpicture}\end{center}
 \uncover<3->{\[
-\underbrace{.30}_{\text{selection probability at }\phi}
-\ \times\ \underbrace{\frac23}_{\text{correction}}
-=\frac{.08}{.40}
+\underbrace{\frac{g_2^\phi}{\sum_k g_k^\phi}}_{\text{selection probability at }\phi}
+\times\underbrace{\frac{g_2^\theta}{g_2^\phi}}_{\text{correction}}
 =\frac{g_2^\theta}{\sum_k g_k^\phi}.
 \]}
-\src{Illustrative densities for $y_n=12$. $g_j^\theta=g_\theta(12\mid\widetilde X_n^j(\theta))$ includes the change in the simulated state.}
+\src{$g_j^\theta=g_\theta(y_n\mid\widetilde X_n^j(\theta))$: the density includes the change in the simulated state.}
 \end{frame}
 
-\begin{frame}{Combine the corrected copies to estimate the likelihood}
-First month: all incoming correction weights are 1.
-\begin{center}\begin{tikzpicture}[x=1cm,y=1cm,font=\small]
-\path[use as bounding box] (0,-.2) rectangle (12.4,2.8);
-\node[left] at (1.3,2.3){Parent};
-\node[left,visible on=<2->] at (1.3,.7){$w$};
-\foreach \x/\a/\old/\new/\ratio in {2.1/2/.12/.08/{2/3},4.3/3/.18/.22/{11/9},6.5/3/.18/.22/{11/9},8.7/3/.18/.22/{11/9},10.9/4/.07/.07/1}{
-\node[circle,draw=blue,fill=blue!8,minimum size=8mm] at (\x,2.3){\a};
-\node at (\x,1.55){$\displaystyle\frac{\new}{\old}$};
-\node[visible on=<2->] at (\x,.7){$\ratio$};
-\draw[arr,blue!45,visible on=<2->] (\x,.35)--(6.5,-.12);
+\begin{frame}{Each copy carries its parent's corrected weight}
+Multiply the incoming weight by the measurement-density ratio.
+\begin{center}\begin{tikzpicture}[x=1cm,y=.9cm,font=\small]
+\path[use as bounding box] (0,-.1) rectangle (12.4,3.55);
+\foreach \x/\a/\size in {1.4/2/.24,3.8/3/.42,6.2/3/.42,8.6/3/.42,11/4/.33}{
+\node[circle,draw=blue,fill=blue!8,minimum size=7mm] (p\x) at (\x,2.9){\a};
+\draw[arr,black!40,visible on=<2->] (\x,2.45)--(\x,1.7);
+\fill[blue!50,visible on=<2->] (\x,1.1) circle(\size);
 }
+\node at (6.2,3.5){Copied parent};
+\node[visible on=<2->] at (6.2,.3){Repeated copies carry the same corrected weight.};
 \end{tikzpicture}\end{center}
 \uncover<2->{\[
-\widehat L_1(\theta;\phi)
-=\underbrace{\frac{.40}{5}}_{\text{baseline increment}}
-\times\frac{\overbrace{\frac23+3\cdot\frac{11}{9}+1}^{\text{total corrected weight}}}{\underbrace{5}_{\text{total incoming weight}}}
-\approx .0853.
+w_{\rm copy}=w_{\rm parent}\,\frac{g_{\rm parent}^\theta}{g_{\rm parent}^\phi}.
 \]}
-\uncover<3->{For each month, multiply the baseline increment by this ratio of weight sums.}
-\src{One fixed resampling draw, $(2,3,3,3,4)$. This is the after-resampling estimate, not the average of the five new measurement densities.}
+\uncover<3->{\[
+\widehat L_n(\theta;\phi)=\widehat L_n(\phi)\times
+\frac{\text{total corrected weight of copies}}{\text{total incoming weight}}.
+\]}
+\src{After-resampling likelihood estimate. Circle areas illustrate correction weights, not normalized selection probabilities.}
 \end{frame}
 
-\begin{frame}{The correction is 1 at the baseline, but its derivative is not}
-Keep the denominator at the saved value $.12$. Vary only the numerator.
+\begin{frame}{Why unit correction weights still have derivatives}
+Differentiate with the baseline $\phi$ fixed. Then evaluate at $\theta=\phi$.
 \begin{columns}[c,onlytextwidth]
 \column{.43\textwidth}
-\begin{tikzpicture}
-\begin{axis}[width=\linewidth,height=3.7cm,xmin=-.1,xmax=1.15,ymin=.57,ymax=1.1,
-axis lines=left,xlabel={$\theta-\phi$},ylabel={Correction $w$},xtick={0,1},ytick={.666667,1},yticklabels={$2/3$,1},
-tick label style={font=\small},label style={font=\small},legend style={draw=none,font=\scriptsize},legend pos=north east]
-\addplot[blue,very thick,domain=0:1.05]{1-x/3};\addlegendentry{Parent 2}
-\addplot[only marks,blue,mark=*] coordinates {(0,1) (1,.666667)};
-\end{axis}\end{tikzpicture}
+\begin{tikzpicture}[x=.72cm,y=.72cm,font=\small]
+\path[use as bounding box] (-.3,-.45) rectangle (6.4,4.9);
+\draw[arr] (.7,.5)--(5.8,.5) node[right]{$\theta$};
+\draw[arr] (.7,.5)--(.7,4.25);
+\node[rotate=90] at (-.2,2.5){Correction weight};
+\draw[black!35,dashed] (.7,2.6)--(3.1,2.6)--(3.1,.5);
+\draw (.6,2.6)--(.8,2.6) node[left=2mm]{1};
+\draw (3.1,.4)--(3.1,.6) node[below=2mm]{$\phi$};
+\draw[blue,very thick,domain=1:5.5,samples=40] plot (\x,{2.6-.4*(\x-3.1)+.035*(\x-3.1)^2});
+\fill[blue] (3.1,2.6) circle(2.8pt);
+\draw[pink,thick,visible on=<2->] (1.6,3.2)--(4.6,2.0);
+\draw[blue,thick] (1.15,4.35)--(1.65,4.35);\node[anchor=west] at (1.75,4.35){Parent 2};
+\end{tikzpicture}
 \column{.54\textwidth}
-For the illustrative local density
 \[
-g_2^\theta=.12-.04(\theta-\phi),
-\]
-\[
-w(\theta;\phi)=\frac{\textcolor{pink}{.12-.04(\theta-\phi)}}{\textcolor{blue}{.12}}.
+w(\theta;\phi)=
+\frac{\overbrace{\textcolor{pink}{g_2^\theta}}^{\text{varies with }\theta}}
+{\underbrace{\textcolor{blue}{g_2^\phi}}_{\text{saved, fixed}}}.
 \]
 \uncover<2->{\[
- w(\phi;\phi)=1,\qquad
- \left.\partial_\theta w(\theta;\phi)\right|_{\theta=\phi}=-\frac13.
+w(\phi;\phi)=1,\qquad
+\left.\partial_\theta w\right|_{\theta=\phi}
+=\left.\partial_\theta\log g_2^\theta\right|_{\theta=\phi}.
 \]}
 \end{columns}
-\uncover<2->{\[
-\frac{w(\phi+h;\phi)-w(\phi;\phi)}{h}=\frac{(1-h/3)-1}{h}=-\frac13.
-\]}
-\uncover<3->{Apply automatic differentiation to $\widehat\ell(\theta;\phi)=\sum_n\log\widehat L_n(\theta;\phi)$, then set $\theta=\phi$.}
-\src{At the baseline, the correction is 1; parent 2\textquotesingle s selection probability is still .30. The density curve is illustrative.}
+\uncover<2->{The numerator equals the denominator at the baseline. Its slope can still be nonzero.}
+\uncover<3->{\gap Automatic differentiation applies this to $\widehat\ell(\theta;\phi)=\sum_n\log\widehat L_n(\theta;\phi)$.}
+\src{Schematic correction curve. These correction weights equal 1 at the baseline; normalized resampling probabilities generally do not.}
 \end{frame}
 
 \begin{frame}{Discount the corrections inherited from earlier months}
 Follow parent 2's copy. Let $r_n$ be its descendant's measurement-density ratio in month $n$.
-\begin{center}\begin{tikzpicture}[x=1cm,y=1cm,font=\small]
+\begin{center}\begin{tikzpicture}[x=1cm,y=.9cm,font=\small]
 \path[use as bounding box] (0,-.15) rectangle (12.4,3.1);
 \foreach \x/\n in {1.8/1,6.2/2,10.6/3}{
 \node at (\x,2.8){Month \n};
 \node[circle,fill=green!12,draw=green,minimum size=8mm] (m\n) at (\x,2.15){\ifnum\n=1 2\else\phantom{2}\fi};}
-\draw[arr,green] (m1)--(m2) node[midway,above] {simulate, keep parent};
-\draw[arr,green] (m2)--(m3) node[midway,above] {simulate, keep parent};
+\draw[arr,green] (m1)--(m2);
+\draw[arr,green] (m2)--(m3);
 \node at (1.8,1.2){$w_1=\textcolor{blue}{r_1}$};
 \node[visible on=<2->] at (6.2,1.2){$w_2=\textcolor{blue}{r_1^\alpha}\,\textcolor{pink}{r_2}$};
 \node[visible on=<2->] at (10.6,1.2){$w_3=\textcolor{blue}{r_1^{\alpha^2}}\,\textcolor{pink}{r_2^\alpha}\,r_3$};
-\node at (1.8,.25){$\displaystyle r_1=\frac{g_2^\theta}{.12}$};
-\node[visible on=<2->] at (8.4,.25){$w_{\rm new}=w_{\rm parent}^{\alpha}\,r_{\rm new}$,\quad $0\le\alpha\le1$};
+\node[visible on=<2->] at (6.2,.25){For $\alpha<1$, older log corrections receive less weight.};
 \end{tikzpicture}\end{center}
-\uncover<3->{At $\theta=\phi$, every $r_n=1$ and $w_3=1$, but}
-\uncover<3->{\[
-\left.\partial_\theta\log w_3\right|_{\theta=\phi}
-=\textcolor{blue}{-\frac{\alpha^2}{3}}
-+\textcolor{pink}{\alpha\left.\partial_\theta\log r_2\right|_{\theta=\phi}}
-+\left.\partial_\theta\log r_3\right|_{\theta=\phi}.
+\uncover<2->{\[
+w_{\rm new}=w_{\rm parent}^{\alpha}r_{\rm new},\qquad 0\le\alpha\le1.
 \]}
 \uncover<3->{Discounting can reduce variance, at the cost of bias.}
-\src{The incoming weight is $w_{\rm parent}^{\alpha}$. Discounting acts on log-weight corrections, not the simulated state's dependence on $\theta$.}
+\src{At the baseline, all correction weights are 1. Their derivatives still accumulate. Incoming weight is $w_{\rm parent}^\alpha$; the simulated state still depends on $\theta$.}
 \end{frame}
 
 \begin{frame}{Likelihood near the baseline recovery rate}
