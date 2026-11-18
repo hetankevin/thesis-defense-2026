@@ -15,6 +15,8 @@ The PDF Kevin presented is /Users/kevin/Downloads/thesis-defense-overlays.pdf. A
 
 ## Scope and standing corrections
 
+Latest small change: slide 31 uses bars for the schematic normalized weights, with no numerical weight labels. Locally rebuilt and visually checked. GitHub updated; Overleaf sync and server PDF refresh are pending because the Mac is locked. Files named `overleaf` are the preceding verified server builds.
+
 November 18, latest correction: Kevin rejected worked arithmetic as a teaching device. His example: keep slide 31's S/I/R counts and modeled deaths, then an arrow determined by measurement density leading to an unnumbered normalized-weight profile. Numbers may illustrate states, but the audience should not have to follow fabricated numerical calculations. This applies across the deck.
 
 Replaced the density values, numerical correction ratios, calculated likelihood, toy affine density and numerical derivative on slides 31 and 33–38. The figures now explain measurement weighting, fixed-parent reweighting, accumulation across copies, unit values with nonzero derivatives, and discounting. Essential symbolic method equations remain. Slide 30's compartment counts and the state-copy diagrams remain as visual context. The RL section already uses conceptual moving-target and catch-up diagrams; its hinge sketch now labels thresholds u1/u2 instead of arbitrary decimal values. Experimental plots and reported numerical results are unchanged. Independent review confirmed that the operations can be explained by pointing at the figures without arithmetic. Removed the redundant derivative recurrence on slide 38, leaving the timeline and weight update.
