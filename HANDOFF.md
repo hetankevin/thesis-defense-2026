@@ -15,7 +15,9 @@ The PDF Kevin presented is /Users/kevin/Downloads/thesis-defense-overlays.pdf. A
 
 ## Scope and standing corrections
 
-49 main frames, 117 overlay pages, no backup. Kevin reached slide 31 at 45 minutes in rehearsal. We budget 20 more minutes for a 65-minute talk, leaving 25 minutes for questions. See timing.csv. The two themes are actor–critic learning and differentiable filtering, with a short connection to control.
+November 18, compartment example: slides 30–32 follow five illustrative S/I/R populations through prediction, measurement weighting and resampling. Slides 33–34 reuse parents 2 and 3 to show a threshold crossing under a common uniform draw, then the fixed-parent calculation. Counts and densities are teaching examples, not Dhaka fits. Fractional nearby counts illustrate the differentiable simulator approximation. Live source export `Downloads/Thesis_Defense_2026-9` matched the prior source except one trailing space in main.tex, preserved here. Both variants rebuilt and all changed slides/reveals visually inspected. Timing allocation is unchanged.
+
+49 main frames, 118 overlay pages, no backup. Kevin reached slide 31 at 45 minutes in rehearsal. We budget 20 more minutes for a 65-minute talk, leaving 25 minutes for questions. See timing.csv. The two themes are actor–critic learning and differentiable filtering, with a short connection to control.
 
 November 18. Slide 21 presents the published rate with its attribution and per-episode interpretation, taking the same class for critics and their backups. Keep internal review comments out of the presentation. Shortened both technical sections and the control recap.
 

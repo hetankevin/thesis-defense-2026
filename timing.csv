@@ -28,11 +28,11 @@ slide,section,title,seconds
 27,filtering,"Monthly cholera deaths in Dhaka, 1891--1940",75
 28,filtering,The Dhaka cholera model,110
 29,filtering,One month of Bayes filtering,120
-30,filtering,Monte Carlo prediction,60
-31,filtering,Which predictions fit the new death count?,75
-32,filtering,Which particles continue to the next month?,55
-33,filtering,What goes wrong if we change the recovery rate?,75
-34,filtering,Keep the resampling choices fixed,65
+30,filtering,Simulate one month for each possible population,60
+31,filtering,Weight each population by how well it explains the deaths,75
+32,filtering,Resample the populations using their weights,55
+33,filtering,Changing the parameter can change which parent we copy,75
+34,filtering,Reuse the baseline parent choices at the nearby parameter,65
 35,filtering,Reweight each selected parent,75
 36,filtering,Reweighting the likelihood,65
 37,filtering,Differentiating the corrected likelihood,90
