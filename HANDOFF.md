@@ -11,7 +11,11 @@ The surrounding proposal repository is archival and divergent. Commit locally th
 
 ## Scope and standing corrections
 
-51 main frames, no backup slides in either entry point. Title lines: Kevin Tan / Dissertation defense. Main research title unchanged. 60-minute prepared talk in the 90-minute slot: opening 5, actor–critic 25, DMOP 25, control/closing 5. This allocation is not a rehearsal. Actor–critic uses the ICML 2025 paper with Wei Fan and Yuting Wei, including its hybrid extension. DMOP is the other main topic; control is a short connection overview. Keep the original PF-MCTQ illustration.
+49 main frames, 122 overlay pages, no backup. Kevin reached slide 31 at 45 minutes in rehearsal. We budget 20 more minutes for a 65-minute talk, leaving 25 minutes for questions. See timing.csv. The two themes are actor–critic learning and differentiable filtering, with a short connection to control.
+
+**AUTHOR ACTION REQUIRED.** Review Lemma 14(i) of the ICML paper with the coauthors. The published class assumptions do not imply the pointwise optimism step used in its proof. The slides qualify the reported regret rate. A two-stage example, the corrected Tetris metric, and both audience audits are recorded in [the rehearsal review](provenance/REHEARSAL_REVIEW.md).
+
+The current source supersedes the historical change logs below. The first three slides introduce the motivating questions. Slides 15–18 use the actor catching up to a fixed critic. Slides 27–44 move from the raw Dhaka series to the Bayes filter, particle approximation, off-parameter reweighting, score and fitting. Slide 44 reports a separate PyPOMP benchmark. The section ends with the original control diagram and a recap of the two themes. Both entry points compiled locally.
 
 Keep the Dhaka cholera statistical inference application and its figures. Observations are monthly deaths. Never replace Wei Fan with Jianqing Fan. Preserve personal acknowledgments and author order. No notes carrying essential explanations, cute titles, invented results, or new experiments. Number RL algorithms. Use diagrams of actual operations, defined notation, stable reveals, and readable evidence.
 

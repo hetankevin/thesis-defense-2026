@@ -2,7 +2,7 @@
 
 Two topics: actor-critic learning (Tan, Fan, Wei, ICML 2025) and differentiable particle filtering (Tan, Abkemeier, He, Hooker, Ionides). Brief return to particle-based control at the end.
 
-60-minute prepared talk: opening 5, actor-critic 25, filtering 25, control/closing 5. 51 main slides, 10 backups. Timing is an allocation, not a rehearsal.
+49 slides. The pacing sheet uses Kevin’s 45-minute rehearsal checkpoint at slide 31, then budgets 20 minutes for slides 32–49. That gives 65 minutes of presentation and 25 minutes for questions in the 90-minute slot. Only the checkpoint was measured.
 
 ## Build
 

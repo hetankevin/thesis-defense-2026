@@ -1,52 +1,50 @@
 slide,section,title,seconds
-1,opening,Title,30
-2,opening,Learning from sequential data,120
-3,opening,Two topics,150
-4,actor-critic,1. Actor--critic methods,20
-5,actor-critic,Actions affect later rewards,55
-6,actor-critic,Estimating total reward,75
-7,actor-critic,What is an actor--critic?,70
-8,actor-critic,The critic update is a regression problem,90
-9,actor-critic,Updating the policy,70
-10,actor-critic,Exploring rarely tried actions,65
-11,actor-critic,How much reward do we lose while learning?,60
-12,actor-critic,The regression response depends on past critics,70
-13,actor-critic,How complicated is a sum of critics?,75
-14,actor-critic,Can we update the critic less often?,60
-15,actor-critic,When does the old critic stop being optimistic?,85
-16,actor-critic,Use an optimality target instead,95
-17,actor-critic,Optimism holds as the actor changes,60
-18,actor-critic,The actor must track the greedy policy,80
-19,actor-critic,Alg. 2: update the critic when its regression error grows,75
-20,actor-critic,Rare critic changes limit the cost of resets,95
-21,actor-critic,Regret guarantee,90
-22,actor-critic,Online experiment: Tetris,60
-23,actor-critic,When can Alg. 2 learn without optimism?,70
-24,actor-critic,AntMaze: a neural implementation comparison,60
-25,actor-critic,Actor--critic: optimality targets and policy resets,20
-26,filtering,2. Differentiable particle filters,20
-27,filtering,Fitting the Dhaka cholera model,60
-28,filtering,A partially observed model,90
-29,filtering,Likelihood requires averaging over hidden states,95
-30,filtering,Particle filtering: simulate candidate states,50
-31,filtering,Particle filtering: weight by the observation,60
-32,filtering,Particle filtering: resample before continuing,70
-33,filtering,Why not differentiate the particle filter directly?,85
-34,filtering,"Run a baseline filter, then keep its ancestors fixed",90
-35,filtering,Correct the weights for the parameter change,70
-36,filtering,Why the weight correction works,50
-37,filtering,Unit correction weights can have nonzero derivatives,90
-38,filtering,Differentiate the corrected likelihood estimate,80
-39,filtering,Discounting reduces the weight of earlier corrections,80
-40,filtering,Error in the score estimate,105
-41,filtering,State mixing alone is not enough for this bound,95
-42,filtering,Discounting changes local likelihood approximations,70
-43,filtering,How does discounting change the estimated score?,70
-44,filtering,Fitting the model,75
-45,filtering,Likelihood searches for the Dhaka cholera model,70
-46,filtering,Particle filtering: fixed ancestry and weight corrections,25
-47,closing,Braking requires velocity information,60
-48,closing,Full belief planning is expensive,100
-49,closing,Connecting inference to control,90
-50,closing,Two contributions,30
-51,closing,Thank you everyone!,20
+1,opening,Title,35
+2,opening,Learning from sequential data,150
+3,opening,Two questions,185
+4,actor-critic,1. Actor--critic methods,25
+5,actor-critic,Actions affect later rewards,70
+6,actor-critic,Estimating total reward,95
+7,actor-critic,What is an actor--critic?,85
+8,actor-critic,The critic update is a regression problem,110
+9,actor-critic,How does the actor use the critic?,85
+10,actor-critic,Exploring rarely tried actions,80
+11,actor-critic,How much reward do we lose while learning?,75
+12,actor-critic,The regression response depends on past critics,85
+13,actor-critic,How complicated is a sum of critics?,95
+14,actor-critic,Can we update the critic less often?,75
+15,actor-critic,An improving actor can overtake the old critic,105
+16,actor-critic,Fit the critic to the best next action,120
+17,actor-critic,One upper estimate can cover every actor,75
+18,actor-critic,Give the actor time to catch up,100
+19,actor-critic,Alg. 2: update the critic when its regression error grows,95
+20,actor-critic,Rare critic changes limit the cost of resets,120
+21,actor-critic,What regret rate does the paper report?,110
+22,actor-critic,Online experiment: Tetris,75
+23,actor-critic,When can Alg. 2 learn without optimism?,85
+24,actor-critic,AntMaze: a neural implementation comparison,75
+25,actor-critic,Actor--critic: optimality targets and policy resets,25
+26,filtering,2. Differentiable particle filters,25
+27,filtering,"Monthly cholera deaths in Dhaka, 1891--1940",75
+28,filtering,What does one monthly count tell us?,110
+29,filtering,One month of Bayes filtering,120
+30,filtering,Monte Carlo prediction,60
+31,filtering,Which predictions fit the new death count?,75
+32,filtering,Which particles continue to the next month?,55
+33,filtering,What goes wrong if we change the recovery rate?,75
+34,filtering,Replay the same family tree,65
+35,filtering,Reweight each selected parent,75
+36,filtering,A likelihood curve through the baseline,65
+37,filtering,Take the slope of that curve,90
+38,filtering,How far back should a correction count?,65
+39,filtering,How closely do the curves follow a particle-filter estimate?,65
+40,filtering,How does discounting change the estimated score?,85
+41,filtering,What can we guarantee about the slope?,90
+42,filtering,Fitting the model,50
+43,filtering,Likelihood searches for the Dhaka cholera model,65
+44,filtering,Running the Dhaka particle filter on a GPU,55
+45,closing,Braking requires velocity information,45
+46,closing,Full belief planning is expensive,75
+47,closing,Choosing an action from a particle estimate of the state,75
+48,closing,What connects these parts of my dissertation?,90
+49,closing,Thank you everyone!,15

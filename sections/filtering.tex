@@ -1,5 +1,5 @@
-
 \renewcommand{\stage}{2. Estimating a partially observed model}
+
 \begin{frame}{2. Differentiable particle filters}
 {\Large Automatic Differentiation for Inference\\on Partially Observed Markov Process Models}\gap
 Joint work: Kevin Tan, A. J. Abkemeier, Kunyang He,\\Giles Hooker, Edward L. Ionides.
@@ -8,84 +8,72 @@ Joint work: Kevin Tan, A. J. Abkemeier, Kunyang He,\\Giles Hooker, Edward L. Ion
 How do we estimate parameters from a simulator and partial observations?
 \end{frame}
 
-\begin{frame}{Fitting the Dhaka cholera model}
-\begin{center}\includegraphics[width=.97\linewidth,height=3.1cm,keepaspectratio]{cholera.png}\end{center}
-\begin{center}\begin{tikzpicture}[x=1cm,y=1cm]
-\path[use as bounding box] (0,0) rectangle (12,1.6);
-\node[lab] at (1.5,1.3) {$S$: susceptible};\node[lab] at (4.5,1.3) {$I$: infected};
-\node[lab] at (9,1.3) {$R_1,R_2,R_3$: stages of immunity};
-\node[lab] at (1.5,.65) {$P$: population};\node[lab] at (4.5,.65) {$M$: deaths};
-\node[lab,text=blue,visible on=<2->] (y) at (2.5,-.1) {Observed monthly deaths};
-\node[lab,visible on=<2->] (fit) at (9,-.1) {Estimate rates, e.g. recovery $\gamma$};
-\draw[arr,visible on=<2->] (y)--node[above,lab]{likelihood}(fit);
-\end{tikzpicture}\end{center}
-\src{King et al. (2008). Infection $\lambda(t)$; recovery $\gamma$; waning immunity $k\epsilon$ ($k=3$); cholera deaths $m$; other deaths $\delta$; population change $dP$.}
+\begin{frame}{Monthly cholera deaths in Dhaka, 1891--1940}
+\begin{center}\begin{tikzpicture}
+\begin{axis}[width=.88\textwidth,height=4.3cm,xlabel=Year,ylabel={Deaths per month},xmin=1890,xmax=1942,xtick={1891,1900,1910,1920,1930,1940},scaled x ticks=false,xticklabel style={/pgf/number format/1000 sep={}},ymin=0,axis lines=left, tick label style={font=\small},legend style={draw=none,font=\small},legend pos=north east]
+\addplot[blue,thick] table[x=time,y=deaths,col sep=comma]{figures/dhaka-monthly.csv};
+\addlegendentry{Recorded deaths}
+\end{axis}\end{tikzpicture}\end{center}
+\uncover<2->{The records give a monthly death count. How much can they tell us about the unobserved infections and recoveries?}
+\src{Dhaka district, now Bangladesh. King et al. (2008), data distributed with PyPOMP.}
 \end{frame}
 
-\begin{frame}{A partially observed model}
-\begin{center}\begin{tikzpicture}[x=1cm,y=1cm]
-\path[use as bounding box] (0,0) rectangle (12,4.5);
-\foreach \x/\lab/\name in {2/{n-1}/xm,6/n/xn,10/{n+1}/xp}{\node[obj] (\name) at (\x,3.4) {$X_{\lab}$};}
-\draw[arr] (xm)--node[above,lab]{$F_\theta$}(xn);\draw[arr] (xn)--(xp);
-\node[obj] (yn) at (6,1.3) {$Y_n$};\draw[arr] (xn)--node[right,lab]{$g_\theta$}(yn);
-\node[lab] at (6,4.25) {Hidden state};
-\node[lab,anchor=west] at (7,1.3) {Observation at time $n$};
-\node[lab] at (6,.5) {Dhaka: monthly deaths};
-\node[lab] at (2,2.1) {$U_n$: simulator draws};
-\draw[arr] (2.5,2.4)--(4.5,3.35);
-\end{tikzpicture}\end{center}
-\pause
-\[X_n=F_\theta(X_{n-1},U_n),\qquad Y_n\mid X_n\sim g_\theta(\cdot\mid X_n).\]
-\pause
-$\theta$: unknown parameters. Fitting needs only draws from $F_\theta$ and evaluations of $g_\theta$.
+\begin{frame}{What does one monthly count tell us?}
+\begin{center}\includegraphics[width=.96\linewidth,height=3.25cm,keepaspectratio]{cholera.png}\end{center}
+\textcolor{blue}{Hidden state $X_n$}\quad The model tracks infections, immunity and deaths accumulated over month $n$.
+\pause\gap
+\textcolor{green}{Observation $y_n$}\quad The recorded death count, measured with error.
+\pause\gap
+The arrow from $I$ to $R_1$ is recovery. Which recovery rate $\gamma$ makes the 600 counts most likely?
+\src{Dhaka model, King et al. (2008) and Tan et al., Section 5. $P$: population, $S$: susceptible, $I$: infected, $R_1$--$R_3$: stages of immunity, $M$: modeled deaths.}
 \end{frame}
 
-\begin{frame}{Likelihood requires averaging over hidden states}
-\[p_\theta(y_{1:N})=\prod_{n=1}^N p_\theta(y_n\mid y_{1:n-1}),\qquad N:\text{ observation count}.\]
-\begin{center}\begin{tikzpicture}[x=1cm,y=1cm]
-\path[use as bounding box] (0,0) rectangle (12,3.2);
-\node[obj] (hist) at (1.3,2.4) {$y_{1:n-1}$};
-\foreach \y in {.4,1,1.6,2.2,2.8}{\fill[blue] (5,\y) circle(3pt);\draw[arr,blue!45] (hist.east)--(4.8,\y);\draw[arr,green!60] (5.2,\y)--(8,1.6);}
-\node at (9.8,1.6) {$p_\theta(y_n\mid y_{1:n-1})$};
-\node[lab] at (5,3.2) {Possible $X_n$};
-\node[lab] at (7.5,.3) {Evaluate $g_\theta(y_n\mid X_n)$};
-\end{tikzpicture}\end{center}
+\begin{frame}{One month of Bayes filtering}
+Last month's filter $b_{n-1}$ describes the previous state. After one month of dynamics and the new count, the current state has distribution $b_n$:
+\[
+ b_n(dx)=\frac{1}{L_n}\,
+ \underbrace{\textcolor{green}{g_\theta(y_n\mid x)}}_{\text{measurement}}
+ \int
+ \underbrace{\textcolor{blue}{P_\theta(dx\mid z)}}_{\text{one month of dynamics}}\,
+ \underbrace{\textcolor{pink}{b_{n-1}(dz)}}_{\text{last month's filter}} .
+\]
 \pause
-\[p_\theta(y_n\mid y_{1:n-1})=\int g_\theta(y_n\mid x)\,p_\theta(dx\mid y_{1:n-1}).\]
-\pause Approximate the integral with $J$ particles.
+Average the process model over last month's possible states $z$. Then weight each possible new state $x$ by how well it explains this month's count.
+\pause\gap
+$L_n=p_\theta(y_n\mid y_{1:n-1})$ is the predictive density of this month's count at parameter $\theta$. The likelihood is $\prod_n L_n$.
 \end{frame}
 
-\begin{frame}{Particle filtering: simulate candidate states}
+\begin{frame}{Monte Carlo prediction}
 \begin{center}\begin{tikzpicture}[x=1cm,y=1cm]
 \path[use as bounding box] (0,0) rectangle (12,4.3);
 \foreach \i/\y/\z in {1/.8/1.35,2/1.5/.65,3/2.2/2.85,4/2.9/2.15,5/3.6/3.55}{
 \fill[blue] (2,\y) circle(3pt);\fill[blue] (9,\z) circle(3pt);
 \draw[arr,blue!55] (2.15,\y)--(8.85,\z);
 \node[left,lab] at (1.8,\y) {$X_{n-1}^{\i}$};\node[right,lab] at (9.2,\z) {$\widetilde X_n^{\i}$};}
-\node[lab] at (2,4.1) {Previous states};\node[lab] at (9,4.1) {Predicted states};
-\node[fill=white] at (5.5,2.1) {$F_\theta(\cdot,U_n^j)$};
+\node[lab] at (2,4.1) {Draws from last month's filter};\node[lab] at (9,4.1) {Predicted states};
+\node[fill=white] at (5.5,2.1) {simulate one month};
 \end{tikzpicture}\end{center}
-\pause\[\widetilde X_n^j=F_\theta(X_{n-1}^j,U_n^j),\qquad j=1,\ldots,J.\]
-\pause Predicted particles approximate $p_\theta(x_n\mid y_{1:n-1})$.
+\pause\[\widetilde X_n^j\sim P_\theta(\cdot\mid X_{n-1}^j),\qquad j=1,\ldots,J.\]
+\pause $J$ particles give a Monte Carlo average over last month and the process model.
 \src{Each particle is one candidate state.}
 \end{frame}
 
-\begin{frame}{Particle filtering: weight by the observation}
+\begin{frame}{Which predictions fit the new death count?}
 \begin{center}\begin{tikzpicture}[x=1cm,y=1cm]
 \path[use as bounding box] (0,0) rectangle (12,3.5);
-\node[obj] (y) at (6,3) {$y_n$};\node[lab,right=3mm of y] {New observation};
+\node[obj] (y) at (6,3) {$y_n$};\node[lab,right=3mm of y] {Monthly death count};
 \foreach \x/\j/\r in {1/1/.06,3.5/2/.13,6/3/.28,8.5/4/.19,11/5/.07}{
 \fill[blue] (\x,1.2) circle(\r);\draw[arr,black!35] (y.south)--(\x,1.6);
 \node[lab] at (\x,.6) {$\widetilde X_n^{\j}$};}
 \end{tikzpicture}\end{center}
 \[g_n^j=g_\theta(y_n\mid\widetilde X_n^j),\qquad\overline g_n^j=\frac{g_n^j}{\sum_m g_n^m}.\]
 \pause
-\[\underbrace{\sum_j\overline g_n^j\delta_{\widetilde X_n^j}}_{\text{weighted state distribution}}\approx p_\theta(dx_n\mid y_{1:n}),\qquad
+\[\underbrace{\sum_j\overline g_n^j\delta_{\widetilde X_n^j}}_{\text{updated state distribution}}\approx b_n,\qquad
 \underbrace{\widehat L_n=\frac1J\sum_jg_n^j}_{\text{likelihood increment}}.\]
 \src{Circle size gives observation weight. $\delta_x$ is a point mass at $x$.}
 \end{frame}
 
-\begin{frame}{Particle filtering: resample before continuing}
+\begin{frame}{Which particles continue to the next month?}
 \begin{center}\begin{tikzpicture}[x=1cm,y=1cm]
 \path[use as bounding box] (0,0) rectangle (12,4.5);
 \foreach \i/\r in {1/.06,2/.13,3/.28,4/.19,5/.07}{
@@ -97,193 +85,122 @@ $\theta$: unknown parameters. Fitting needs only draws from $F_\theta$ and evalu
 \node[fill=white,lab] at (5.5,2.4) {$A_n^{1:5}=(2,3,3,3,4)$};
 \end{tikzpicture}\end{center}
 \pause\[A_n^j\sim\operatorname{Cat}(\overline g_n^{1:J}),\qquad X_n^j=\widetilde X_n^{A_n^j}.\]
-\pause $A_n^j$: ancestor of particle $j$. Higher weights give more copies on average.
+\pause $A_n^j$ records the parent chosen for copy $j$. Repeat for the next month.
 \end{frame}
 
-\begin{frame}{Why not differentiate the particle filter directly?}
-Goal: the score $\nabla_\theta\ell(\theta)$, where $\ell(\theta)=\log p_\theta(y_{1:N})$.
-\begin{center}\begin{tikzpicture}[x=1cm,y=1cm]
-\path[use as bounding box] (0,0) rectangle (12,4.6);
-\node (th) at (.7,3.6) {$\theta$};\node (x) at (3.3,3.6) {$\widetilde X_n$};
-\node (w) at (6,3.6) {$\overline g_n$};\node (a) at (9,3.6) {$A_n$};\node (ell) at (11.3,3.6) {$\widehat\ell$};
-\draw[arr] (th)--node[above,lab]{simulate}(x);\draw[arr] (x)--node[above,lab]{weight}(w);
-\draw[arr,pink] (w)--node[above,lab]{resample}(a);\draw[arr] (a)--(ell);
-\begin{scope}[visible on=<2->]
-\draw[fill=blue!15] (1.2,1.7) rectangle (3.3,2.2);\draw[fill=green!15] (3.3,1.7) rectangle (6,2.2);\draw[fill=pink!15] (6,1.7) rectangle (10.8,2.2);
-\node[lab] at (2.2,1.95) {ancestor 1};\node[lab] at (4.6,1.95) {ancestor 2};\node[lab] at (8.4,1.95) {ancestor 3};
-\draw[very thick] (5.7,1.4)--(5.7,2.5);\node[below,lab] at (5.7,1.3) {fixed draw $u\sim\operatorname{Unif}(0,1)$};
-\draw[<->,pink,thick] (5.5,2.7)--(6.6,2.7);\node[above,lab] at (6.05,2.7) {boundary moves with $\theta$};
-\end{scope}
+\begin{frame}{What goes wrong if we change the recovery rate?}
+To fit $\theta$, we want the slope of the log likelihood. First fix the random seed $\omega$, so both runs use the same random numbers.
+\begin{center}\begin{tikzpicture}[x=1cm,y=.85cm]
+\path[use as bounding box] (-.5,-.7) rectangle (12.7,3.65);
+\foreach \y/\split/\name/\which/\vis in {2.25/6.8/{Baseline}/2/1,.95/5.5/{Nearby}/3/2}{
+\begin{scope}[visible on=<\vis->]
+\node[left,lab] at (1.3,\y){\name};
+\fill[blue!18] (1.4,\y-.32) rectangle (3.6,\y+.32);
+\fill[green!22] (3.6,\y-.32) rectangle (\split,\y+.32);
+\fill[pink!22] (\split,\y-.32) rectangle (9.25,\y+.32);
+\node at (2.5,\y){1};\node at (4.3,\y){2};\node at (8.2,\y){3};
+\node[right,lab] at (9.35,\y){select parent \which};
+\end{scope}}
+\draw[thick,dashed] (6.1,.5)--(6.1,2.85) node[above,lab]{same uniform draw};
+\node[lab] at (5.3,-.1){Interval width = probability of choosing that parent};
 \end{tikzpicture}\end{center}
-\uncover<3->{A change of ancestor can make the likelihood estimate jump.\\Fixing the ancestor omits the change in its selection probability.}
+\uncover<3->{The same random draw can select a different parent. The estimated likelihood can jump.\\Fixing the ancestor omits the change in its selection probability.}
 \end{frame}
 
-\begin{frame}{Run a baseline filter, then keep its ancestors fixed}
-$\phi$: baseline parameter. $\theta$: parameter we differentiate.
-\begin{center}\begin{tikzpicture}[x=1cm,y=1cm]
-\path[use as bounding box] (0,0) rectangle (12,4.1);
-\node[lab,text=blue] at (1,3.7) {Filter at $\phi$};
-\node[lab,text=pink,visible on=<2->] at (1,1.3) {Recompute at $\theta$};
-\foreach \x/\lab in {3/0,6/1,9/2}{
-\node[obj] (b\lab) at (\x,3.4) {$X_{\lab}^{\phi}$};
-\node[obj,visible on=<2->] (t\lab) at (\x,1) {$X_{\lab}^{\theta}$};
-\draw[dashed,black!35,visible on=<2->] (b\lab)--(t\lab);}
-\draw[arr,blue] (b0)--node[above,lab]{$U_1,A_1$}(b1);\draw[arr,blue] (b1)--node[above,lab]{$U_2,A_2$}(b2);
-\draw[arr,pink,visible on=<2->] (t0)--node[above,lab]{$U_1,A_1$}(t1);\draw[arr,pink,visible on=<2->] (t1)--node[above,lab]{$U_2,A_2$}(t2);
-\node[lab,fill=white,inner sep=3pt,visible on=<2->] at (6,2.2) {Same draws and ancestor indices};
+\begin{frame}{Replay the same family tree}
+Run the filter once at the baseline parameter $\phi$. Save its parent choices.
+\begin{center}\begin{tikzpicture}[x=.84cm,y=.78cm,font=\small]
+\path[use as bounding box] (-.3,-.5) rectangle (14.5,3.65);
+\foreach \offset/\col/\txt/\vis/\warp in {0/blue/{Baseline $\phi$}/1/0,7.2/pink/{Nearby $\theta$}/2/.27}{
+\begin{scope}[xshift=\offset cm,visible on=<\vis->]
+\node[text=\col] at (2.6,3.45){\txt};
+\foreach \x/\t in {0/0,2.5/1,5/2}{\node at (\x,-.22){month \t};\foreach \y in {.65,1.65,2.65}{\fill[\col] (\x,{\y+\warp*cos(90*\y+50*\x)}) circle(2.5pt);}}
+\foreach \x/\y/\z in {0/.65/.65,0/1.65/1.65,0/1.65/2.65,2.5/.65/.65,2.5/2.65/1.65,2.5/2.65/2.65}
+{\draw[thick,\col] (\x+.06,{\y+\warp*cos(90*\y+50*\x)})--(\x+2.44,{\z+\warp*cos(90*\z+50*(\x+2.5))});}
+\end{scope}}
 \end{tikzpicture}\end{center}
-\uncover<2->{\[\widetilde X_n^{\theta,j}=F_\theta(X_{n-1}^{\theta,j},U_n^j),\qquad X_n^{\theta,j}=\widetilde X_n^{\theta,A_n^j}.\]}
-\uncover<3->{A differentiable simulator and measurement density now give differentiable paths.}
+\uncover<2->{Replay the initialization and process draws from $\omega$, and copy the same parents.
+The links stay fixed. The simulated states change with $\theta$.}
 \end{frame}
 
-\begin{frame}{Correct the weights for the parameter change}
-$g_n^{\theta,j}=g_\theta(y_n\mid\widetilde X_n^{\theta,j})$; $w_{n-1}^j$: previous correction weight.\\$\alpha<1$ discounts earlier corrections.
-\begin{center}\begin{tikzpicture}[x=1cm,y=1cm]
-\path[use as bounding box] (0,0) rectangle (12,2.7);
-\node (prev) at (1.5,2) {$w_{n-1}^j$};
-\node (disc) at (5.3,2) {$\widetilde w_n^j=(w_{n-1}^j)^\alpha$};
-\node (sel) at (10,2) {$\widetilde w_n^{A_n^j}$};
-\draw[arr] (prev)--node[above,lab]{discount}(disc);
-\draw[arr,visible on=<2->] (disc)--node[above,lab]{copy ancestor}(sel);
-\node[lab] at (5.3,.8) {$0\leq\alpha\leq1$};
-\node[lab,visible on=<2->] at (10,.8) {Ancestor chosen at $\phi$};
-\end{tikzpicture}\end{center}
-\uncover<3->{\[
-w_n^j=\widetilde w_n^{A_n^j}\,
-\underbrace{\frac{g_n^{\theta,A_n^j}}{\underbrace{g_n^{\phi,A_n^j}}_{\text{held fixed}}}}_{\text{selection-probability correction}}.
-\]}
-\uncover<3->{$w_0^j=1$. At $\theta=\phi$, $w_n^j=1$ for all $n,j$.}
-\end{frame}
-
-
-\begin{frame}{Why the weight correction works}
-First observation: $w_0^j=1$. Condition on predicted particles.
-\begin{center}\begin{tikzpicture}[x=1cm,y=1cm]
-\path[use as bounding box] (0,0) rectangle (12,2.3);
-\node[lab,text=blue] at (2,2) {Select at $\phi$};\node[lab,text=pink] at (6,2) {Correct to $\theta$};\node[lab] at (10,2) {Multiply};
-\node at (2,1) {$\displaystyle\frac{g^{\phi,j}}{\sum_m g^{\phi,m}}$};
-\node at (6,1) {$\displaystyle\frac{g^{\theta,j}}{g^{\phi,j}}$};
-\node[visible on=<2->] at (10,1) {$\displaystyle\frac{g^{\theta,j}}{\sum_m g^{\phi,m}}$};
-\node at (4,1) {$\times$};\draw[arr,visible on=<2->] (7.4,1)--(8.5,1);
-\end{tikzpicture}\end{center}
-\uncover<2->{\[
-\E_{A\sim\overline g^\phi}\!\left[\frac{g^{\theta,A}}{g^{\phi,A}}\right]
-=\frac{\sum_jg^{\theta,j}}{\sum_jg^{\phi,j}}.
-\]}
-\uncover<3->{\[
-\underbrace{\frac1J\sum_jg^{\phi,j}}_{L^\phi:\ \text{baseline increment}}
-\ \times\ \frac{\sum_jg^{\theta,j}}{\sum_jg^{\phi,j}}
-=\underbrace{\frac1J\sum_jg^{\theta,j}}_{\text{increment at }\theta}.
-\]}
-\src{Later increments also carry previous corrections.}
-\end{frame}
-
-\begin{frame}{Unit correction weights can have nonzero derivatives}
-\begin{center}\begin{tikzpicture}[x=1cm,y=1cm]
-\path[use as bounding box] (0,0) rectangle (12,4.4);
-\node[obj] (th) at (1,3.1) {$\theta$};\node[obj] (g) at (4.3,3.1) {$g^\theta$};
-\node[obj] (phi) at (1,1) {$\phi$};\node[obj] (gp) at (4.3,1) {$g^\phi$};
-\node[obj] (ratio) at (8.7,2.1) {$w(\theta)=g^\theta/g^\phi$};
-\draw[arr,blue] (th)--(g);\draw[arr,blue] (g)--(ratio);
-\draw[arr,black!45] (phi)--(gp);\draw[arr,black!45] (gp)--(ratio);
-\node[lab,text=blue] at (4.3,3.9) {Differentiate numerator};
-\node[lab] at (4.3,.3) {Denominator fixed};
-\node[lab,visible on=<2->] at (9.2,3.6) {Evaluate at $\theta=\phi$};
-\draw[arr,visible on=<2->] (ratio)--(9.2,3.1);
-\end{tikzpicture}\end{center}
-\uncover<2->{\[
-\underbrace{w(\phi)=1}_{\text{unit correction weight}},\qquad
-\underbrace{\nabla_\theta w(\theta)|_{\theta=\phi}
-=\frac{\nabla_\theta g^\theta|_{\theta=\phi}}{g^\phi}}_{\text{generally nonzero}}.
-\]}
-
-\end{frame}
-
-\begin{frame}{Differentiate the corrected likelihood estimate}
-Baseline increment: $L_n^\phi=J^{-1}\sum_jg_n^{\phi,j}$.
-\begin{center}\begin{tikzpicture}[x=1cm,y=1cm]
-\path[use as bounding box] (0,0) rectangle (12,2.8);
-\node at (2,2) {$L_n^\phi$};\node at (5.6,2) {$\displaystyle\frac{\sum_jw_n^j}{\sum_j\widetilde w_n^j}$};
-\node at (9.8,2) {$\widehat L_n^\alpha(\theta;\phi)$};
-\node at (3.6,2) {$\times$};\draw[arr] (7.1,2)--(8.2,2);
-\node[lab] at (2,1) {Fixed baseline};\node[lab] at (5.6,1) {Correction divided by\\incoming total weight};\node[lab] at (9.8,1) {After resampling};
-\end{tikzpicture}\end{center}
-\uncover<2->{\[
-\widehat L_1^\alpha,\ldots,\widehat L_N^\alpha
-\quad\xrightarrow{\ \log\text{ and sum}\ }\quad
-\sum_{n=1}^N\log\widehat L_n^\alpha(\theta;\phi).
-\]}
-\uncover<3->{\[
-\widehat S_{J,\alpha}(\phi)=
-\left.\nabla_\theta\sum_{n=1}^N\log\widehat L_n^\alpha(\theta;\phi)\right|_{\theta=\phi}.
-\]}
-\src{DMOP: Differentiated Measurement Off-Parameter particle filter.}
-\end{frame}
-
-\begin{frame}{Discounting reduces the weight of earlier corrections}
-\[\log w_n^j=\alpha\log w_{n-1}^{A_n^j}+\log g_n^{\theta,A_n^j}-\log g_n^{\phi,A_n^j}.\]
-\begin{center}\begin{tikzpicture}[x=1cm,y=1cm]
-\path[use as bounding box] (0,0) rectangle (12,3.6);
-\draw[arr] (.5,2)--(11.7,2) node[right,lab]{time};
-\foreach \x/\lab/\age in {1/{\alpha^3}/{n-3},4/{\alpha^2}/{n-2},7/\alpha/{n-1},10/1/n}{
-\node at (\x,2.55) {$\lab$};\fill[blue] (\x,2) circle(2pt);\node[below,lab] at (\x,1.4) {$\age$};}
-\node[lab] at (6,3) {Contribution of each log weight ratio along one lineage};
-\begin{scope}[visible on=<2->]
-\node at (3,.5) {$\alpha=1$: full history};\node at (9,.5) {$\alpha<1$: earlier ratios downweighted};
-\end{scope}
-\end{tikzpicture}\end{center}
-\uncover<3->{Discounting can reduce variance, but introduces score bias.}
-\src{Only correction weights are discounted.}
-\end{frame}
-
-\begin{frame}{Error in the score estimate}
-$S=\nabla_\theta\ell(\theta)$. For fixed observations and $\alpha<1$, averaging over filter draws gives
+\begin{frame}{Reweight each selected parent}
+A parent was selected using its measurement likelihood at $\phi$. Under $\theta$, the same parent may explain the observation better or worse.
 \[
-\E\|\widehat S_{J,\alpha}-S\|^2\lesssim
-\underbrace{\left[\frac{N(1+\log J)^2}{J}+\frac{N^2}{J^2}\right]H_N(\alpha)^2}_{\text{particle approximation}}
-+\underbrace{N^2(1-\alpha)^2}_{\text{discount bias}}.
+\underbrace{\frac{g^\phi_j}{\sum_k g^\phi_k}}_{\text{chance of selecting parent }j}
+\quad\times\quad
+\underbrace{\frac{g^\theta_j}{g^\phi_j}}_{\text{weight correction}}
+=\frac{g^\theta_j}{\sum_k g^\phi_k}.
 \]
-\begin{center}\begin{tikzpicture}[x=1cm,y=1cm]
-\path[use as bounding box] (0,0) rectangle (12,2.7);
-\node at (3,2) {$J\uparrow$};\node at (9,2) {$\alpha\uparrow1$};
-\draw[arr,blue,visible on=<2->] (3,1.6)--(3,.9);\draw[arr,pink,visible on=<2->] (9,1.6)--(9,.9);
-\node[lab,visible on=<2->] at (3,.5) {Particle-error bound decreases\\discount-bias bound unchanged};
-\node[lab,visible on=<2->] at (9,.5) {Discount-bias bound decreases\\retained history increases};
-\end{tikzpicture}\end{center}
-$H_N(\alpha)=\sum_{r=0}^{N-1}\alpha^r$: retained history factor.
-\src{Model constants suppressed. Conditions on the next slide.}
+\pause
+In month one, average over the parent draw conditional on these candidates. Multiplying by the baseline increment $(\sum_k g^\phi_k)/J$ recovers $(\sum_j g^\theta_j)/J$ in expectation.
+\src{$g^\theta_j$ is the measurement density for this count at parent $j$'s predicted state under $\theta$. The denominator $g^\phi_j$ stays fixed.}
 \end{frame}
 
-\begin{frame}{State mixing alone is not enough for this bound}
-Bounded positive densities; smooth simulator and measurement operations.
-\begin{center}\begin{tikzpicture}[x=1cm,y=1cm]
-\path[use as bounding box] (0,0) rectangle (12,4.3);
-\node[anchor=west,lab] at (0,3.9) {Either condition suffices:};
-\node (x) at (1,2.9) {$x_m$};\node (xn) at (5,2.9) {$X_n^\theta$};\node (g) at (9.6,2.9) {$\log g_\theta(y_n\mid X_n^\theta)$};
-\draw[arr] (x)--node[above,lab]{fixed draws}(xn);\draw[arr] (xn)--(g);
-\node[lab] at (6,2.1) {Sensitivity to $x_m$ decays as $C\kappa^{n-m}$, $0<\kappa<1$};
-\begin{scope}[visible on=<2->]
-\node at (1,1) {or};\node (j1) at (4,1) {$(X_n^\theta,\partial_\theta X_n^\theta)$};
-\node (j2) at (10,1) {$(X_{n+1}^\theta,\partial_\theta X_{n+1}^\theta)$};
-\draw[arr] (j1)--node[above,lab]{joint mixing}(j2);
-\end{scope}
-\end{tikzpicture}\end{center}
-\uncover<3->{At $\alpha=1$ and fixed $N$: mean squared score error $\to0$ as $J\to\infty$.}
-\src{Multinomial resampling, $J\geq2$, $\theta=\phi$. Uniform local derivative bounds.}
+\begin{frame}{A likelihood curve through the baseline}
+Follow a selected lineage. Start its weight at 1 and multiply by the correction at each month.
+\[
+w_{\rm new}=w_{\rm parent}\,\frac{g^\theta_{\rm parent}}{g^\phi_{\rm parent}} .
+\]
+\pause
+If parents $(2,3,3,3,4)$ were drawn, parent 3 contributes three copies to the numerator.
+\[
+\widehat L_n(\theta;\phi)=\widehat L_n(\phi)\,
+\frac{\text{total corrected weight after resampling}}{\text{total weight before the measurement}} .
+\]
+\pause\gap
+Multiplying the increments gives an off-parameter likelihood estimate. At $\theta=\phi$ all ratios equal one, so this curve passes through the original filter estimate.
+\src{Measurement Off-Parameter (MOP), full corrections ($\alpha=1$). Positive, differentiable measurement densities and a pathwise-differentiable simulator.}
 \end{frame}
 
-\begin{frame}{Discounting changes local likelihood approximations}
-Averaging before resampling avoids ancestor-draw noise in this increment.
+\begin{frame}{Take the slope of that curve}
+\begin{columns}[c,onlytextwidth]
+\column{.48\textwidth}\begin{tikzpicture}[x=.80cm,y=.81cm]
+\path[use as bounding box] (-.3,-.5) rectangle (6.7,4.6);
+\draw[arr] (.4,.4)--(6,.4) node[above,lab]{$\theta$};
+\draw[arr] (.4,.4)--(.4,4.05) node[above right,lab]{corrected log likelihood};
+\draw[blue,very thick,domain=.8:5.65,samples=35] plot (\x,{2.24+.6*(\x-3.2)+.075*(\x-3.2)^2});
+\fill[blue] (3.20,2.24) circle (2.8pt);
+\draw[black!45,dashed] (3.2,.43)--(3.2,2.24);\node[below] at (3.2,.40) {$\phi$};
+\draw[pink,dashed,thick,visible on=<2|handout:0>] (2.6,{2.24-.6*.70125})--(4.95,{2.24+1.75*.70125});
+\draw[green,very thick,visible on=<3->] (2.2,1.64)--(4.8,3.20) node[right,lab]{tangent};
+\fill[pink,visible on=<2|handout:0>] (4.55,3.18669) circle(2.8pt);
+\draw[black!45,dashed,visible on=<2|handout:0>] (4.55,.43)--(4.55,3.18669);\node[below,visible on=<2|handout:0>] at (4.55,.40) {$\phi+h$};
+\end{tikzpicture}
+\column{.49\textwidth}
+Vary one parameter, keeping the baseline run fixed. Write $\widehat\ell(\theta;\phi)$ for its corrected log likelihood.
+\uncover<2->{\gap A finite difference uses two nearby points.}\uncover<3->{\gap We compute the slope at $\phi$ by automatic differentiation. It estimates that coordinate of the log-likelihood gradient.}
+\end{columns}
+\uncover<3->{\[
+\lim_{h\to0}\frac{\widehat\ell(\phi+h;\phi)-\widehat\ell(\phi;\phi)}{h}
+=\left.\partial_\theta\widehat\ell(\theta;\phi)\right|_{\theta=\phi}.
+\]}
+\src{Differentiated Measurement Off-Parameter (DMOP). At the baseline a weight ratio equals one, but its denominator is fixed as its numerator varies.}
+\end{frame}
+
+\begin{frame}{How far back should a correction count?}
+For discount $\alpha\in[0,1]$, use $w_{\rm new}=w_{\rm parent}^{\alpha}\,(g^\theta_{\rm parent}/g^\phi_{\rm parent})$.
+\begin{center}\begin{tikzpicture}[x=1cm,y=.85cm]
+\draw[arr] (.3,.6)--(11.8,.6) node[right,lab]{month};
+\foreach \x/\t/\a/\v in {1.4/{n-3}/{\alpha^3}/.65,4.1/{n-2}/{\alpha^2}/1,6.8/{n-1}/\alpha/1.5,9.5/n/1/2.2}{
+\fill[blue!40] (\x-.32,.62) rectangle (\x+.32,.62+\v);
+\node at (\x,1.0+\v) {$\a$};\node[below] at (\x,.5) {$\t$};}
+\end{tikzpicture}\end{center}
+Each bar weights one month's log correction along a lineage. Lower $\alpha$ damps old corrections. This can reduce variance at the cost of bias.
+\src{Heights illustrate $0<\alpha<1$. Fixing the tree makes the curve differentiable even at $\alpha=1$.}
+\end{frame}
+
+\begin{frame}{How closely do the curves follow a particle-filter estimate?}
+In Dhaka, vary the recovery rate. The dashed blue curve gives a particle-filter reference.
 \begin{columns}[c]
 \column{.58\textwidth}\picturefit[4.9cm]{dmop-local-labeled.pdf}
 \column{.39\textwidth}
-10,000 particles at $\phi=18$.
+10,000 particles. Baseline recovery rate $\phi=18$.
 \pause\gap
-Same value at $\phi$,\\different slopes and curvature.
+Near $\phi$ the estimates nearly coincide, then differ in slope and curvature.
 \gap
-Update $\phi$ after each gradient step.
+For the next gradient step, run the filter at the new baseline.
 \end{columns}
-\src{DMOP Fig. 1A. Systematic resampling here. The theorem uses after-resampling increments and multinomial draws.}
+\src{DMOP Fig. 1A. Before-resampling estimates with systematic resampling. The theorem uses after-resampling increments and multinomial draws.}
 \end{frame}
 
 \begin{frame}{How does discounting change the estimated score?}
@@ -302,11 +219,25 @@ Update $\phi$ after each gradient step.
 \node[anchor=west,font=\scriptsize,inner sep=0pt] at (.516,.813) {Variance};
 \end{scope}\end{tikzpicture}
 \column{.41\textwidth}
-At the fitted parameters:\\1,000 runs of 10,000 particles.
+Here the score is the gradient of log likelihood per observation. Repeat the filter 1,000 times with 10,000 particles.
 \uncover<2->{\gap Near $\alpha=1$, variance rises sharply.}
-\uncover<3->{\gap At a stationary point, the mean score's squared norm is squared bias.}
+\uncover<3->{\gap The blue curve measures error against zero. This equals mean squared error if the true score is zero.}
 \end{columns}
 \src{DMOP Fig. 1B. Mean-log-likelihood score, summed moments over coordinates. Same estimator as Fig. 1A.}
+\end{frame}
+
+\begin{frame}{What can we guarantee about the slope?}
+With $N$ observations fixed, $\widehat S$ estimates the likelihood score $S=\nabla_\theta\log p_\theta(y_{1:N})$ at $\theta=\phi$ using $J$ particles.
+\pause\gap
+\textbf{Full corrections ($\alpha=1$).} As $J$ grows, the mean squared error of the estimated score goes to zero.
+\pause\gap
+\textbf{Discounted corrections ($\alpha<1$).} Put $H_N(\alpha)=1+\alpha+\cdots+\alpha^{N-1}$. The full-score error satisfies
+\[
+\E\|\widehat S-S\|^2\ \lesssim\
+\underbrace{\left[\frac{N(1+\log J)^2}{J}+\frac{N^2}{J^2}\right]H_N(\alpha)^2}_{\text{particle approximation}}
++\underbrace{N^2(1-\alpha)^2}_{\text{discount-bias bound}} .
+\]
+\src{Theorem 5. After-resampling estimate, multinomial draws, $J\ge2$, $\theta=\phi$. Bounded positive densities, smoothness and derivative bounds, plus measurement-sensitivity decay or joint state--derivative mixing (A2, A3, A5 and A6 or A6-J). Model constants suppressed.}
 \end{frame}
 
 \begin{frame}{Fitting the model}
@@ -331,24 +262,27 @@ At the fitted parameters:\\1,000 runs of 10,000 particles.
 \begin{columns}[c]
 \column{.67\textwidth}\picturefit[5.2cm]{dmop-searches.pdf}
 \column{.30\textwidth}
-IF2: iterated filtering.\\IFAD: IF2 warm start, then Adam.
+IF2: iterated filtering.\\IFAD: IF2 warm start, then Adam. Its suffix is the discount $\alpha$.
 \pause\gap
-IFAD-$.97$ attains higher likelihoods here.
+Median log likelihood rises from $-3754.24$ (IF2) to $-3744.40$ (IFAD-$.97$).
 \end{columns}
 Plot excludes log-likelihoods below $-3780$.
 \src{Timing excludes diagnostic likelihood calls. Omitted (of 100): IF2 2, IFAD-1 4, IFAD-0 2, IFAD-.97 0. Red line: best fit.}
 \end{frame}
 
-\begin{frame}{Particle filtering: fixed ancestry and weight corrections}
-\begin{center}\begin{tikzpicture}[x=1cm,y=1cm]
-\path[use as bounding box] (0,0) rectangle (12,4.6);
-\node[lab,anchor=west] at (0,4.1) {Keep baseline draws $U_n^j$ and ancestors $A_n^j$};
-\node at (3,3) {$X_n^{\theta,j}=F_\theta(X_{n-1}^{\theta,A_n^j},U_n^{A_n^j})$};
-\node at (9,3) {$w_n^j=(w_{n-1}^{A_n^j})^\alpha\frac{g_n^{\theta,A_n^j}}{g_n^{\phi,A_n^j}}$};
-\node[lab] at (3,2) {Differentiable paths};\node[lab] at (9,2) {Correct ancestor selection};
-\node[visible on=<2->] (s) at (6,.7) {$\widehat S_{J,\alpha}$};
-\draw[arr,visible on=<2->] (3,1.6)--(s);\draw[arr,visible on=<2->] (9,1.6)--(s);
-\node[lab,visible on=<2->] at (9.5,.5) {$\alpha$: bias--variance choice};
-\end{tikzpicture}\end{center}
-\uncover<3->{\[\text{Fitted dynamics}\quad\longrightarrow\quad\text{state inference}\quad\longrightarrow\quad\text{action choice}.\]}
+\begin{frame}{Running the Dhaka particle filter on a GPU}
+\begin{columns}[c,onlytextwidth]
+\column{.61\textwidth}
+\begin{tikzpicture}
+\begin{axis}[xbar,width=.69\linewidth,height=4.4cm,bar width=7pt,xmin=0,xmax=14,
+xlabel={Seconds per filter batch},ytick={1,2,3,4},yticklabels={PyPOMP + CuTe,PyPOMP (XLA),pfjax,cuthbert},tick label style={font=\small},nodes near coords,axis x line=bottom,axis y line=left,enlarge y limits=.20]
+\addplot[fill=blue!70,draw=blue] coordinates {(3.3,1) (7.5,2) (11.2,3) (11.6,4)};
+\end{axis}
+\end{tikzpicture}
+\column{.36\textwidth}
+Each particle simulates one month. We run those simulations in parallel.
+\pause\gap
+With a custom CuTe kernel for the process model, PyPOMP takes 3.3 seconds per batch.
+\end{columns}
+\src{Warm filter times on one RTX 3090. Each batch uses 36 parameter sets, 36 replicates per set and 5,000 particles per filter. PyPOMP uses Threefry in both runs. Source: PyPOMP library comparison, Dhaka workload.}
 \end{frame}

@@ -1,6 +1,8 @@
 # Source and claim map
 
-Reviewed 2026-11-16. No new experiments were run for this deck. Schematics illustrate operations and are not numerical results.
+Current rehearsal revision: [source corrections and audience review](REHEARSAL_REVIEW.md), including the Tetris notebook, figure-specific qualifications and proof detail. It supersedes the historical notes below.
+
+Original review 2026-11-16. No new experiments were run for this deck. Schematics illustrate operations and are not numerical results.
 
 ## Actor-critic
 
