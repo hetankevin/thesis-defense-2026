@@ -40,7 +40,8 @@ POMDP: partially observed Markov decision process.\\Belief $b$: hidden-state dis
 
 \begin{frame}{Choosing an action from a particle estimate of the state}
 {\small Joint work with Ziping Xu, NeurIPS 2026.}
-\picturefit[4.65cm]{control-pipeline.pdf}
+\picturefit[4.1cm]{control-pipeline.pdf}
+{\small $\bar\theta$: fitted model. $b^J$: particle belief. $H_t$: observed history.}\par\smallskip
 {\small Deeper trees need more simulations. The QMDP error bound falls geometrically with depth.}
 \uncover<2->{\gap\small Experiments use state rollouts with a learned actor and critic. Belief-tree depth $d=0$.}
 \end{frame}

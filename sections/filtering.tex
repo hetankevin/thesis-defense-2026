@@ -29,15 +29,16 @@ Which recovery rate $\gamma$ best fits the 600 counts?
 \end{frame}
 
 \begin{frame}{One month of Bayes filtering}
-$b_n$ is the state distribution given the counts through month $n$.
+$b_n$ is the state distribution given counts through month $n$. The model parameters are $\theta$.
 \[
  b_n(dx)=\frac{1}{L_n}\,
  \underbrace{\textcolor{green}{g_\theta(y_n\mid x)}}_{\text{measurement}}
  \int
- \underbrace{\textcolor{blue}{P_\theta(dx\mid z)}}_{\text{one month of dynamics}}\,
+ \underbrace{\textcolor{blue}{P_\theta(dx\mid z)}}_{\text{process}}\,
  \underbrace{\textcolor{pink}{b_{n-1}(dz)}}_{\text{last month's filter}} .
 \]
-\pause
+\pause Average over last month\textquotesingle s states, then weight by this month\textquotesingle s measurement.
+\pause\gap
 $L_n=p_\theta(y_n\mid y_{1:n-1})$ is the predictive density. The likelihood is $\prod_n L_n$.
 \end{frame}
 
@@ -86,7 +87,7 @@ $A_n^j$ is the parent of copy $j$.
 \end{frame}
 
 \begin{frame}{What goes wrong if we change the recovery rate?}
-Compare two nearby rates with the same random seed $\omega$.
+We need a likelihood gradient to fit the rates. Compare nearby rates using the same seed $\omega$.
 \begin{center}\begin{tikzpicture}[x=1cm,y=.85cm]
 \path[use as bounding box] (-.5,-.7) rectangle (12.7,3.65);
 \foreach \y/\split/\name/\which/\vis in {2.25/6.8/{Baseline}/2/1,.95/5.5/{Nearby}/3/2}{
@@ -147,9 +148,13 @@ w_{\rm new}=w_{\rm parent}\,\frac{g^\theta_{\rm parent}}{g^\phi_{\rm parent}} .
 \widehat L_n(\theta;\phi)=\widehat L_n(\phi)\,
 \frac{\text{total corrected weight of the copies}}{\text{total incoming weight}} .
 \]
-For parents $(2,3,3,3,4)$, count weight $w_3$ three times.
+The numerator sums over the selected copies, counting repeated parents each time.
 \pause\gap
-At $\theta=\phi$, every correction equals one. The product of increments recovers the baseline estimate.
+At $\theta=\phi$, the correction is 1, but its derivative is
+\[
+\left.\partial_\theta\frac{g_j^\theta}{g_j^\phi}\right|_{\theta=\phi}
+=\left.\partial_\theta\log g_j^\theta\right|_{\theta=\phi}.
+\]
 \src{Measurement Off-Parameter (MOP). Positive, differentiable measurement density and pathwise-differentiable simulator.}
 \end{frame}
 
@@ -168,7 +173,11 @@ At $\theta=\phi$, every correction equals one. The product of increments recover
 \draw[black!45,dashed,visible on=<2|handout:0>] (4.55,.43)--(4.55,3.18669);\node[below,visible on=<2|handout:0>] at (4.55,.40) {$\phi+h$};
 \end{tikzpicture}
 \column{.49\textwidth}
-Vary one coordinate of $\theta$ with the baseline fixed.
+The corrected log likelihood is
+\[
+\widehat\ell(\theta;\phi)=\sum_n\log\widehat L_n(\theta;\phi).
+\]
+Vary one parameter, holding the baseline fixed.
 \uncover<2->{\gap Two points give a finite difference.}
 \uncover<3->{\gap Automatic differentiation gives the slope at $\phi$. It estimates one log-likelihood derivative.}
 \end{columns}

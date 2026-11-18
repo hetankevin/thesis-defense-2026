@@ -9,9 +9,13 @@ Private GitHub: https://github.com/hetankevin/thesis-defense-2026
 Working copy: this directory. Publication clone: `/tmp/thesis-defense-linked-20261116`.
 The surrounding proposal repository is archival and divergent. Commit locally there, but publish through the linked clone; do not blindly push the parent.
 
+## Baseline and revision
+
+The PDF Kevin presented is /Users/kevin/Downloads/thesis-defense-overlays.pdf. All 131 pages match the whitespace-normalized extracted text of a fresh build at df038f0. This is the baseline for reviewing later changes. The revision restores the max-cover inequality, actor tracking gap, switch-count placement, linear-critic interpretation, corrected log-likelihood definition, unit-weight derivative and control-figure notation. See provenance/BASELINE_REVIEW.md.
+
 ## Scope and standing corrections
 
-49 main frames, 115 overlay pages, no backup. Kevin reached slide 31 at 45 minutes in rehearsal. We budget 20 more minutes for a 65-minute talk, leaving 25 minutes for questions. See timing.csv. The two themes are actor–critic learning and differentiable filtering, with a short connection to control.
+49 main frames, 117 overlay pages, no backup. Kevin reached slide 31 at 45 minutes in rehearsal. We budget 20 more minutes for a 65-minute talk, leaving 25 minutes for questions. See timing.csv. The two themes are actor–critic learning and differentiable filtering, with a short connection to control.
 
 November 18. Slide 21 presents the published rate with its attribution and per-episode interpretation, taking the same class for critics and their backups. Keep internal review comments out of the presentation. Shortened both technical sections and the control recap.
 

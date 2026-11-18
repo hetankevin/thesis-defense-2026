@@ -266,6 +266,10 @@ Same transition $(s,a,r,s')$, same next-action scores.
 \end{scope}
 \end{tikzpicture}\end{center}
 \uncover<2->{Only the average changes when the actor updates.}
+\uncover<3->{\[
+\left|\max_b f(s',b)-\max_b g(s',b)\right|\leq\|f-g\|_\infty.
+\]
+A cover of the critics also covers their maxima.}
 \end{frame}
 
 \begin{frame}{One upper estimate can cover every actor}
@@ -308,7 +312,10 @@ A new critic may favor an action that the old policy almost never took.
 \node[lab,anchor=west,text=blue] at (6.45,2.68) {Repeated softmax updates};
 \end{scope}
 \end{tikzpicture}\end{center}
-\uncover<3->{After a uniform reset, each update raises the odds of the newly favored action.}
+\uncover<3->{\[
+\underbrace{\max_a f_h(s,a)-\sum_a\pi_h(a\mid s)f_h(s,a)}_{\text{actor-to-greedy tracking error}}
+\]
+}
 \end{frame}
 
 \begin{frame}{Alg. 2: update the critic when its regression error grows}
@@ -338,7 +345,7 @@ Bellman error = critic estimate $-$ expected target. The dimension $d$ counts ho
 \path[use as bounding box] (0,0) rectangle (12,1.5);
 \draw[arr] (.5,.6)--(11.5,.6);
 \foreach \x/\lab in {1/t_1,4/t_2,8/t_3}{\draw[pink,very thick] (\x,.3)--(\x,.9);\node[above,lab] at (\x,.9) {$\lab$: reset};}
-\node[lab] at (6,0) {For $K$ critic changes, the tracking bound is};
+\node[lab] at (6,0) {$K=O(dH\log T)$ critic changes};
 \end{tikzpicture}\end{center}
 \uncover<2->{\[
 \underbrace{\eta H^3T}_{\text{softmax update error}}+
@@ -346,7 +353,7 @@ Bellman error = critic estimate $-$ expected target. The dimension $d$ counts ho
 \underbrace{6KH^2}_{\text{switch cost}}.
 \]}
 \uncover<3->{\[
-K=O(dH\log T),\quad \eta\asymp\sqrt{\frac{d\log T\log|\A|}{HT}}
+\eta\asymp\sqrt{\frac{d\log T\log|\A|}{HT}}
 \quad\Longrightarrow\quad\text{tracking cost}=\widetilde O(\sqrt{dH^5T}+dH^3).
 \]}
 
@@ -376,7 +383,7 @@ At fixed complexity, the average loss per episode is $\widetilde O(1/\sqrt T)$.
 \node[rotate=90,font=\small] at ($(p.west)+(.15,0)$) {Cumulative reward shortfall};
 \end{tikzpicture}\end{center}
 Reference reward $-0.25$ per move. Mean $\pm$ one standard deviation over 30 trials.
-\uncover<2->{\gap Alg. 1 finishes lowest. The value-iteration baseline (LSVI-UCB) finishes between the two.}
+\uncover<2->{\gap These critics are unclipped and linear. Their sum still needs only one coefficient vector.}
 \end{frame}
 
 \begin{frame}{When can Alg. 2 learn without optimism?}
