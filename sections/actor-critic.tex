@@ -95,7 +95,7 @@ y=r+\sum_b\pi_{h+1}(b\mid s')f_{h+1}(s',b).
 \end{frame}
 
 \begin{frame}{How does the actor use the critic?}
-At state $s$ and step $h$, the critic scores each action. In episode $t$, suppose it favors $a$ over $b$.
+At step $h$ in episode $t$, the critic scores action $a$ above $b$.
 \begin{center}\begin{tikzpicture}[x=1cm,y=.84cm]
 \path[use as bounding box] (0,0) rectangle (12,3.65);
 \foreach \x/\lab in {2.4/Current policy,9.55/Updated policy}{
@@ -115,7 +115,7 @@ At state $s$ and step $h$, the critic scores each action. In episode $t$, suppos
 \underbrace{\pi_{t,h}(a\mid s)}_{\text{old probability}}\,
 \underbrace{\exp\!\big(\eta f_{t,h}(s,a)\big)}_{\text{weight from the critic}} .
 \]}
-\uncover<3->{A higher score increases the odds of $a$ relative to $b$. The learning rate $\eta>0$ sets the size of the change.}
+\uncover<3->{The learning rate $\eta>0$ controls how much the odds shift toward $a$.}
 \end{frame}
 
 \begin{frame}{Exploring rarely tried actions}
@@ -208,8 +208,8 @@ $f_u(x)=\max(0,x-u)$\par\smallskip
 \end{tikzpicture}\par
 Each new threshold adds a bend.}
 \end{columns}
-\uncover<3->{\medskip A cover is a list of $M$ functions. Every critic is within $\varepsilon$ of a function on the list at every input.}
-\uncover<4->{\par\medskip For $K$ fits there are up to $M^K$ sequences. With $K=T$, the bound contains $\sqrt{T\log(M^T)}=T\sqrt{\log M}$ and cannot rule out linear regret.}
+\uncover<3->{\medskip $M$ functions cover the critics if each critic is within $\varepsilon$ of one everywhere.}
+\uncover<4->{\par\medskip $K$ fits give up to $M^K$ sequences. Refit every episode and the bound scales as $\sqrt{T\log M^T}=T\sqrt{\log M}$.}
 \end{frame}
 
 \begin{frame}{Can we update the critic less often?}
@@ -227,12 +227,12 @@ Each new threshold adds a bend.}
 \end{scope}
 \end{tikzpicture}\end{center}
 \uncover<2->{\[y_t^\pi=r+\sum_b\pi_{t,h+1}(b\mid s')f_{h+1}(s',b).\]}
-\uncover<2->{The target averages next-action scores using the actor's current probabilities.\par}\medskip
+
 \uncover<3->{Between critic updates, does the old upper bound still hold?}
 \end{frame}
 
 \begin{frame}{An improving actor can overtake the old critic}
-At the last fit, $f_h(s,a)$ was an upper estimate for the actor's expected target. Between fits, the next-action scores $f_{h+1}(s',b)$ stay fixed.
+Between fits, next-action scores $f_{h+1}(s',b)$ stay fixed. The actor changes their weights.
 \begin{center}\begin{tikzpicture}[x=1cm,y=.85cm]
 \path[use as bounding box] (0,0) rectangle (12,4.75);
 \draw[arr] (1.9,.75)--(1.9,4.3);
@@ -249,11 +249,11 @@ At the last fit, $f_h(s,a)$ was an upper estimate for the actor's expected targe
 \end{scope}
 \draw[<->,thick,visible on=<3->] (9.55,2.53)--(9.55,3.70);
 \end{tikzpicture}\end{center}
-\uncover<3->{As the actor favors higher-scoring actions, its average can rise above the estimate we kept.}
+\uncover<3->{The weighted average can rise above the old upper estimate.}
 \end{frame}
 
 \begin{frame}{Fit the critic to the best next action}
-For the same transition $(s,a,r,s')$, keep the next-action scores fixed.
+Same transition $(s,a,r,s')$, same next-action scores.
 \begin{center}\begin{tikzpicture}[x=1cm,y=.9cm]
 \path[use as bounding box] (0,0) rectangle (12,3.55);
 \node[lab] at (3,3.03) {Algorithm 1};
@@ -265,11 +265,11 @@ For the same transition $(s,a,r,s')$, keep the next-action scores fixed.
 \node at (9.15,1.41) {$\displaystyle r+\max_b f_{h+1}(s',b)$};
 \end{scope}
 \end{tikzpicture}\end{center}
-\uncover<2->{The actor can change its action probabilities every episode. For this transition, the maximum stays fixed until the critic changes.}
+\uncover<2->{Only the average changes when the actor updates.}
 \end{frame}
 
 \begin{frame}{One upper estimate can cover every actor}
-Suppose $f_h(s,a)$ upper-bounds the expected target obtained by choosing the highest next-action score $f_{h+1}(s',b)$.
+Suppose the critic upper-bounds the expected best-action target.
 \begin{center}\begin{tikzpicture}[x=1cm,y=.84cm]
 \path[use as bounding box] (0,0) rectangle (12,4.68);
 \draw[arr] (1.9,.72)--(1.9,4.30);
@@ -285,7 +285,7 @@ Suppose $f_h(s,a)$ upper-bounds the expected target obtained by choosing the hig
 \fill[blue] (2.52,1.04) circle(2.7pt);\fill[blue] (9.56,2.87) circle(2.7pt);
 \end{scope}
 \end{tikzpicture}\end{center}
-\uncover<2->{At each next state, the actor's average of the fixed scores is at most their maximum. Taking expectations preserves that inequality.}
+\uncover<2->{Any actor averages scores below or equal to the maximum. The inequality holds in expectation.}
 \end{frame}
 
 \begin{frame}{Give the actor time to catch up}
@@ -308,7 +308,7 @@ A new critic may favor an action that the old policy almost never took.
 \node[lab,anchor=west,text=blue] at (6.45,2.68) {Repeated softmax updates};
 \end{scope}
 \end{tikzpicture}\end{center}
-\uncover<3->{Starting from uniform gives each action a chance. Holding the new critic fixed lets successive updates favor the same action.}
+\uncover<3->{After a uniform reset, each update raises the odds of the newly favored action.}
 \end{frame}
 
 \begin{frame}{Alg. 2: update the critic when its regression error grows}
@@ -333,7 +333,7 @@ L_{t,h}(q,f)=\sum_{(s,a,r,s')\in D_{t,h}}[q(s,a)-r-\max_b f_{h+1}(s',b)]^2.
 \end{frame}
 
 \begin{frame}{Rare critic changes limit the cost of resets}
-A Bellman error is the critic estimate minus its expected target. The dimension $d$ measures how often fresh data expose a new error.
+Bellman error = critic estimate $-$ expected target. The dimension $d$ counts how often new data can expose a new error.
 \begin{center}\begin{tikzpicture}[x=1cm,y=1cm]
 \path[use as bounding box] (0,0) rectangle (12,1.5);
 \draw[arr] (.5,.6)--(11.5,.6);
@@ -353,16 +353,16 @@ K=O(dH\log T),\quad \eta\asymp\sqrt{\frac{d\log T\log|\A|}{HT}}
 \src{$d$: Dirac-type Bellman eluder dimension at scale $T^{-1/2}$.}
 \end{frame}
 
-\begin{frame}{What regret rate does the paper report?}
-The proof needs a critic that upper-bounds its own expected target. The stated class assumptions alone do not establish this step.\gap Theorem 2 reports, with probability at least $1-\delta$,
+\begin{frame}{Regret over $T$ episodes}
+Alg. 2 \hfill Theorem 2, Tan, Fan and Wei (ICML 2025)
 \[
 \Reg(T)=\widetilde O\!\left(
-\underbrace{\sqrt{dH^5T\log|\A|}+dH^3}_{\text{actor tracking and switches}}
-+\underbrace{\sqrt{dH^4T\log\mathcal N}}_{\text{critic error}}\right).
+\underbrace{\sqrt{dH^5T\log|\A|}+dH^3}_{\text{actor tracking and resets}}
++\underbrace{\sqrt{dH^4T\log\mathcal N}}_{\text{critic estimation}}\right).
 \]
-$\mathcal N$ is the covering number for critics and expected optimality targets at scale $1/T$.
-\uncover<2->{\gap For controlled $d$ and $\log\mathcal N$, the reported rate scales as $\sqrt T$ up to logarithms.}
-\uncover<3->{\gap The assumptions place optimal values $Q^*$ in the bounded critic class and expected targets in an auxiliary class.}
+\pause\gap
+At fixed complexity, the average loss per episode is $\widetilde O(1/\sqrt T)$.
+\src{Probability $\geq 1-\delta$. Bounded critics represent optimal values. An auxiliary class represents expected targets. $\mathcal N$ covers both at scale $1/T$.}
 \end{frame}
 
 \begin{frame}{Online experiment: Tetris}
@@ -375,8 +375,8 @@ $\mathcal N$ is the covering number for critics and expected optimality targets 
   \node[anchor=west,font=\scriptsize,inner sep=1pt] at ($(p.north west)+(1.57,\y)$) {\lab};}
 \node[rotate=90,font=\small] at ($(p.west)+(.15,0)$) {Cumulative reward shortfall};
 \end{tikzpicture}\end{center}
-Mean shortfall relative to a reference reward of $-0.25$ per move. Bands show one standard deviation across 30 trials.
-\uncover<2->{\gap Algorithm 1 has the lowest final shortfall. Algorithm 2 finishes above rare-switching LSVI-UCB, the optimistic value-iteration baseline.}
+Reference reward $-0.25$ per move. Mean $\pm$ one standard deviation over 30 trials.
+\uncover<2->{\gap Alg. 1 finishes lowest. The value-iteration baseline (LSVI-UCB) finishes between the two.}
 \end{frame}
 
 \begin{frame}{When can Alg. 2 learn without optimism?}
@@ -394,13 +394,13 @@ Mean shortfall relative to a reference reward of $-0.25$ per move. Bands show on
 \ \xrightarrow{\ \text{coverage}\ }\ 
 \text{Bellman error under }\pi^*.
 \]}
-\uncover<3->{Alg. 2 with optimality targets and $N_{\rm off}$ offline samples:
+\uncover<3->{With $N_{\rm off}$ offline transitions,
 \[
 \text{Additional regret}
 =O\!\left(\sqrt{\beta^* H^4 c_{\rm off}^*T^2/N_{\rm off}}\right).
 \]
-With bounded coverage $c_{\rm off}^*$ and $N_{\rm off}=\Omega(T)$, this term grows as $\widetilde O(\sqrt T)$, conditional on controlled complexity.}
-\src{$\beta^*$ is the confidence width. The total rate also depends on the online bound on slide 21.}
+For bounded coverage coefficient $c_{\rm off}^*$ and fixed complexity, $N_{\rm off}=\Omega(T)$ keeps this term at $\widetilde O(\sqrt T)$.}
+\src{$\beta^*$ is the confidence width for the critic.}
 \end{frame}
 
 \begin{frame}{AntMaze: a neural implementation comparison}

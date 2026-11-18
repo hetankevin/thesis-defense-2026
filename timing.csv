@@ -19,14 +19,14 @@ slide,section,title,seconds
 18,actor-critic,Give the actor time to catch up,100
 19,actor-critic,Alg. 2: update the critic when its regression error grows,95
 20,actor-critic,Rare critic changes limit the cost of resets,120
-21,actor-critic,What regret rate does the paper report?,110
+21,actor-critic,Regret over $T$ episodes,110
 22,actor-critic,Online experiment: Tetris,75
 23,actor-critic,When can Alg. 2 learn without optimism?,85
 24,actor-critic,AntMaze: a neural implementation comparison,75
 25,actor-critic,Actor--critic: optimality targets and policy resets,25
 26,filtering,2. Differentiable particle filters,25
 27,filtering,"Monthly cholera deaths in Dhaka, 1891--1940",75
-28,filtering,What does one monthly count tell us?,110
+28,filtering,The Dhaka cholera model,110
 29,filtering,One month of Bayes filtering,120
 30,filtering,Monte Carlo prediction,60
 31,filtering,Which predictions fit the new death count?,75
@@ -37,7 +37,7 @@ slide,section,title,seconds
 36,filtering,A likelihood curve through the baseline,65
 37,filtering,Take the slope of that curve,90
 38,filtering,How far back should a correction count?,65
-39,filtering,How closely do the curves follow a particle-filter estimate?,65
+39,filtering,Likelihood near the baseline recovery rate,65
 40,filtering,How does discounting change the estimated score?,85
 41,filtering,What can we guarantee about the slope?,90
 42,filtering,Fitting the model,50

@@ -1,7 +1,7 @@
 \renewcommand{\stage}{From inference to control}
 
 \begin{frame}{Braking requires velocity information}
-We measure position and need to brake.
+We observe only position.
 \begin{center}\begin{tikzpicture}[every node/.style={font=\small,align=center}]
 \path[use as bounding box] (-2,-2.6) rectangle (8,1.8);
 \foreach \x in {0,6}{
@@ -35,27 +35,27 @@ POMDP: partially observed Markov decision process.\\Belief $b$: hidden-state dis
 \end{scope}
 \end{tikzpicture}\end{center}
 \uncover<2->{\[Q_{\mathrm{QMDP}}(b,a)=\E_{X\sim b}[Q^*_{\mathrm{fully\ observed}}(X,a)].\]}
-\uncover<3->{QMDP saves computation by ignoring future information gathering. A short belief tree delays that assumption.}
+\uncover<3->{QMDP skips future observation branches. A short belief tree keeps the first few.}
 \end{frame}
 
 \begin{frame}{Choosing an action from a particle estimate of the state}
 {\small Joint work with Ziping Xu, NeurIPS 2026.}
 \picturefit[4.65cm]{control-pipeline.pdf}
-{\small The bound on QMDP approximation error decreases geometrically with tree depth. More branches require more simulations.}
-\uncover<2->{\gap\small In experiments we use zero belief-tree lookahead and simulate from the particle states with a learned actor and critic.}
+{\small Deeper trees need more simulations. The QMDP error bound falls geometrically with depth.}
+\uncover<2->{\gap\small Experiments use state rollouts with a learned actor and critic. Belief-tree depth $d=0$.}
 \end{frame}
 
 \begin{frame}{What connects these parts of my dissertation?}
 \begin{columns}[T,onlytextwidth]
 \column{.47\textwidth}
 {\Large\color{blue}Learning to act}\gap
-Fitting the critic to the best next action keeps its regression target fixed while the policy improves.
+The best-action target stays fixed as the policy improves.
 \pause
 \column{.47\textwidth}
 {\Large\color{green}Fitting a model}\gap
-Reusing parent choices and reweighting the particles lets us estimate a likelihood gradient.
+Fix the parent choices and reweight the particles to estimate a likelihood gradient.
 \end{columns}
-\uncover<3->{\gap In partially observed control we do both: infer the state from past observations, then decide what to do.}
+\uncover<3->{\gap The filter estimates the hidden state. The policy uses that estimate to act.}
 \end{frame}
 
 \begin{frame}{Thank you everyone!}

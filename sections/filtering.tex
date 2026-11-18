@@ -14,22 +14,22 @@ How do we estimate parameters from a simulator and partial observations?
 \addplot[blue,thick] table[x=time,y=deaths,col sep=comma]{figures/dhaka-monthly.csv};
 \addlegendentry{Recorded deaths}
 \end{axis}\end{tikzpicture}\end{center}
-\uncover<2->{The records give a monthly death count. How much can they tell us about the unobserved infections and recoveries?}
-\src{Dhaka district, now Bangladesh. King et al. (2008), data distributed with PyPOMP.}
+\uncover<2->{What can deaths tell us about infections and recoveries?}
+\src{King et al. (2008). Data from PyPOMP.}
 \end{frame}
 
-\begin{frame}{What does one monthly count tell us?}
+\begin{frame}{The Dhaka cholera model}
 \begin{center}\includegraphics[width=.96\linewidth,height=3.25cm,keepaspectratio]{cholera.png}\end{center}
-\textcolor{blue}{Hidden state $X_n$}\quad The model tracks infections, immunity and deaths accumulated over month $n$.
+\textcolor{blue}{Hidden $X_n$}\quad Susceptible, infected and immune populations, plus modeled deaths.
 \pause\gap
-\textcolor{green}{Observation $y_n$}\quad The recorded death count, measured with error.
+\textcolor{green}{Observed $y_n$}\quad Monthly deaths, measured with error.
 \pause\gap
-The arrow from $I$ to $R_1$ is recovery. Which recovery rate $\gamma$ makes the 600 counts most likely?
-\src{Dhaka model, King et al. (2008) and Tan et al., Section 5. $P$: population, $S$: susceptible, $I$: infected, $R_1$--$R_3$: stages of immunity, $M$: modeled deaths.}
+Which recovery rate $\gamma$ best fits the 600 counts?
+\src{$I\to R_1$ denotes recovery. $R_1,R_2,R_3$ are stages of immunity. King et al. (2008).}
 \end{frame}
 
 \begin{frame}{One month of Bayes filtering}
-Last month's filter $b_{n-1}$ describes the previous state. After one month of dynamics and the new count, the current state has distribution $b_n$:
+$b_n$ is the state distribution given the counts through month $n$.
 \[
  b_n(dx)=\frac{1}{L_n}\,
  \underbrace{\textcolor{green}{g_\theta(y_n\mid x)}}_{\text{measurement}}
@@ -38,9 +38,7 @@ Last month's filter $b_{n-1}$ describes the previous state. After one month of d
  \underbrace{\textcolor{pink}{b_{n-1}(dz)}}_{\text{last month's filter}} .
 \]
 \pause
-Average the process model over last month's possible states $z$. Then weight each possible new state $x$ by how well it explains this month's count.
-\pause\gap
-$L_n=p_\theta(y_n\mid y_{1:n-1})$ is the predictive density of this month's count at parameter $\theta$. The likelihood is $\prod_n L_n$.
+$L_n=p_\theta(y_n\mid y_{1:n-1})$ is the predictive density. The likelihood is $\prod_n L_n$.
 \end{frame}
 
 \begin{frame}{Monte Carlo prediction}
@@ -54,8 +52,7 @@ $L_n=p_\theta(y_n\mid y_{1:n-1})$ is the predictive density of this month's coun
 \node[fill=white] at (5.5,2.1) {simulate one month};
 \end{tikzpicture}\end{center}
 \pause\[\widetilde X_n^j\sim P_\theta(\cdot\mid X_{n-1}^j),\qquad j=1,\ldots,J.\]
-\pause $J$ particles give a Monte Carlo average over last month and the process model.
-\src{Each particle is one candidate state.}
+Each of the $J$ particles represents a possible state.
 \end{frame}
 
 \begin{frame}{Which predictions fit the new death count?}
@@ -70,7 +67,7 @@ $L_n=p_\theta(y_n\mid y_{1:n-1})$ is the predictive density of this month's coun
 \pause
 \[\underbrace{\sum_j\overline g_n^j\delta_{\widetilde X_n^j}}_{\text{updated state distribution}}\approx b_n,\qquad
 \underbrace{\widehat L_n=\frac1J\sum_jg_n^j}_{\text{likelihood increment}}.\]
-\src{Circle size gives observation weight. $\delta_x$ is a point mass at $x$.}
+\src{Larger circles carry more weight. $\delta_x$ is a point mass.}
 \end{frame}
 
 \begin{frame}{Which particles continue to the next month?}
@@ -85,11 +82,11 @@ $L_n=p_\theta(y_n\mid y_{1:n-1})$ is the predictive density of this month's coun
 \node[fill=white,lab] at (5.5,2.4) {$A_n^{1:5}=(2,3,3,3,4)$};
 \end{tikzpicture}\end{center}
 \pause\[A_n^j\sim\operatorname{Cat}(\overline g_n^{1:J}),\qquad X_n^j=\widetilde X_n^{A_n^j}.\]
-\pause $A_n^j$ records the parent chosen for copy $j$. Repeat for the next month.
+$A_n^j$ is the parent of copy $j$.
 \end{frame}
 
 \begin{frame}{What goes wrong if we change the recovery rate?}
-To fit $\theta$, we want the slope of the log likelihood. First fix the random seed $\omega$, so both runs use the same random numbers.
+Compare two nearby rates with the same random seed $\omega$.
 \begin{center}\begin{tikzpicture}[x=1cm,y=.85cm]
 \path[use as bounding box] (-.5,-.7) rectangle (12.7,3.65);
 \foreach \y/\split/\name/\which/\vis in {2.25/6.8/{Baseline}/2/1,.95/5.5/{Nearby}/3/2}{
@@ -102,13 +99,13 @@ To fit $\theta$, we want the slope of the log likelihood. First fix the random s
 \node[right,lab] at (9.35,\y){select parent \which};
 \end{scope}}
 \draw[thick,dashed] (6.1,.5)--(6.1,2.85) node[above,lab]{same uniform draw};
-\node[lab] at (5.3,-.1){Interval width = probability of choosing that parent};
+\node[lab] at (5.3,-.1){Interval width = selection probability};
 \end{tikzpicture}\end{center}
-\uncover<3->{The same random draw can select a different parent. The estimated likelihood can jump.\\Fixing the ancestor omits the change in its selection probability.}
+\uncover<3->{Switching parents can make the estimated likelihood jump.}
 \end{frame}
 
 \begin{frame}{Replay the same family tree}
-Run the filter once at the baseline parameter $\phi$. Save its parent choices.
+Save the parents from a baseline run at $\phi$.
 \begin{center}\begin{tikzpicture}[x=.84cm,y=.78cm,font=\small]
 \path[use as bounding box] (-.3,-.5) rectangle (14.5,3.65);
 \foreach \offset/\col/\txt/\vis/\warp in {0/blue/{Baseline $\phi$}/1/0,7.2/pink/{Nearby $\theta$}/2/.27}{
@@ -119,37 +116,41 @@ Run the filter once at the baseline parameter $\phi$. Save its parent choices.
 {\draw[thick,\col] (\x+.06,{\y+\warp*cos(90*\y+50*\x)})--(\x+2.44,{\z+\warp*cos(90*\z+50*(\x+2.5))});}
 \end{scope}}
 \end{tikzpicture}\end{center}
-\uncover<2->{Replay the initialization and process draws from $\omega$, and copy the same parents.
-The links stay fixed. The simulated states change with $\theta$.}
+\uncover<2->{At $\theta$, reuse the initial and process draws and the parents. The states can change.}
 \end{frame}
 
 \begin{frame}{Reweight each selected parent}
-A parent was selected using its measurement likelihood at $\phi$. Under $\theta$, the same parent may explain the observation better or worse.
+Write $g_j^\theta$ for the measurement density at particle $j$ simulated under $\theta$.
 \[
-\underbrace{\frac{g^\phi_j}{\sum_k g^\phi_k}}_{\text{chance of selecting parent }j}
+\underbrace{\frac{g^\phi_j}{\sum_k g^\phi_k}}_{\text{selection probability at }\phi}
 \quad\times\quad
 \underbrace{\frac{g^\theta_j}{g^\phi_j}}_{\text{weight correction}}
 =\frac{g^\theta_j}{\sum_k g^\phi_k}.
 \]
 \pause
-In month one, average over the parent draw conditional on these candidates. Multiplying by the baseline increment $(\sum_k g^\phi_k)/J$ recovers $(\sum_j g^\theta_j)/J$ in expectation.
-\src{$g^\theta_j$ is the measurement density for this count at parent $j$'s predicted state under $\theta$. The denominator $g^\phi_j$ stays fixed.}
+In month one, average over the parent draw $A$, holding the candidates fixed:
+\[
+\underbrace{\frac{\sum_k g^\phi_k}{J}}_{\text{baseline increment}}\,
+\E\!\left[\frac{g^\theta_A}{g^\phi_A}\right]
+=\frac{1}{J}\sum_j g^\theta_j .
+\]
 \end{frame}
 
 \begin{frame}{A likelihood curve through the baseline}
-Follow a selected lineage. Start its weight at 1 and multiply by the correction at each month.
+Start each lineage at $w_0=1$.
 \[
 w_{\rm new}=w_{\rm parent}\,\frac{g^\theta_{\rm parent}}{g^\phi_{\rm parent}} .
 \]
 \pause
-If parents $(2,3,3,3,4)$ were drawn, parent 3 contributes three copies to the numerator.
+
 \[
 \widehat L_n(\theta;\phi)=\widehat L_n(\phi)\,
-\frac{\text{total corrected weight after resampling}}{\text{total weight before the measurement}} .
+\frac{\text{total corrected weight of the copies}}{\text{total incoming weight}} .
 \]
+For parents $(2,3,3,3,4)$, count weight $w_3$ three times.
 \pause\gap
-Multiplying the increments gives an off-parameter likelihood estimate. At $\theta=\phi$ all ratios equal one, so this curve passes through the original filter estimate.
-\src{Measurement Off-Parameter (MOP), full corrections ($\alpha=1$). Positive, differentiable measurement densities and a pathwise-differentiable simulator.}
+At $\theta=\phi$, every correction equals one. The product of increments recovers the baseline estimate.
+\src{Measurement Off-Parameter (MOP). Positive, differentiable measurement density and pathwise-differentiable simulator.}
 \end{frame}
 
 \begin{frame}{Take the slope of that curve}
@@ -167,40 +168,38 @@ Multiplying the increments gives an off-parameter likelihood estimate. At $\thet
 \draw[black!45,dashed,visible on=<2|handout:0>] (4.55,.43)--(4.55,3.18669);\node[below,visible on=<2|handout:0>] at (4.55,.40) {$\phi+h$};
 \end{tikzpicture}
 \column{.49\textwidth}
-Vary one parameter, keeping the baseline run fixed. Write $\widehat\ell(\theta;\phi)$ for its corrected log likelihood.
-\uncover<2->{\gap A finite difference uses two nearby points.}\uncover<3->{\gap We compute the slope at $\phi$ by automatic differentiation. It estimates that coordinate of the log-likelihood gradient.}
+Vary one coordinate of $\theta$ with the baseline fixed.
+\uncover<2->{\gap Two points give a finite difference.}
+\uncover<3->{\gap Automatic differentiation gives the slope at $\phi$. It estimates one log-likelihood derivative.}
 \end{columns}
 \uncover<3->{\[
 \lim_{h\to0}\frac{\widehat\ell(\phi+h;\phi)-\widehat\ell(\phi;\phi)}{h}
 =\left.\partial_\theta\widehat\ell(\theta;\phi)\right|_{\theta=\phi}.
 \]}
-\src{Differentiated Measurement Off-Parameter (DMOP). At the baseline a weight ratio equals one, but its denominator is fixed as its numerator varies.}
+\src{Differentiated Measurement Off-Parameter (DMOP). At $\theta=\phi$ the ratio is one, but its numerator still varies with $\theta$.}
 \end{frame}
 
 \begin{frame}{How far back should a correction count?}
-For discount $\alpha\in[0,1]$, use $w_{\rm new}=w_{\rm parent}^{\alpha}\,(g^\theta_{\rm parent}/g^\phi_{\rm parent})$.
+\[w_{\rm new}=w_{\rm parent}^{\alpha}\,(g^\theta_{\rm parent}/g^\phi_{\rm parent}),\qquad 0\le\alpha\le1.\]
 \begin{center}\begin{tikzpicture}[x=1cm,y=.85cm]
 \draw[arr] (.3,.6)--(11.8,.6) node[right,lab]{month};
 \foreach \x/\t/\a/\v in {1.4/{n-3}/{\alpha^3}/.65,4.1/{n-2}/{\alpha^2}/1,6.8/{n-1}/\alpha/1.5,9.5/n/1/2.2}{
 \fill[blue!40] (\x-.32,.62) rectangle (\x+.32,.62+\v);
 \node at (\x,1.0+\v) {$\a$};\node[below] at (\x,.5) {$\t$};}
 \end{tikzpicture}\end{center}
-Each bar weights one month's log correction along a lineage. Lower $\alpha$ damps old corrections. This can reduce variance at the cost of bias.
-\src{Heights illustrate $0<\alpha<1$. Fixing the tree makes the curve differentiable even at $\alpha=1$.}
+Each month's log correction gets the weight shown. Discounting can reduce variance at the cost of bias.
 \end{frame}
 
-\begin{frame}{How closely do the curves follow a particle-filter estimate?}
-In Dhaka, vary the recovery rate. The dashed blue curve gives a particle-filter reference.
+\begin{frame}{Likelihood near the baseline recovery rate}
+
 \begin{columns}[c]
 \column{.58\textwidth}\picturefit[4.9cm]{dmop-local-labeled.pdf}
 \column{.39\textwidth}
-10,000 particles. Baseline recovery rate $\phi=18$.
+Dhaka recovery rate, 10,000 particles.
 \pause\gap
-Near $\phi$ the estimates nearly coincide, then differ in slope and curvature.
-\gap
-For the next gradient step, run the filter at the new baseline.
+The curves nearly coincide at $\phi=18$, then diverge.
 \end{columns}
-\src{DMOP Fig. 1A. Before-resampling estimates with systematic resampling. The theorem uses after-resampling increments and multinomial draws.}
+\src{Fig. 1A. Before-resampling estimates, systematic resampling.}
 \end{frame}
 
 \begin{frame}{How does discounting change the estimated score?}
@@ -219,25 +218,25 @@ For the next gradient step, run the filter at the new baseline.
 \node[anchor=west,font=\scriptsize,inner sep=0pt] at (.516,.813) {Variance};
 \end{scope}\end{tikzpicture}
 \column{.41\textwidth}
-Here the score is the gradient of log likelihood per observation. Repeat the filter 1,000 times with 10,000 particles.
-\uncover<2->{\gap Near $\alpha=1$, variance rises sharply.}
-\uncover<3->{\gap The blue curve measures error against zero. This equals mean squared error if the true score is zero.}
+1,000 runs of 10,000 particles at the fitted parameters.
+\uncover<2->{\gap Variance rises near $\alpha=1$.}
+\uncover<3->{\gap Blue is mean squared error against zero, the score at a stationary point.}
 \end{columns}
-\src{DMOP Fig. 1B. Mean-log-likelihood score, summed moments over coordinates. Same estimator as Fig. 1A.}
+\src{Fig. 1B. Gradient of log likelihood per observation, summed moments across coordinates. Same filter as Fig. 1A.}
 \end{frame}
 
 \begin{frame}{What can we guarantee about the slope?}
-With $N$ observations fixed, $\widehat S$ estimates the likelihood score $S=\nabla_\theta\log p_\theta(y_{1:N})$ at $\theta=\phi$ using $J$ particles.
+Fix the $N$ observations. The target is the score $S=\nabla_\theta\log p_\theta(y_{1:N})$ at $\theta=\phi$.
 \pause\gap
-\textbf{Full corrections ($\alpha=1$).} As $J$ grows, the mean squared error of the estimated score goes to zero.
+$\alpha=1$: $\E\|\widehat S-S\|^2\to0$ as the particle count $J\to\infty$.
 \pause\gap
-\textbf{Discounted corrections ($\alpha<1$).} Put $H_N(\alpha)=1+\alpha+\cdots+\alpha^{N-1}$. The full-score error satisfies
+For $\alpha<1$, let $H_N(\alpha)=\sum_{r=0}^{N-1}\alpha^r$. Then
 \[
 \E\|\widehat S-S\|^2\ \lesssim\
 \underbrace{\left[\frac{N(1+\log J)^2}{J}+\frac{N^2}{J^2}\right]H_N(\alpha)^2}_{\text{particle approximation}}
 +\underbrace{N^2(1-\alpha)^2}_{\text{discount-bias bound}} .
 \]
-\src{Theorem 5. After-resampling estimate, multinomial draws, $J\ge2$, $\theta=\phi$. Bounded positive densities, smoothness and derivative bounds, plus measurement-sensitivity decay or joint state--derivative mixing (A2, A3, A5 and A6 or A6-J). Model constants suppressed.}
+\src{Theorem 5. After-resampling estimate with multinomial draws, $J\ge2$. Smoothness, bounded positive densities and bounded derivatives (A2, A3, A5), plus sensitivity decay (A6) or joint state--derivative mixing (A6-J).}
 \end{frame}
 
 \begin{frame}{Fitting the model}
@@ -253,8 +252,7 @@ With $N$ observations fixed, $\widehat S$ estimates the likelihood score $S=\nab
 \draw[arr,visible on=<2->] (next)--(theta);
 \node[lab,visible on=<2->] at (2,1.1) {Update baseline\\$\phi\leftarrow\theta_{k+1}$};
 \end{tikzpicture}\end{center}
-\uncover<3->{IFAD = iterated filtering followed by gradient updates.}
-\src{Iterated filtering perturbs parameters during filtering. $k$: optimization step.}
+\src{IFAD combines iterated filtering (IF2) with automatic differentiation.}
 \end{frame}
 
 \begin{frame}{Likelihood searches for the Dhaka cholera model}
@@ -262,12 +260,12 @@ With $N$ observations fixed, $\widehat S$ estimates the likelihood score $S=\nab
 \begin{columns}[c]
 \column{.67\textwidth}\picturefit[5.2cm]{dmop-searches.pdf}
 \column{.30\textwidth}
-IF2: iterated filtering.\\IFAD: IF2 warm start, then Adam. Its suffix is the discount $\alpha$.
-\pause\gap
-Median log likelihood rises from $-3754.24$ (IF2) to $-3744.40$ (IFAD-$.97$).
+Median log likelihood
+\gap
+IF2 \hfill $-3754.24$\\
+IFAD-$.97$ \hfill $-3744.40$
 \end{columns}
-Plot excludes log-likelihoods below $-3780$.
-\src{Timing excludes diagnostic likelihood calls. Omitted (of 100): IF2 2, IFAD-1 4, IFAD-0 2, IFAD-.97 0. Red line: best fit.}
+\src{IFAD suffix denotes $\alpha$. Red line marks the best fit. Below $-3780$: 2 IF2, 4 IFAD-1, 2 IFAD-0, 0 IFAD-$.97$. Timings exclude diagnostic likelihood calls.}
 \end{frame}
 
 \begin{frame}{Running the Dhaka particle filter on a GPU}
@@ -280,9 +278,7 @@ xlabel={Seconds per filter batch},ytick={1,2,3,4},yticklabels={PyPOMP + CuTe,PyP
 \end{axis}
 \end{tikzpicture}
 \column{.36\textwidth}
-Each particle simulates one month. We run those simulations in parallel.
-\pause\gap
-With a custom CuTe kernel for the process model, PyPOMP takes 3.3 seconds per batch.
+The CuTe kernel implements the monthly process simulation.
 \end{columns}
-\src{Warm filter times on one RTX 3090. Each batch uses 36 parameter sets, 36 replicates per set and 5,000 particles per filter. PyPOMP uses Threefry in both runs. Source: PyPOMP library comparison, Dhaka workload.}
+\src{Warm RTX 3090 timings. $36$ parameter sets $\times$ $36$ replicates, $5{,}000$ particles per filter. Both PyPOMP runs use Threefry.}
 \end{frame}

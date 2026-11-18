@@ -1,5 +1,7 @@
 # Rehearsal revision and independent review
 
+Historical review of the November 17 version. Kevin subsequently requested a shorter theorem slide. The November 18 deck presents the published result.
+
 ## Source corrections
 
 **Actor–critic proof.** Algorithm 2 fits in the critic class F. Assumption 2 places expected optimality backups in an auxiliary class G. Lemma 14(i), Equation (66), uses a backup as an admissible member of a critic confidence set. Membership in G alone does not justify this step. Take two stages, one state, one action, zero rewards and no retained data. Set F₁={0}, F₂={0,1}, G₁={0,1} and include the zero terminal target in G₂. The optimal value zero is realizable and every required backup lies in G. The upper critic has f₁=0 and f₂=1, so its first-stage expected backup is 1. This refutes the pointwise step under the stated assumptions. Regret in this example is zero. Whether the regret theorem admits a different proof remains open in this audit. Slide 21 states the limitation on the same reveal as the rate. [Published paper, Lemma 14](https://raw.githubusercontent.com/mlresearch/v267/main/assets/tan25c/tan25c.pdf#page=30)

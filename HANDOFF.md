@@ -1,6 +1,6 @@
 # Thesis defense handoff
 
-Updated November 17, 2026.
+Updated November 18, 2026.
 
 ## Canonical project
 
@@ -11,9 +11,9 @@ The surrounding proposal repository is archival and divergent. Commit locally th
 
 ## Scope and standing corrections
 
-49 main frames, 122 overlay pages, no backup. Kevin reached slide 31 at 45 minutes in rehearsal. We budget 20 more minutes for a 65-minute talk, leaving 25 minutes for questions. See timing.csv. The two themes are actor–critic learning and differentiable filtering, with a short connection to control.
+49 main frames, 115 overlay pages, no backup. Kevin reached slide 31 at 45 minutes in rehearsal. We budget 20 more minutes for a 65-minute talk, leaving 25 minutes for questions. See timing.csv. The two themes are actor–critic learning and differentiable filtering, with a short connection to control.
 
-**AUTHOR ACTION REQUIRED.** Review Lemma 14(i) of the ICML paper with the coauthors. The published class assumptions do not imply the pointwise optimism step used in its proof. The slides qualify the reported regret rate. A two-stage example, the corrected Tetris metric, and both audience audits are recorded in [the rehearsal review](provenance/REHEARSAL_REVIEW.md).
+November 18. Slide 21 presents the published rate with its attribution, assumptions and per-episode interpretation. Keep internal review comments out of the presentation. Shortened both technical sections and the control recap.
 
 The current source supersedes the historical change logs below. The first three slides introduce the motivating questions. Slides 15–18 use the actor catching up to a fixed critic. Slides 27–44 move from the raw Dhaka series to the Bayes filter, particle approximation, off-parameter reweighting, score and fitting. Slide 44 reports a separate PyPOMP benchmark. The section ends with the original control diagram and a recap of the two themes. Both entry points compiled locally.
 
