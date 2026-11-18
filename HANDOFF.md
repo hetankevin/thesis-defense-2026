@@ -15,9 +15,11 @@ The PDF Kevin presented is /Users/kevin/Downloads/thesis-defense-overlays.pdf. A
 
 ## Scope and standing corrections
 
+November 18, correction continuation: slides 35–38 follow the same parent 2 and fixed copies (2,3,3,3,4). They show the .08/.12 correction, the after-resampling likelihood increment .08533, a local density with unit correction and derivative -1/3 at the baseline, then the inherited contribution -alpha^2/3 after two discounted updates. These remain illustrative values. The denominator, baseline and parent indices are held fixed while differentiating. Algorithm 1 and Section 3 of the current DMOP manuscript were checked. Both variants compile; changed slides and every reveal were inspected. Independent review confirmed the operations and arithmetic; added the suggested explicit multiplication sign on slide 36. Timing unchanged.
+
 November 18, compartment example: slides 30–32 follow five illustrative S/I/R populations through prediction, measurement weighting and resampling. Slides 33–34 reuse parents 2 and 3 to show a threshold crossing under a common uniform draw, then the fixed-parent calculation. Counts and densities are teaching examples, not Dhaka fits. Fractional nearby counts illustrate the differentiable simulator approximation. Live source export `Downloads/Thesis_Defense_2026-9` matched the prior source except one trailing space in main.tex, preserved here. Both variants rebuilt and all changed slides/reveals visually inspected. Timing allocation is unchanged.
 
-49 main frames, 118 overlay pages, no backup. Kevin reached slide 31 at 45 minutes in rehearsal. We budget 20 more minutes for a 65-minute talk, leaving 25 minutes for questions. See timing.csv. The two themes are actor–critic learning and differentiable filtering, with a short connection to control.
+49 main frames, 121 overlay pages, no backup. Kevin reached slide 31 at 45 minutes in rehearsal. We budget 20 more minutes for a 65-minute talk, leaving 25 minutes for questions. See timing.csv. The two themes are actor–critic learning and differentiable filtering, with a short connection to control.
 
 November 18. Slide 21 presents the published rate with its attribution and per-episode interpretation, taking the same class for critics and their backups. Keep internal review comments out of the presentation. Shortened both technical sections and the control recap.
 

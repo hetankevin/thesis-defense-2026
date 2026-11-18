@@ -33,10 +33,10 @@ slide,section,title,seconds
 32,filtering,Resample the populations using their weights,55
 33,filtering,Changing the parameter can change which parent we copy,75
 34,filtering,Reuse the baseline parent choices at the nearby parameter,65
-35,filtering,Reweight each selected parent,75
-36,filtering,Reweighting the likelihood,65
-37,filtering,Differentiating the corrected likelihood,90
-38,filtering,Discounting earlier weight corrections,65
+35,filtering,Correct the weight of the parent we kept,75
+36,filtering,Combine the corrected copies to estimate the likelihood,65
+37,filtering,"The correction is 1 at the baseline, but its derivative is not",90
+38,filtering,Discount the corrections inherited from earlier months,65
 39,filtering,Likelihood near the baseline recovery rate,65
 40,filtering,How does discounting change the estimated score?,85
 41,filtering,Error in the estimated score,90

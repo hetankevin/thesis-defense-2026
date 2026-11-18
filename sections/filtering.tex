@@ -178,83 +178,109 @@ The baseline run selected parent 2. Keep that choice when changing $\phi$ to $\t
 \src{Illustrative simulator outputs. Only parents 2 and 3 are shown. Fractional counts allow a differentiable simulation approximation.}
 \end{frame}
 
-\begin{frame}{Reweight each selected parent}
-Write $g_j^\theta$ for the measurement density at particle $j$ simulated under $\theta$.
-\[
-\underbrace{\frac{g^\phi_j}{\sum_k g^\phi_k}}_{\text{selection probability at }\phi}
-\quad\times\quad
-\underbrace{\frac{g^\theta_j}{g^\phi_j}}_{\text{weight correction}}
-=\frac{g^\theta_j}{\sum_k g^\phi_k}.
-\]
-\pause
-In month one, average over the parent draw $A$, holding the candidates fixed:
-\[
-\underbrace{\frac{\sum_k g^\phi_k}{J}}_{\text{baseline increment}}\,
-\E\!\left[\frac{g^\theta_A}{g^\phi_A}\right]
-=\frac{1}{J}\sum_j g^\theta_j .
-\]
-\end{frame}
-
-\begin{frame}{Reweighting the likelihood}
-Start each lineage at $w_0=1$.
-\[
-w_{\rm new}=w_{\rm parent}\,\frac{g^\theta_{\rm parent}}{g^\phi_{\rm parent}} .
-\]
-\pause
-
-\[
-\widehat L_n(\theta;\phi)=\widehat L_n(\phi)\,
-\frac{\text{total corrected weight of the copies}}{\text{total incoming weight}} .
-\]
-Sum the weights of the selected copies, including repeats.
-\pause\gap
-At $\theta=\phi$, the correction equals 1. Its derivative is
-\[
-\left.\partial_\theta\frac{g_j^\theta}{g_j^\phi}\right|_{\theta=\phi}
-=\left.\partial_\theta\log g_j^\theta\right|_{\theta=\phi}.
-\]
-\src{Measurement Off-Parameter (MOP). Positive, differentiable measurement density and pathwise-differentiable simulator.}
-\end{frame}
-
-\begin{frame}{Differentiating the corrected likelihood}
-\begin{columns}[c,onlytextwidth]
-\column{.48\textwidth}\begin{tikzpicture}[x=.80cm,y=.81cm]
-\path[use as bounding box] (-.3,-.5) rectangle (6.7,4.6);
-\draw[arr] (.4,.4)--(6,.4) node[above,lab]{$\theta$};
-\draw[arr] (.4,.4)--(.4,4.05) node[above right,lab]{corrected log likelihood};
-\draw[blue,very thick,domain=.8:5.65,samples=35] plot (\x,{2.24+.6*(\x-3.2)+.075*(\x-3.2)^2});
-\fill[blue] (3.20,2.24) circle (2.8pt);
-\draw[black!45,dashed] (3.2,.43)--(3.2,2.24);\node[below] at (3.2,.40) {$\phi$};
-\draw[pink,dashed,thick,visible on=<2|handout:0>] (2.6,{2.24-.6*.70125})--(4.95,{2.24+1.75*.70125});
-\draw[green,very thick,visible on=<3->] (2.2,1.64)--(4.8,3.20) node[right,lab]{tangent};
-\fill[pink,visible on=<2|handout:0>] (4.55,3.18669) circle(2.8pt);
-\draw[black!45,dashed,visible on=<2|handout:0>] (4.55,.43)--(4.55,3.18669);\node[below,visible on=<2|handout:0>] at (4.55,.40) {$\phi+h$};
-\end{tikzpicture}
-\column{.49\textwidth}
-The corrected log likelihood is
-\[
-\widehat\ell(\theta;\phi)=\sum_n\log\widehat L_n(\theta;\phi).
-\]
-Vary one parameter, holding the baseline fixed.
-\uncover<2->{\gap Two points give a finite difference.}
-\uncover<3->{\gap Automatic differentiation gives the slope at $\phi$. It estimates one log-likelihood derivative.}
-\end{columns}
-\uncover<3->{\[
-\lim_{h\to0}\frac{\widehat\ell(\phi+h;\phi)-\widehat\ell(\phi;\phi)}{h}
-=\left.\partial_\theta\widehat\ell(\theta;\phi)\right|_{\theta=\phi}.
-\]}
-\src{Differentiated Measurement Off-Parameter (DMOP). At $\theta=\phi$ the ratio is one, but its numerator still varies with $\theta$.}
-\end{frame}
-
-\begin{frame}{Discounting earlier weight corrections}
-\[w_{\rm new}=w_{\rm parent}^{\alpha}\,(g^\theta_{\rm parent}/g^\phi_{\rm parent}),\qquad 0\le\alpha\le1.\]
-\begin{center}\begin{tikzpicture}[x=1cm,y=.85cm]
-\draw[arr] (.3,.6)--(11.8,.6) node[right,lab]{month};
-\foreach \x/\t/\a/\v in {1.4/{n-3}/{\alpha^3}/.65,4.1/{n-2}/{\alpha^2}/1,6.8/{n-1}/\alpha/1.5,9.5/n/1/2.2}{
-\fill[blue!40] (\x-.32,.62) rectangle (\x+.32,.62+\v);
-\node at (\x,1.0+\v) {$\a$};\node[below] at (\x,.5) {$\t$};}
+\begin{frame}{Correct the weight of the parent we kept}
+Keep parent 2, and correct for its changed measurement density.
+\begin{center}\begin{tikzpicture}[x=1cm,y=1cm,font=\small]
+\path[use as bounding box] (0,0) rectangle (12.4,3.35);
+\node[text=blue] at (2.5,3.05){Baseline $\phi$};
+\node[text=pink] at (9.6,3.05){Nearby $\theta$};
+\node[fill=green!8,minimum height=8mm] at (2.5,2.4){$(S,I,R)=(820,95,75)$};
+\node[fill=green!8,minimum height=8mm] at (9.6,2.4){$(819.8,95.7,74.5)$};
+\node at (2.5,1.65){$g_2^\phi=.12$};
+\node at (9.6,1.65){$g_2^\theta=.08$};
+\begin{scope}[visible on=<2->]
+\draw[arr,blue] (3.4,1.55)--(5.4,.8);
+\draw[arr,pink] (8.7,1.55)--(6.8,.8);
+\node at (6.1,.45){Correction: $\displaystyle\frac{g_2^\theta}{g_2^\phi}=\frac{.08}{.12}=\frac23$};
+\end{scope}
 \end{tikzpicture}\end{center}
-Each month's log correction gets the weight shown. Discounting can reduce variance at the cost of bias.
+\uncover<3->{\[
+\underbrace{.30}_{\text{selection probability at }\phi}
+\ \times\ \underbrace{\frac23}_{\text{correction}}
+=\frac{.08}{.40}
+=\frac{g_2^\theta}{\sum_k g_k^\phi}.
+\]}
+\src{Illustrative densities for $y_n=12$. $g_j^\theta=g_\theta(12\mid\widetilde X_n^j(\theta))$ includes the change in the simulated state.}
+\end{frame}
+
+\begin{frame}{Combine the corrected copies to estimate the likelihood}
+First month: all incoming correction weights are 1.
+\begin{center}\begin{tikzpicture}[x=1cm,y=1cm,font=\small]
+\path[use as bounding box] (0,-.2) rectangle (12.4,2.8);
+\node[left] at (1.3,2.3){Parent};
+\node[left,visible on=<2->] at (1.3,.7){$w$};
+\foreach \x/\a/\old/\new/\ratio in {2.1/2/.12/.08/{2/3},4.3/3/.18/.22/{11/9},6.5/3/.18/.22/{11/9},8.7/3/.18/.22/{11/9},10.9/4/.07/.07/1}{
+\node[circle,draw=blue,fill=blue!8,minimum size=8mm] at (\x,2.3){\a};
+\node at (\x,1.55){$\displaystyle\frac{\new}{\old}$};
+\node[visible on=<2->] at (\x,.7){$\ratio$};
+\draw[arr,blue!45,visible on=<2->] (\x,.35)--(6.5,-.12);
+}
+\end{tikzpicture}\end{center}
+\uncover<2->{\[
+\widehat L_1(\theta;\phi)
+=\underbrace{\frac{.40}{5}}_{\text{baseline increment}}
+\times\frac{\overbrace{\frac23+3\cdot\frac{11}{9}+1}^{\text{total corrected weight}}}{\underbrace{5}_{\text{total incoming weight}}}
+\approx .0853.
+\]}
+\uncover<3->{For each month, multiply the baseline increment by this ratio of weight sums.}
+\src{One fixed resampling draw, $(2,3,3,3,4)$. This is the after-resampling estimate, not the average of the five new measurement densities.}
+\end{frame}
+
+\begin{frame}{The correction is 1 at the baseline, but its derivative is not}
+Keep the denominator at the saved value $.12$. Vary only the numerator.
+\begin{columns}[c,onlytextwidth]
+\column{.43\textwidth}
+\begin{tikzpicture}
+\begin{axis}[width=\linewidth,height=3.7cm,xmin=-.1,xmax=1.15,ymin=.57,ymax=1.1,
+axis lines=left,xlabel={$\theta-\phi$},ylabel={Correction $w$},xtick={0,1},ytick={.666667,1},yticklabels={$2/3$,1},
+tick label style={font=\small},label style={font=\small},legend style={draw=none,font=\scriptsize},legend pos=north east]
+\addplot[blue,very thick,domain=0:1.05]{1-x/3};\addlegendentry{Parent 2}
+\addplot[only marks,blue,mark=*] coordinates {(0,1) (1,.666667)};
+\end{axis}\end{tikzpicture}
+\column{.54\textwidth}
+For the illustrative local density
+\[
+g_2^\theta=.12-.04(\theta-\phi),
+\]
+\[
+w(\theta;\phi)=\frac{\textcolor{pink}{.12-.04(\theta-\phi)}}{\textcolor{blue}{.12}}.
+\]
+\uncover<2->{\[
+ w(\phi;\phi)=1,\qquad
+ \left.\partial_\theta w(\theta;\phi)\right|_{\theta=\phi}=-\frac13.
+\]}
+\end{columns}
+\uncover<2->{\[
+\frac{w(\phi+h;\phi)-w(\phi;\phi)}{h}=\frac{(1-h/3)-1}{h}=-\frac13.
+\]}
+\uncover<3->{Apply automatic differentiation to $\widehat\ell(\theta;\phi)=\sum_n\log\widehat L_n(\theta;\phi)$, then set $\theta=\phi$.}
+\src{At the baseline, the correction is 1; parent 2\textquotesingle s selection probability is still .30. The density curve is illustrative.}
+\end{frame}
+
+\begin{frame}{Discount the corrections inherited from earlier months}
+Follow parent 2's copy. Let $r_n$ be its descendant's measurement-density ratio in month $n$.
+\begin{center}\begin{tikzpicture}[x=1cm,y=1cm,font=\small]
+\path[use as bounding box] (0,-.15) rectangle (12.4,3.1);
+\foreach \x/\n in {1.8/1,6.2/2,10.6/3}{
+\node at (\x,2.8){Month \n};
+\node[circle,fill=green!12,draw=green,minimum size=8mm] (m\n) at (\x,2.15){\ifnum\n=1 2\else\phantom{2}\fi};}
+\draw[arr,green] (m1)--(m2) node[midway,above] {simulate, keep parent};
+\draw[arr,green] (m2)--(m3) node[midway,above] {simulate, keep parent};
+\node at (1.8,1.2){$w_1=\textcolor{blue}{r_1}$};
+\node[visible on=<2->] at (6.2,1.2){$w_2=\textcolor{blue}{r_1^\alpha}\,\textcolor{pink}{r_2}$};
+\node[visible on=<2->] at (10.6,1.2){$w_3=\textcolor{blue}{r_1^{\alpha^2}}\,\textcolor{pink}{r_2^\alpha}\,r_3$};
+\node at (1.8,.25){$\displaystyle r_1=\frac{g_2^\theta}{.12}$};
+\node[visible on=<2->] at (8.4,.25){$w_{\rm new}=w_{\rm parent}^{\alpha}\,r_{\rm new}$,\quad $0\le\alpha\le1$};
+\end{tikzpicture}\end{center}
+\uncover<3->{At $\theta=\phi$, every $r_n=1$ and $w_3=1$, but}
+\uncover<3->{\[
+\left.\partial_\theta\log w_3\right|_{\theta=\phi}
+=\textcolor{blue}{-\frac{\alpha^2}{3}}
++\textcolor{pink}{\alpha\left.\partial_\theta\log r_2\right|_{\theta=\phi}}
++\left.\partial_\theta\log r_3\right|_{\theta=\phi}.
+\]}
+\uncover<3->{Discounting can reduce variance, at the cost of bias.}
+\src{The incoming weight is $w_{\rm parent}^{\alpha}$. Discounting acts on log-weight corrections, not the simulated state's dependence on $\theta$.}
 \end{frame}
 
 \begin{frame}{Likelihood near the baseline recovery rate}
