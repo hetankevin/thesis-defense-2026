@@ -17,6 +17,10 @@ The surrounding proposal repository is archival and divergent. Commit locally th
 
 The PDF Kevin presented is /Users/kevin/Downloads/thesis-defense-overlays.pdf. All 131 pages match the whitespace-normalized extracted text of a fresh build at df038f0. This is the baseline for reviewing later changes. The revision restores the max-cover inequality, actor tracking gap, switch-count placement, linear-critic interpretation, corrected log-likelihood definition, unit-weight derivative and control-figure notation. See provenance/BASELINE_REVIEW.md.
 
+## Latest notation correction, November 19
+
+Slide 13 uses Kevin’s requested $\mathcal{N}_{\mathcal{F}}(\epsilon)$ throughout in place of $M$, including the sequence count and bound. Both PDF variants rebuilt and the slide’s reveals visually checked. Overleaf hold remains in force.
+
 ## Latest visual review, November 19
 
 Inspected all 49 frames and all 121 overlay pages. Fixed diagram-label spacing on 6, 9, 31, 35 and 46; made the original control figure’s planning label larger on 47; enlarged the likelihood legend on 39. Source/qualification notes are larger and darker. Independent re-review found no remaining blocking defects. Both versions rebuilt without overfull/underfull boxes or TeX errors. No papers, equations, results or timing allocations were changed. See `provenance/VISUAL_REVIEW_2026-11-19.md`. Overleaf was not accessed; the explicit hold above remains in force.

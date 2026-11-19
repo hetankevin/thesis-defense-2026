@@ -208,8 +208,8 @@ $f_u(x)=\max(0,x-u)$\par\smallskip
 \end{tikzpicture}\par
 Each new threshold adds a bend.}
 \end{columns}
-\uncover<3->{\medskip $M$ functions cover the critics if each critic is within $\varepsilon$ of one everywhere.}
-\uncover<4->{\par\medskip $K$ fitted critics give up to $M^K$ sequences. With a new fit each episode, the bound scales as $\sqrt{T\log M^T}=T\sqrt{\log M}$.}
+\uncover<3->{\medskip $\mathcal{N}_{\mathcal{F}}(\epsilon)$ is the smallest number of functions needed to approximate every critic within $\epsilon$ everywhere.}
+\uncover<4->{\par\medskip $K$ fitted critics give up to $\mathcal{N}_{\mathcal{F}}(\epsilon)^K$ sequences. Refitting every episode gives $\sqrt{T\log(\mathcal{N}_{\mathcal{F}}(\epsilon)^T)}=T\sqrt{\log\mathcal{N}_{\mathcal{F}}(\epsilon)}$.}
 \end{frame}
 
 \begin{frame}{Can we update the critic less often?}
