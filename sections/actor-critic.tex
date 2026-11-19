@@ -69,7 +69,7 @@ V_h^\pi(s)=\underbrace{\sum_{a\in\A}\pi_h(a\mid s)Q_h^\pi(s,a)}_{\text{average o
 \draw[arr,visible on=<2->] (3.8,3.7)--node[above,lab]{estimated values}(6.9,3.7);
 \draw[arr,visible on=<3->] (9.5,1.7)--(9.5,.8)--node[below,lab]{new transitions $(s,a,r,s')$}(2,.8)--(2,1.7);
 \end{tikzpicture}\end{center}
-\uncover<2->{Higher estimated value raises an action's odds.}
+\uncover<2->{The actor gives more probability to actions with higher estimated values.}
 
 \end{frame}
 
@@ -179,7 +179,7 @@ From a uniform initial policy,
 \uncover<2->{\[
 y=r+\sum_b\underbrace{\pi_{t+1,h+1}(b\mid s')}_{\text{depends on past critics}}f_{h+1}(s',b).
 \]}
-\uncover<3->{Reusing the data requires a uniform bound over these responses.}
+\uncover<3->{Because the policy depends on the same data, we need a bound that holds across these regression responses.}
 \end{frame}
 
 \begin{frame}{How complicated is a sum of critics?}
@@ -209,7 +209,7 @@ $f_u(x)=\max(0,x-u)$\par\smallskip
 Each new threshold adds a bend.}
 \end{columns}
 \uncover<3->{\medskip $M$ functions cover the critics if each critic is within $\varepsilon$ of one everywhere.}
-\uncover<4->{\par\medskip $K$ fits give up to $M^K$ sequences. Refit every episode and the bound scales as $\sqrt{T\log M^T}=T\sqrt{\log M}$.}
+\uncover<4->{\par\medskip $K$ fitted critics give up to $M^K$ sequences. With a new fit each episode, the bound scales as $\sqrt{T\log M^T}=T\sqrt{\log M}$.}
 \end{frame}
 
 \begin{frame}{Can we update the critic less often?}
@@ -253,7 +253,7 @@ Between fits, next-action scores $f_{h+1}(s',b)$ stay fixed. The actor changes t
 \end{frame}
 
 \begin{frame}{Fit the critic to the best next action}
-Same transition $(s,a,r,s')$, same next-action scores.
+Both updates use the same transition $(s,a,r,s')$ and next-action scores.
 \begin{center}\begin{tikzpicture}[x=1cm,y=.9cm]
 \path[use as bounding box] (0,0) rectangle (12,3.55);
 \node[lab] at (3,3.03) {Algorithm 1};
@@ -265,7 +265,7 @@ Same transition $(s,a,r,s')$, same next-action scores.
 \node at (9.15,1.41) {$\displaystyle r+\max_b f_{h+1}(s',b)$};
 \end{scope}
 \end{tikzpicture}\end{center}
-\uncover<2->{Only the average changes when the actor updates.}
+\uncover<2->{When the actor changes, the average changes but the maximum stays fixed.}
 \uncover<3->{\[
 \left|\max_b f(s',b)-\max_b g(s',b)\right|\leq\|f-g\|_\infty.
 \]
@@ -273,7 +273,7 @@ A cover of the critics also covers their maxima.}
 \end{frame}
 
 \begin{frame}{Optimism as the actor changes}
-Suppose the critic upper-bounds the expected best-action target.
+Suppose the critic upper-bounds the expected target using the best next action.
 \begin{center}\begin{tikzpicture}[x=1cm,y=.84cm]
 \path[use as bounding box] (0,0) rectangle (12,4.68);
 \draw[arr] (1.9,.72)--(1.9,4.30);
@@ -289,7 +289,7 @@ Suppose the critic upper-bounds the expected best-action target.
 \fill[blue] (2.52,1.04) circle(2.7pt);\fill[blue] (9.56,2.87) circle(2.7pt);
 \end{scope}
 \end{tikzpicture}\end{center}
-\uncover<2->{The actor's average cannot exceed the maximum, even after taking expectations.}
+\uncover<2->{The actor's average cannot exceed the maximum. This upper bound holds as the policy changes.}
 \end{frame}
 
 \begin{frame}{Give the actor time to catch up}
@@ -319,7 +319,7 @@ A new critic may favor an action that the old policy almost never took.
 \end{frame}
 
 \begin{frame}{Alg. 2: update the critic when its regression error grows}
-On retained step-$h$ transitions $D_{t,h}$,
+Using stored transitions $D_{t,h}$ from step $h$, we measure regression loss:
 \[
 L_{t,h}(q,f)=\sum_{(s,a,r,s')\in D_{t,h}}[q(s,a)-r-\max_b f_{h+1}(s',b)]^2.
 \]
@@ -331,11 +331,11 @@ L_{t,h}(q,f)=\sum_{(s,a,r,s')\in D_{t,h}}[q(s,a)-r-\max_b f_{h+1}(s',b)]^2.
 \path[use as bounding box] (0,0) rectangle (12,2.5);
 \node[visible on=<2->] (test) at (6,2) {$\Delta_h\geq5H^2\beta$ for any $h$?};
 \node[align=center,visible on=<3->] (keep) at (2,.6) {Keep critic\\Continue softmax updates};
-\node[align=center,visible on=<3->] (new) at (9.8,.6) {Take pointwise upper estimates\\from the new set. Reset actor.};
+\node[align=center,visible on=<3->] (new) at (9.8,.6) {Refit the confidence set\\Use its upper estimates and reset actor};
 \draw[arr,visible on=<3->] (test.west)-|node[above,pos=.3,lab]{no}(keep.north);
 \draw[arr,visible on=<3->] (test.east)-|node[above,pos=.3,lab]{yes}(new.north);
 \end{tikzpicture}\end{center}
-\uncover<2->{$\beta$: confidence threshold.}\par\uncover<3->{Refit cutoff: excess loss $\le H^2\beta$ at every step.}
+\uncover<2->{$\beta$: confidence threshold.}\par\uncover<3->{The new set keeps critics with excess loss $\le H^2\beta$ at every step.}
 
 \end{frame}
 
@@ -383,7 +383,7 @@ At fixed complexity, the average loss per episode is $\widetilde O(1/\sqrt T)$.
 \node[rotate=90,font=\small] at ($(p.west)+(.15,0)$) {Cumulative reward shortfall};
 \end{tikzpicture}\end{center}
 Reference reward $-0.25$ per move. Mean $\pm$ one standard deviation over 30 trials.
-\uncover<2->{\gap These critics are unclipped and linear. Their sum still needs only one coefficient vector.}
+\uncover<2->{\gap The critics here are unclipped and linear, so their sum is represented by one coefficient vector.}
 \end{frame}
 
 \begin{frame}{When can Alg. 2 learn without optimism?}
@@ -435,13 +435,13 @@ Alg. 2H reaches the highest return here.
 \node at (3,3.8) {$r+\sum_b\pi_{t,h+1}(b\mid s')f_{h+1}(s',b)$};
 \node at (9.5,3.8) {$r+\max_b f_{h+1}(s',b)$};
 \draw[arr] (5.8,3.8)--(7.4,3.8);
-\node[lab] at (9.5,2.9) {No growing policy cover};
+\node[lab] at (9.5,2.9) {The cover no longer depends on the policy};
 \begin{scope}[visible on=<2->]
 \node[anchor=west,text=pink,font=\large] at (0,2) {Actor};
 \draw[arr] (2.2,1.2)--(11.4,1.2);
 \foreach \x in {3,7.3}{\draw[pink,very thick] (\x,.9)--(\x,1.6);\node[above,lab] at (\x,1.6) {reset to uniform};}
 \foreach \x in {3.5,4.2,...,10.5}{\fill[blue] (\x,1.2) circle(1.8pt);}
-\node[lab] at (7,.5) {Softmax steps; rare critic changes};
+\node[lab] at (7,.5) {Softmax updates between critic changes};
 \end{scope}
 \end{tikzpicture}\end{center}
 \uncover<3->{Next, how do we fit a model when the state is hidden?}

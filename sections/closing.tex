@@ -35,7 +35,7 @@ POMDP: partially observed Markov decision process.\\Belief $b$: hidden-state dis
 \end{scope}
 \end{tikzpicture}\end{center}
 \uncover<2->{\[Q_{\mathrm{QMDP}}(b,a)=\E_{X\sim b}[Q^*_{\mathrm{fully\ observed}}(X,a)].\]}
-\uncover<3->{QMDP skips future observation branches. A short belief tree keeps the first few.}
+\uncover<3->{A short belief tree plans over the next few observations, then uses QMDP.}
 \end{frame}
 
 \begin{frame}{Using the particle filter to choose actions}
@@ -50,11 +50,11 @@ POMDP: partially observed Markov decision process.\\Belief $b$: hidden-state dis
 \begin{columns}[T,onlytextwidth]
 \column{.47\textwidth}
 {\Large\color{blue}Learning to act}\gap
-We fit the critic to the best next action so its target stays fixed while the policy changes.
+The maximum target removes dependence on a changing policy.
 \pause
 \column{.47\textwidth}
 {\Large\color{green}Fitting a model}\gap
-We keep the parent choices fixed and reweight the particles to differentiate the likelihood.
+Fixed parents and corrected weights give a differentiable likelihood estimate.
 \end{columns}
 \uncover<3->{\gap In partially observed control, we estimate the state and then choose an action.}
 \end{frame}

@@ -5,7 +5,7 @@
 Joint work: Kevin Tan, A. J. Abkemeier, Kunyang He,\\Giles Hooker, Edward L. Ionides.
 \gap JRSS-B, revise and resubmit.\par
 \vspace{6mm}
-How do we estimate parameters from a simulator and partial observations?
+How do we fit a model when we can simulate its states but cannot observe them?
 \end{frame}
 
 \begin{frame}{Monthly cholera deaths in Dhaka, 1891--1940}
@@ -24,12 +24,12 @@ How do we estimate parameters from a simulator and partial observations?
 \pause\gap
 \textcolor{green}{Observed $y_n$}\quad Monthly deaths, measured with error.
 \pause\gap
-Which recovery rate $\gamma$ best fits the 600 counts?
+Which recovery rate $\gamma$ best fits these 600 monthly death counts?
 \src{$I\to R_1$ denotes recovery. $R_1,R_2,R_3$ are stages of immunity. King et al. (2008).}
 \end{frame}
 
-\begin{frame}{One month of Bayes filtering}
-$b_n$ is the state distribution given counts through month $n$. The model parameters are $\theta$.
+\begin{frame}{Updating the state distribution}
+For fixed parameters $\theta$, $b_n$ is the distribution of hidden states given deaths observed through month $n$.
 \[
  b_n(dx)=\frac{1}{L_n}\,
  \underbrace{\textcolor{green}{g_\theta(y_n\mid x)}}_{\text{measurement}}
@@ -37,14 +37,14 @@ $b_n$ is the state distribution given counts through month $n$. The model parame
  \underbrace{\textcolor{blue}{P_\theta(dx\mid z)}}_{\text{process}}\,
  \underbrace{\textcolor{pink}{b_{n-1}(dz)}}_{\text{last month's filter}} .
 \]
-\pause Average over last month\textquotesingle s states, then weight by this month\textquotesingle s measurement.
+\pause We average predictions over last month's state distribution, then weight them by the density of observed deaths.
 \pause\gap
 $L_n=p_\theta(y_n\mid y_{1:n-1})$ is the predictive density. The likelihood is $\prod_n L_n$.
 \end{frame}
 
 % Illustrative counts and measurement densities, not a fitted Dhaka trajectory.
-\begin{frame}{Simulate one month for each possible population}
-Each particle is one possible population: $S$ susceptible, $I$ infected, $R$ immune.
+\begin{frame}{Predicting next month's populations}
+A particle gives possible counts of susceptible ($S$), infected ($I$) and immune ($R$) people.
 \begin{center}\begin{tikzpicture}[x=1cm,y=1cm,font=\small]
 \path[use as bounding box] (0,-.1) rectangle (12.4,4.35);
 \node at (2.4,4.1) {Last month's particles};
@@ -73,7 +73,7 @@ Each particle is one possible population: $S$ susceptible, $I$ infected, $R$ imm
 \src{Illustrative counts, $J=5$ particles. $R$ combines the immunity stages. The full state also tracks modeled deaths.}
 \end{frame}
 
-\begin{frame}{Weight the populations using the observed deaths}
+\begin{frame}{Weighting particles by observed deaths}
 Observed this month: $y_n=12$ deaths.
 \begin{center}\begin{tikzpicture}[x=1cm,y=.9cm,font=\small]
 \path[use as bounding box] (0,-.6) rectangle (12.7,3.9);
@@ -110,7 +110,7 @@ Observed this month: $y_n=12$ deaths.
 \src{Illustrative compartment counts and schematic weights. $g_n^j=g_\theta(y_n\mid\widetilde X_n^j)$; $\delta_x$ is a point mass.}
 \end{frame}
 
-\begin{frame}{Resample the populations using their weights}
+\begin{frame}{Resampling particles}
 \begin{center}\begin{tikzpicture}[x=1cm,y=1cm,font=\small]
 \path[use as bounding box] (0,0) rectangle (12.4,4.6);
 \foreach \j/\y/\r/\sir in {
@@ -133,7 +133,7 @@ Observed this month: $y_n=12$ deaths.
 \end{frame}
 
 \begin{frame}{Changing the parameter can change which parent we copy}
-Use the same resampling draw $u\sim\mathrm{Unif}(0,1)$ at baseline $\phi$ and nearby $\theta$.
+The same draw $u\sim\mathrm{Unif}(0,1)$ can select different parents at baseline $\phi$ and nearby $\theta$.
 \begin{center}\begin{tikzpicture}[x=1cm,y=1cm,font=\small]
 \path[use as bounding box] (-.4,-.15) rectangle (12.5,4.35);
 \foreach \y/\split/\name/\vis in {3.15/.35/{Baseline $\phi$}/1,1.85/.25/{Nearby $\theta$}/2}{
@@ -154,12 +154,12 @@ Use the same resampling draw $u\sim\mathrm{Unif}(0,1)$ at baseline $\phi$ and ne
 \node[below] at (1.6,1.5){0};\node[below] at (10.6,1.5){1};
 \node[visible on=<2->] at (6.1,.5){Selected $(S,I,R)$:\quad $(820,95,75)$\quad$\longrightarrow$\quad near $(760,130,95)$};
 \end{tikzpicture}\end{center}
-\uncover<3->{The copied population jumps. Later simulations, and hence the likelihood estimate, can jump too.}
+\uncover<3->{A different parent changes the subsequent simulation, so the likelihood estimate can jump.}
 \src{Schematic selection intervals. Gray intervals contain the other parents.}
 \end{frame}
 
-\begin{frame}{Reuse the baseline parent choices at the nearby parameter}
-The baseline run selected parent 2. Keep that choice when changing $\phi$ to $\theta$.
+\begin{frame}{Fixing the parent choices}
+Parent 2 was selected at $\phi$. We use it again at $\theta$.
 \begin{center}\begin{tikzpicture}[x=1cm,y=1cm,font=\small]
 \path[use as bounding box] (-.2,-.1) rectangle (12.6,4.05);
 \foreach \off/\col/\head/\vis/\two/\three in {
@@ -178,13 +178,13 @@ The baseline run selected parent 2. Keep that choice when changing $\phi$ to $\t
 \draw[arr,green] (5,.35)--(c\vis.east);
 \end{scope}}
 \end{tikzpicture}\end{center}
-\uncover<2->{Reuse the simulation draws too. The compartment counts still vary with $\theta$.}
-\uncover<3->{\gap We no longer resample using the new weights. We correct for that next.}
+\uncover<2->{We also keep the simulation draws fixed, while the compartment counts vary with $\theta$.}
+\uncover<3->{\gap Because parent selection still uses $\phi$, we need to correct the weights.}
 \src{Illustrative simulator outputs. Only parents 2 and 3 are shown. Fractional counts allow a differentiable simulation approximation.}
 \end{frame}
 
-\begin{frame}{Correct for selecting parents under the baseline model}
-Keep the parent choice. Reweight its contribution using the new measurement density.
+\begin{frame}{Correcting the resampling weights}
+We selected parents under $\phi$, so we reweight their contributions at $\theta$.
 \begin{center}\begin{tikzpicture}[x=1cm,y=1cm,font=\small]
 \path[use as bounding box] (0,0) rectangle (12.4,3.3);
 \node[text=blue] at (2.5,3.05){Baseline $\phi$};
@@ -208,7 +208,7 @@ Keep the parent choice. Reweight its contribution using the new measurement dens
 \end{frame}
 
 \begin{frame}{Each copy carries its parent's corrected weight}
-Multiply the incoming weight by the measurement-density ratio.
+The correction multiplies the weight inherited from the parent.
 \begin{center}\begin{tikzpicture}[x=1cm,y=.9cm,font=\small]
 \path[use as bounding box] (0,-.1) rectangle (12.4,3.55);
 \foreach \x/\a/\size in {1.4/2/.24,3.8/3/.42,6.2/3/.42,8.6/3/.42,11/4/.33}{
@@ -230,7 +230,7 @@ w_{\rm copy}=w_{\rm parent}\,\frac{g_{\rm parent}^\theta}{g_{\rm parent}^\phi}.
 \end{frame}
 
 \begin{frame}{Why unit correction weights still have derivatives}
-Differentiate with the baseline $\phi$ fixed. Then evaluate at $\theta=\phi$.
+We vary $\theta$ while holding $\phi$ fixed, then evaluate the derivative at $\theta=\phi$.
 \begin{columns}[c,onlytextwidth]
 \column{.43\textwidth}
 \begin{tikzpicture}[x=.72cm,y=.72cm,font=\small]
@@ -258,13 +258,13 @@ w(\phi;\phi)=1,\qquad
 =\left.\partial_\theta\log g_2^\theta\right|_{\theta=\phi}.
 \]}
 \end{columns}
-\uncover<2->{The numerator equals the denominator at the baseline. Its slope can still be nonzero.}
+\uncover<2->{At $\theta=\phi$, the densities agree, but only the numerator varies with $\theta$.}
 \uncover<3->{\gap Automatic differentiation applies this to $\widehat\ell(\theta;\phi)=\sum_n\log\widehat L_n(\theta;\phi)$.}
 \src{Schematic correction curve. These correction weights equal 1 at the baseline; normalized resampling probabilities generally do not.}
 \end{frame}
 
-\begin{frame}{Discount the corrections inherited from earlier months}
-Follow parent 2's copy. Let $r_n$ be its descendant's measurement-density ratio in month $n$.
+\begin{frame}{Discounting earlier corrections}
+Along this lineage, $r_n$ is the ratio of the new measurement density to the baseline density in month $n$.
 \begin{center}\begin{tikzpicture}[x=1cm,y=.9cm,font=\small]
 \path[use as bounding box] (0,-.15) rectangle (12.4,3.1);
 \foreach \x/\n in {1.8/1,6.2/2,10.6/3}{
@@ -314,13 +314,13 @@ The estimates agree closely at $\phi=18$, with different slopes.
 \column{.41\textwidth}
 1,000 runs of 10,000 particles at the fitted parameters.
 \uncover<2->{\gap Variance rises near $\alpha=1$.}
-\uncover<3->{\gap The blue curve measures squared error relative to zero. This is score MSE at a stationary point.}
+\uncover<3->{\gap The blue curve is the mean squared norm. It equals score MSE at a stationary point.}
 \end{columns}
 \src{Fig. 1B. Gradient of log likelihood per observation, summed moments across coordinates. Same filter as Fig. 1A.}
 \end{frame}
 
 \begin{frame}{Error in the estimated score}
-Fix the $N$ observations. The target is the score $S=\nabla_\theta\log p_\theta(y_{1:N})$ at $\theta=\phi$.
+For a fixed dataset $y_{1:N}$, we estimate the score $S=\nabla_\theta\log p_\theta(y_{1:N})$ at $\theta=\phi$.
 \pause\gap
 $\alpha=1$: $\E\|\widehat S-S\|^2\to0$ as the particle count $J\to\infty$.
 \pause\gap
@@ -336,7 +336,7 @@ For $\alpha<1$, let $H_N(\alpha)=\sum_{r=0}^{N-1}\alpha^r$. Then
 \begin{frame}{Fitting the model}
 \begin{center}\begin{tikzpicture}[x=1cm,y=1cm]
 \path[use as bounding box] (0,0) rectangle (12,5.4);
-\node[obj] (init) at (1.4,3.6) {$\theta_0$};\node[lab] at (1.4,4.7) {Iterated-filtering\\warm start};
+\node[obj] (init) at (1.4,3.6) {$\theta_0$};\node[lab] at (1.4,4.7) {Initial fit\\(iterated filtering)};
 \node[obj] (theta) at (5.6,3.6) {$\theta_k$};\node[lab] at (5.6,4.7) {Current parameter};
 \node (score) at (10,3.6) {$\widehat S_{J,\alpha}(\theta_k)$};
 \node[lab] at (10,4.7) {DMOP score};

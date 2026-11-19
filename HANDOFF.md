@@ -15,7 +15,11 @@ The PDF Kevin presented is /Users/kevin/Downloads/thesis-defense-overlays.pdf. A
 
 ## Scope and standing corrections
 
-Latest small change: slide 31 uses bars for the schematic normalized weights, with no numerical weight labels. Locally rebuilt and visually checked. GitHub updated; Overleaf sync and server PDF refresh are pending because the Mac is locked. Files named `overleaf` are the preceding verified server builds.
+Latest revision: whole-deck language pass following Kevin's “look at the whole presentation.” Read all 49 slides and revised phrasing across the opening, actor–critic section, filtering section and closing. Replaced clipped instructions with explanations of why the operations are needed; tied the Bayes update to observed deaths; shortened several PF titles and the final recap. Mathematical displays, assumptions, figures and reported findings are preserved. Slide 31 still uses unnumbered bars.
+
+Both local versions compile: 49 handout pages and 121 overlay pages. Inspected the entire rendered handout and representative reveals. Timing stays at 3900 seconds (65 minutes). No overfull/underfull boxes or compile errors. Current PDFs are `output/thesis-defense-handout.pdf` and `output/thesis-defense-overlays.pdf`.
+
+Overleaf is pending: Safari now opens, but the defense tab reports “You're offline” and says edits are saved in the browser. No reload, upload or pull was attempted, to preserve those edits. Before syncing, wait for reconnection, export source, compare it with publication history, and merge any live edits. The last verified live source is `691f874`; files named `overleaf` remain those older verified server builds. GitHub is updated through the local publication checkout. Historical delivery statements below apply only to their named revisions.
 
 November 18, latest correction: Kevin rejected worked arithmetic as a teaching device. His example: keep slide 31's S/I/R counts and modeled deaths, then an arrow determined by measurement density leading to an unnumbered normalized-weight profile. Numbers may illustrate states, but the audience should not have to follow fabricated numerical calculations. This applies across the deck.
 

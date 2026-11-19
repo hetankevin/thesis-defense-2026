@@ -27,16 +27,16 @@ slide,section,title,seconds
 26,filtering,2. Differentiable particle filters,25
 27,filtering,"Monthly cholera deaths in Dhaka, 1891--1940",75
 28,filtering,The Dhaka cholera model,110
-29,filtering,One month of Bayes filtering,120
-30,filtering,Simulate one month for each possible population,60
-31,filtering,Weight the populations using the observed deaths,75
-32,filtering,Resample the populations using their weights,55
+29,filtering,Updating the state distribution,120
+30,filtering,Predicting next month's populations,60
+31,filtering,Weighting particles by observed deaths,75
+32,filtering,Resampling particles,55
 33,filtering,Changing the parameter can change which parent we copy,75
-34,filtering,Reuse the baseline parent choices at the nearby parameter,65
-35,filtering,Correct for selecting parents under the baseline model,75
+34,filtering,Fixing the parent choices,65
+35,filtering,Correcting the resampling weights,75
 36,filtering,Each copy carries its parent's corrected weight,65
 37,filtering,Why unit correction weights still have derivatives,90
-38,filtering,Discount the corrections inherited from earlier months,65
+38,filtering,Discounting earlier corrections,65
 39,filtering,Likelihood near the baseline recovery rate,65
 40,filtering,How does discounting change the estimated score?,85
 41,filtering,Error in the estimated score,90
