@@ -1,5 +1,5 @@
 slide,section,title,seconds
-1,opening,Title,35
+1,opening,,35
 2,opening,Learning from sequential data,150
 3,opening,Two questions,185
 4,actor-critic,1. Actor--critic methods,25
@@ -31,20 +31,20 @@ slide,section,title,seconds
 30,filtering,Predicting next month's populations,60
 31,filtering,Weighting particles by observed deaths,75
 32,filtering,Resampling particles,55
-33,filtering,Changing the parameter can change which parent we copy,75
-34,filtering,Fixing the parent choices,65
-35,filtering,Correcting the resampling weights,75
-36,filtering,Each copy carries its parent's corrected weight,65
-37,filtering,Why unit correction weights still have derivatives,90
-38,filtering,Discounting earlier corrections,65
-39,filtering,Likelihood near the baseline recovery rate,65
-40,filtering,How does discounting change the estimated score?,85
-41,filtering,Error in the estimated score,90
-42,filtering,Fitting the model,50
-43,filtering,Likelihood searches for the Dhaka cholera model,65
-44,filtering,Running the Dhaka particle filter on a GPU,55
-45,closing,Braking depends on velocity,45
-46,closing,Full belief planning is expensive,75
-47,closing,Using the particle filter to choose actions,75
-48,closing,Two themes from my dissertation,90
+33,filtering,Resampling makes the fixed-seed likelihood discontinuous,75
+34,filtering,Reweighting gives a smooth likelihood approximation,105
+35,filtering,Correcting the resampling weights,70
+36,filtering,Why unit correction weights still have derivatives,90
+37,filtering,Discounting accumulated importance weights,65
+38,filtering,Likelihood near the baseline recovery rate,65
+39,filtering,How does discounting change the estimated score?,85
+40,filtering,Error in the estimated score,90
+41,filtering,Fitting the model,50
+42,filtering,Likelihood searches for the Dhaka cholera model,65
+43,filtering,GPU particle filtering: Dhaka and London,55
+44,closing,Let's deal with control now,45
+45,closing,QMDP assumes future states will be observed,75
+46,closing,Using the particle filter to choose actions,75
+47,closing,MuJoCo with partially observed states,60
+48,closing,Two themes from my dissertation,60
 49,closing,Thank you everyone!,15

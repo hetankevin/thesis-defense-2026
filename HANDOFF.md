@@ -2,9 +2,13 @@
 
 Updated November 19, 2026.
 
-## Publication hold
+## Current revision, November 19
 
-Kevin explicitly instructed on November 19: **do not synchronize to Overleaf until he says so**. This supersedes all pending-sync instructions below. Work locally and on the existing GitHub repository only. Do not open, reload, pull into, or upload to Overleaf during this hold.
+Kevin released the Overleaf hold with “ok update overleaf.” A fresh live source export at `/Users/kevin/Downloads/Thesis_Defense_2026-13` matches publication commit `691f874` across existing tracked files. Preserve any subsequent live changes through GitHub Sync.
+
+Rebuilt the fixed-seed explanation: likelihood jumps when parent selection changes away from the baseline; fixed-parent reweighting gives a smooth local approximation and its derivative. Moved the two likelihood-correction equations onto that slide and removed their redundant standalone frame. The next slides distinguish the unchanged forward pass from the approximate score and explain why undiscounted off-parameter weight products motivate discounting. Added the London runtime comparison with sampler qualifications. Control now starts with “Let's deal with control now”; QMDP's future-state observability assumption precedes its formula. The control pipeline explicitly connects earlier model fitting, standard PF inference, and planning. The following slide shows published MuJoCo Ant/HalfCheetah results under both masks, including original Ant instability and the unfavorable HalfCheetah position-masked result.
+
+Historical hold statements below describe earlier revisions and are superseded by this release. Local build: 49 handout slides, 120 overlay pages; 3900 seconds (65 minutes), including 60 seconds for MuJoCo. Inspected revised slides and intermediate reveals, resolved layout warnings, and obtained independent source/clarity reviews. Overleaf synchronization is pending.
 
 ## Canonical project
 

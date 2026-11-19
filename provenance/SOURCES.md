@@ -106,3 +106,17 @@ Pre-edit Overleaf export `Downloads/Thesis_Defense_2026-12` matched publication 
 ## November 19 visual pass
 
 The original control pipeline PDF is unchanged. Slide 47 resets only its small Planning label as larger vector text, preserving its wording and operations. Figure 1A was regenerated from the same saved CSV and style with legend fontsize 12 instead of the default 10. No curve values or experimental claims changed.
+
+
+## November 19: fixed-seed likelihood and London runtimes
+
+Slides 33–37 follow the updated DMOP manuscript, Section 2, Off-Parameter Particle Filters (local verified source `/tmp/defense-dmop-current.tex`, lines 147–165). The fixed-seed likelihood and correction curves are schematic, not measured data. The baseline fixes both the seed and ancestor choices. At theta=phi the reweighted likelihood equals the usual particle-filter estimate; its derivative is a score approximation. Undiscounted off-parameter correction products can grow exponentially with the horizon; at the baseline their values are one while derivatives accumulate.
+
+London runtime table: `https://github.com/pypomp/quant/blob/4e1cb8119a9b7fc696a1ac0b7df85b37ec3edd04/tests/library_comparison/table.csv`, with protocol in `tests/library_comparison/measles/README.md` at that commit. Warm second full-batch call, RTX 3090, float32, 36 parameter sets x 36 replicates x 5000 particles; 730 weekly observations and seven daily Euler steps per week. CuTe 9.9853 s, parallel XLA 33.9747 s, pfjax 1340.2749 s, cuthbert 1219.6189 s. PyPOMP uses approximate inverse-CDF draws; the comparison adapters use exact JAX draws. pfjax uses multinomial resampling; the others use systematic. Both PyPOMP paths use Threefry. The separate same-commit PR57 44.0 s vs 10.0 s comparison is NOT mixed into this table or used to label it 4.4x.
+
+
+## November 19: control experiments
+
+MuJoCo source is the published arXiv v1 figure, not the older local submission draft: https://arxiv.org/html/2610.27575v1#S5.F3 . Full exact vector asset `figures/control-mujoco-full.pdf` was extracted from `NeurIPS/Figures/mujoco_camera_ready.pdf` in https://arxiv.org/src/2610.27575v1 . SHA256: 329668d311c100294ed8239ba92606edb88da5dda83fab6adf8cb459df859103. `control-mujoco-selected.pdf` crops the Ant and HalfCheetah columns, both observation masks, without changing curves. The legend is reproduced in vector text with the exact original RGB colors. The slide retains original Ant settings and the original 3k cutoff as well as revised runs through 49.2k, and includes the unfavorable HalfCheetah/hidden-position result.
+
+Section 5 states that neural dynamics are learned online, the PF estimates latent states, and the implementation uses state rollouts with a learned actor and a learned critic. Belief-tree depth is zero. Ant uses 16 particles and a ten-step state rollout (not belief-tree depth 10). Five seeds except Ant PF-MCTQ: three revised and two original; mean and 95% t bands, with thin original Ant trajectories. Ant PF-MCTQ uses 10-episode rolling training returns, other curves individual episode training returns. The slide presents empirical comparisons, not a guarantee for the implemented planner.

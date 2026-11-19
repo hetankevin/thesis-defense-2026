@@ -133,55 +133,69 @@ Observed this month: $y_n=12$ deaths.
 \src{One possible resampling draw. Circle area is proportional to weight. Each copy carries the full state, including modeled deaths.}
 \end{frame}
 
-\begin{frame}{Changing the parameter can change which parent we copy}
-The same draw $u\sim\mathrm{Unif}(0,1)$ can select different parents at baseline $\phi$ and nearby $\theta$.
-\begin{center}\begin{tikzpicture}[x=1cm,y=1cm,font=\small]
-\path[use as bounding box] (-.4,-.15) rectangle (12.5,4.35);
-\foreach \y/\split/\name/\vis in {3.15/.35/{Baseline $\phi$}/1,1.85/.25/{Nearby $\theta$}/2}{
-\begin{scope}[visible on=<\vis->]
-\node[left] at (1.5,\y){\name};
-\fill[black!12] (1.6,\y-.25) rectangle (2.05,\y+.25);
-\fill[green!25] (2.05,\y-.25) rectangle ({1.6+9*\split},\y+.25);
-\fill[pink!25] ({1.6+9*\split},\y-.25) rectangle (8.8,\y+.25);
-\fill[black!12] (8.8,\y-.25) rectangle (10.6,\y+.25);
-\node at ({(2.05+1.6+9*\split)/2},\y){2};
-\node at ({(1.6+9*\split+8.8)/2},\y){3};
-\draw[thin] (1.6,\y-.25) rectangle (10.6,\y+.25);
-\end{scope}}
-\node at (8.1,4.05){Interval width = weight};
-\draw[dashed,thick] (4.3,1.45)--(4.3,3.6) node[above] {same draw $u$};
-\node[right,text=green] at (10.65,3.15){copy 2};
-\node[right,text=pink,visible on=<2->] at (10.65,1.85){copy 3};
-\node[below] at (1.6,1.5){0};\node[below] at (10.6,1.5){1};
-\node[visible on=<2->] at (6.1,.5){Selected $(S,I,R)$:\quad $(820,95,75)$\quad$\longrightarrow$\quad near $(760,130,95)$};
+% Shared axes keep the fixed-seed PF and reweighted likelihood pictures aligned.
+\newcommand{\likelihoodaxes}{%
+\path[use as bounding box] (0,-.7) rectangle (12.4,4.7);
+\draw[arr] (1.5,.6)--(11.8,.6) node[right]{$\theta$};
+\draw[arr] (1.5,.6)--(1.5,4.15);
+\node[rotate=90] at (.55,2.4){Log likelihood};
+\draw (4,.52)--(4,.68);\node[below] at (4,.48){$\phi$};
+\draw[black!35,dashed] (4,.7)--(4,2.1);
+}
+\newcommand{\pfleftcurve}{%
+\draw[blue,very thick,domain=1.8:5.4,samples=35] plot (\x,{2.1+.17*(\x-4)+.025*(\x-4)^2});
+}
+\newcommand{\pfrightcurve}{%
+\draw[blue,very thick,domain=5.4:11.2,samples=40] plot (\x,{3.3+.2*(\x-5.4)-.035*(\x-5.4)^2});
+\draw[blue,fill=white,thick] (5.4,2.387) circle(2.4pt);
+\fill[blue] (5.4,3.3) circle(2.4pt);
+}
+\begin{frame}[t]{Resampling makes the fixed-seed likelihood discontinuous}
+We keep the seed fixed as $\theta$ varies.
+\begin{center}\begin{tikzpicture}[x=1cm,y=.58cm,font=\small]
+\likelihoodaxes
+\pfleftcurve
+\fill[black] (4,2.1) circle(2.6pt);
+\draw[blue,very thick] (2.2,4.45)--(2.8,4.45);\node[anchor=west] at (2.95,4.45){Particle filter};
+\node[text=blue] at (3.35,3.05){Parent 2 selected};
+\begin{scope}[visible on=<2->]
+\pfrightcurve
+\draw[black!40,dashed] (5.4,.7)--(5.4,3.3);
+\draw (5.4,.52)--(5.4,.68);\node[below] at (5.4,.48){$\phi+\Delta$};
+\draw[<->,black!65] (4,-.32)--(5.4,-.32) node[midway,below]{$\Delta$};
+\node[text=blue] at (8.4,2.55){Parent 3 selected};
+\end{scope}
 \end{tikzpicture}\end{center}
-\uncover<3->{A different parent changes the subsequent simulation, so the likelihood estimate can jump.}
-\src{Schematic selection intervals. Gray intervals contain the other parents.}
+\uncover<3->{At $\phi+\Delta$, changed weights select a different parent. The likelihood estimate jumps.}
+\src{Schematic, with a differentiable simulator. The jump need not occur at the baseline $\phi$.}
 \end{frame}
 
-\begin{frame}{Fixing the parent choices}
-Parent 2 was selected at $\phi$. We use it again at $\theta$.
-\begin{center}\begin{tikzpicture}[x=1cm,y=1cm,font=\small]
-\path[use as bounding box] (-.2,-.1) rectangle (12.6,4.05);
-\foreach \off/\col/\head/\vis/\two/\three in {
-0/blue/{Baseline $\phi$}/1/{(820,95,75)}/{(760,130,95)},
-6.6/pink/{Nearby $\theta$}/2/{(819.8,95.7,74.5)}/{(759.8,130.7,94.5)}}{
-\begin{scope}[xshift=\off cm,visible on=<\vis->]
-\node[text=\col] at (2.7,3.75){\head};
-\node at (1.4,3.2){Predicted $(S,I,R)$};
-\node[draw=green,fill=green!8,minimum width=3.6cm,minimum height=7mm] (p\vis) at (1.6,2.5){$\two$};
-\node[left] at (-.25,2.5){2};
-\node[text=black!55] at (1.6,1.45){$\three$};
-\node[left,text=black!55] at (-.25,1.45){3};
-\draw[thick,green] (3.5,2.5)--(5,2.5)--(5,.35);
-\node[align=center] at (4.8,3.2){Copy\\parent 2};
-\node[fill=green!8,minimum height=7mm,minimum width=3.6cm] (c\vis) at (2.8,.35){$\two$};
-\draw[arr,green] (5,.35)--(c\vis.east);
-\end{scope}}
+\begin{frame}[t]{Reweighting gives a smooth likelihood approximation}
+We fix the seed and the parent choices from the baseline $\phi$.
+\begin{center}\begin{tikzpicture}[x=1cm,y=.58cm,font=\small]
+\likelihoodaxes
+\pfleftcurve\pfrightcurve
+\draw[blue,very thick] (2.2,4.45)--(2.8,4.45);\node[anchor=west] at (2.95,4.45){Particle filter};
+\begin{scope}[visible on=<2->]
+\draw[pink,very thick,domain=1.8:11.2,samples=60] plot (\x,{2.1+.32*(\x-4)-.018*(\x-4)^2});
+\draw[pink,very thick] (7.2,4.45)--(7.8,4.45);\node[anchor=west] at (7.95,4.45){Reweighted};
+\end{scope}
+\begin{scope}[visible on=<3->]
+\draw[black,dashed,thick] (2.7,1.684)--(5.3,2.516);
+\node[anchor=west] at (6.3,1.15){Derivative at $\theta=\phi$};
+\draw[arr,black!60] (6.2,1.15)--(4.75,2.34);
+\end{scope}
+\fill[black] (4,2.1) circle(2.6pt);
 \end{tikzpicture}\end{center}
-\uncover<2->{We also keep the simulation draws fixed, while the compartment counts vary with $\theta$.}
-\uncover<3->{\gap Because parent selection still uses $\phi$, we need to correct the weights.}
-\src{Illustrative simulator outputs. Only parents 2 and 3 are shown. Fractional counts allow a differentiable simulation approximation.}
+\vspace{-2mm}
+\uncover<2->{\[
+w_{\rm copy}=w_{\rm parent}\,\frac{g_{\rm parent}^\theta}{g_{\rm parent}^\phi}.
+\]}
+\uncover<2->{\[
+\widehat L_n(\theta;\phi)=\widehat L_n(\phi)\times
+\frac{\text{total corrected weight of copies}}{\text{total incoming weight}}.
+\]}
+\src{Schematic log likelihood $\widehat\ell(\theta;\phi)=\sum_n\log\widehat L_n(\theta;\phi)$. Same value at $\theta=\phi$, with $\phi$ held fixed when differentiating.}
 \end{frame}
 
 \begin{frame}{Correcting the resampling weights}
@@ -206,27 +220,6 @@ We selected parents under $\phi$, so we reweight their contributions at $\theta$
 =\frac{g_2^\theta}{\sum_k g_k^\phi}.
 \]}
 \src{$g_j^\theta=g_\theta(y_n\mid\widetilde X_n^j(\theta))$: the density includes the change in the simulated state.}
-\end{frame}
-
-\begin{frame}{Each copy carries its parent's corrected weight}
-\begin{center}\begin{tikzpicture}[x=1cm,y=.9cm,font=\small]
-\path[use as bounding box] (0,-.1) rectangle (12.4,3.55);
-\foreach \x/\a/\size in {1.4/2/.24,3.8/3/.42,6.2/3/.42,8.6/3/.42,11/4/.33}{
-\node[circle,draw=blue,fill=blue!8,minimum size=7mm] (p\x) at (\x,2.9){\a};
-\draw[arr,black!40,visible on=<2->] (\x,2.45)--(\x,1.7);
-\fill[blue!50,visible on=<2->] (\x,1.1) circle(\size);
-}
-\node at (6.2,3.5){Copied parent};
-\node[visible on=<2->] at (6.2,.3){Parent 3 appears three times.};
-\end{tikzpicture}\end{center}
-\uncover<2->{\[
-w_{\rm copy}=w_{\rm parent}\,\frac{g_{\rm parent}^\theta}{g_{\rm parent}^\phi}.
-\]}
-\uncover<3->{\[
-\widehat L_n(\theta;\phi)=\widehat L_n(\phi)\times
-\frac{\text{total corrected weight of copies}}{\text{total incoming weight}}.
-\]}
-\src{After-resampling likelihood estimate. Circle areas illustrate correction weights, not normalized selection probabilities.}
 \end{frame}
 
 \begin{frame}{Why unit correction weights still have derivatives}
@@ -258,13 +251,21 @@ w(\phi;\phi)=1,\qquad
 =\left.\partial_\theta\log g_2^\theta\right|_{\theta=\phi}.
 \]}
 \end{columns}
-\uncover<2->{At $\theta=\phi$, the densities agree, but only the numerator varies with $\theta$.}
-\uncover<3->{\gap Automatic differentiation applies this to $\widehat\ell(\theta;\phi)=\sum_n\log\widehat L_n(\theta;\phi)$.}
-\src{Schematic correction curve. Resampling probabilities need not equal 1.}
+\uncover<2->{\par\smallskip\textbf{Forward:}\quad
+$\widehat\ell(\phi;\phi)=\widehat\ell_{\rm PF}(\phi)$,
+the usual particle-filter estimate.}
+\uncover<3->{\[
+\underbrace{\left.\nabla_\theta\widehat\ell(\theta;\phi)
+\right|_{\theta=\phi}}_{\text{backward pass}}
+\ \approx\
+\underbrace{\left.\nabla_\theta\log p_\theta(y_{1:N})
+\right|_{\theta=\phi}}_{\text{score}}.
+\]}
+\src{Schematic correction curve. Correction weights are 1 at the baseline; resampling probabilities generally are not.}
 \end{frame}
 
-\begin{frame}{Discounting earlier corrections}
-Along this lineage, $r_n$ is the ratio of the new measurement density to the baseline density in month $n$.
+\begin{frame}{Discounting accumulated importance weights}
+Each month multiplies the weight by $r_n$, the new measurement density divided by the baseline density.
 \begin{center}\begin{tikzpicture}[x=1cm,y=.9cm,font=\small]
 \path[use as bounding box] (0,-.15) rectangle (12.4,3.1);
 \foreach \x/\n in {1.8/1,6.2/2,10.6/3}{
@@ -273,15 +274,17 @@ Along this lineage, $r_n$ is the ratio of the new measurement density to the bas
 \draw[arr,green] (m1)--(m2);
 \draw[arr,green] (m2)--(m3);
 \node at (1.8,1.2){$w_1=\textcolor{blue}{r_1}$};
-\node[visible on=<2->] at (6.2,1.2){$w_2=\textcolor{blue}{r_1^\alpha}\,\textcolor{pink}{r_2}$};
-\node[visible on=<2->] at (10.6,1.2){$w_3=\textcolor{blue}{r_1^{\alpha^2}}\,\textcolor{pink}{r_2^\alpha}\,r_3$};
+\node at (6.2,1.2){$w_2=\textcolor{blue}{\alt<2->{r_1^\alpha}{r_1}}\,\textcolor{pink}{r_2}$};
+\node at (10.6,1.2){$w_3=\textcolor{blue}{\alt<2->{r_1^{\alpha^2}}{r_1}}\,\textcolor{pink}{\alt<2->{r_2^\alpha}{r_2}}\,r_3$};
 \node[visible on=<2->] at (6.2,.25){For $\alpha<1$, older log corrections receive less weight.};
 \end{tikzpicture}\end{center}
+Without discounting, off-baseline weights can grow exponentially with the horizon.
 \uncover<2->{\[
 w_{\rm new}=w_{\rm parent}^{\alpha}r_{\rm new},\qquad 0\le\alpha\le1.
 \]}
-\uncover<3->{Discounting can reduce variance, at the cost of bias.}
-\src{At the baseline, all correction weights are 1. Their derivatives still accumulate. Incoming weight is $w_{\rm parent}^\alpha$; the simulated state still depends on $\theta$.}
+\uncover<3->{At $\phi$, weights stay at 1 but derivatives accumulate.\par
+Discounting can reduce variance, at the cost of bias.}
+\src{Incoming weight is $w_{\rm parent}^\alpha$; the simulated state still depends on $\theta$.}
 \end{frame}
 
 \begin{frame}{Likelihood near the baseline recovery rate}
@@ -362,17 +365,21 @@ IFAD-$.97$ \hfill $-3744.40$
 \src{IFAD suffix denotes $\alpha$. Red line marks the best fit. Below $-3780$: 2 IF2, 4 IFAD-1, 2 IFAD-0, 0 IFAD-$.97$. Timings exclude diagnostic likelihood calls.}
 \end{frame}
 
-\begin{frame}{Running the Dhaka particle filter on a GPU}
-\begin{columns}[c,onlytextwidth]
-\column{.61\textwidth}
-\begin{tikzpicture}
-\begin{axis}[xbar,width=.69\linewidth,height=4.4cm,bar width=7pt,xmin=0,xmax=14,
-xlabel={Seconds per filter batch},ytick={1,2,3,4},yticklabels={PyPOMP + CuTe,PyPOMP (XLA),pfjax,cuthbert},tick label style={font=\small},nodes near coords,axis x line=bottom,axis y line=left,enlarge y limits=.20]
-\addplot[fill=blue!70,draw=blue] coordinates {(3.3,1) (7.5,2) (11.2,3) (11.6,4)};
-\end{axis}
-\end{tikzpicture}
-\column{.36\textwidth}
-The CuTe kernel implements the monthly process simulation.
-\end{columns}
-\src{Warm RTX 3090 timings. $36$ parameter sets $\times$ $36$ replicates, $5{,}000$ particles per filter. Both PyPOMP runs use Threefry.}
+\begin{frame}{GPU particle filtering: Dhaka and London}
+\begin{center}
+Seconds per filter batch\par\medskip
+\renewcommand{\arraystretch}{1.35}
+\begin{tabular}{lrr}
+\toprule
+& Dhaka & London \\
+\midrule
+PyPOMP + CuTe & 3.3 & 10.0 \\
+PyPOMP (XLA) & 7.5 & 34.0 \\
+pfjax & 11.2 & 1340.3 \\
+cuthbert & 11.6 & 1219.6 \\
+\bottomrule
+\end{tabular}
+\end{center}
+London: 730 weekly observations, seven daily simulation steps per week.
+\src{Warm RTX 3090 timings, float32. $36$ parameter sets $\times$ $36$ replicates, $5{,}000$ particles per filter. Both PyPOMP runs use Threefry. London: PyPOMP uses approximate inverse-CDF draws; pfjax and cuthbert use exact JAX draws. pfjax uses multinomial resampling; the others use systematic resampling.}
 \end{frame}
