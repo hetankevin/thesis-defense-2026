@@ -37,7 +37,7 @@ Joint work: Kevin Tan, Wei Fan, Yuting Wei.\gap ICML 2025
 \path[use as bounding box] (0,0) rectangle (12,3.2);
 \node[obj] (s) at (1,2.1) {$s$};\node[obj] (a) at (3,2.1) {$a$};
 \node[obj] (sp) at (5.3,2.1) {$s'$};
-\draw[arr] (s)--node[above,lab]{choose}(a);
+\draw[arr] (s)--node[above=4mm,lab]{choose}(a);
 \draw[arr] (a)--node[above,lab]{$r_h$}(sp);
 \draw[arr] (sp)--(11,2.1);
 \foreach \x/\r in {7/r_{h+1},9/r_{h+2},11/r_H}{\fill[blue] (\x,2.1) circle (2pt);\node[above,lab] at (\x,2.3) {$\r$};}
@@ -113,7 +113,7 @@ At step $h$ in episode $t$, the critic scores action $a$ above $b$.
 \uncover<2->{\[
 \pi_{t+1,h}(a\mid s)\ \propto\
 \underbrace{\pi_{t,h}(a\mid s)}_{\text{old probability}}\,
-\underbrace{\exp\!\big(\eta f_{t,h}(s,a)\big)}_{\text{weight from the critic}} .
+\underbrace{\exp\!\big(\eta f_{t,h}(s,a)\big)}_{\text{critic weight}} .
 \]}
 \uncover<3->{The learning rate $\eta>0$ controls how much the odds shift toward $a$.}
 \end{frame}

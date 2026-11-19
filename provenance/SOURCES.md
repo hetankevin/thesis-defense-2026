@@ -102,3 +102,7 @@ Source: current arXiv 2407.03085 v2, Section 3 and Algorithm 1 (https://arxiv.or
 Supersedes the two numerical-example entries above. Slide 31 retains illustrative S/I/R counts and modeled deaths, but its normalized-weight profile is schematic and unnumbered. It displays no invented density or weight values. Slide 33 uses an unlabeled common uniform draw. Slides 35–36 use the actual density-ratio and weight-sum operations, without numerical substitutions. Slide 37 illustrates a generic correction passing through 1 at the baseline with a nonzero tangent; it does not posit a fitted or toy affine measurement model or a numerical derivative. Slide 38 shows symbolic discounting of inherited log corrections. The full likelihood still uses the after-resampling normalizer. The actor–critic hinge thresholds are u1/u2, with no new claims. All experimental figures and numerical findings are unchanged.
 
 Pre-edit Overleaf export `Downloads/Thesis_Defense_2026-12` matched publication source 0604e09 exactly.
+
+## November 19 visual pass
+
+The original control pipeline PDF is unchanged. Slide 47 resets only its small Planning label as larger vector text, preserving its wording and operations. Figure 1A was regenerated from the same saved CSV and style with legend fontsize 12 instead of the default 10. No curve values or experimental claims changed.

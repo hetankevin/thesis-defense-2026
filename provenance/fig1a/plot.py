@@ -29,7 +29,7 @@ def main():
     ax.set_xlabel('Recovery Rate')
     ax.set_ylabel('Log-Likelihood')
     ax.axvline(18, linestyle='--', color='black', label=r'Baseline $\phi=18$')
-    ax.legend()
+    ax.legend(fontsize=12)
     fig.tight_layout()
     # No caption or large panel label in the exported plot.
     args.output.parent.mkdir(parents=True, exist_ok=True)

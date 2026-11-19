@@ -91,7 +91,7 @@ Observed this month: $y_n=12$ deaths.
 \node at (4.4,\y){\d};}
 \begin{scope}[visible on=<2->]
 \draw[arr,thick] (5.15,1.8)--(7.65,1.8);
-\node[align=center] at (6.4,2.65){Measurement density\\then normalize};
+\node[align=center] at (6.4,2.85){Measurement\\density, then\\normalize};
 \node at (6.4,1.15){$g_\theta(y_n\mid\widetilde X_n^j)$};
 \draw[arr] (8.1,.5)--(12.5,.5);
 \node at (10.3,-.4){Particle};
@@ -102,6 +102,7 @@ Observed this month: $y_n=12$ deaths.
 \draw (\x,.5)--(\x,.42);\node[below] at (\x,.4){$\j$};}
 \end{scope}
 \end{tikzpicture}\end{center}
+\vspace{-2mm}
 \uncover<2->{\[
 \overline g_n^j=\frac{g_n^j}{\sum_m g_n^m},\qquad
 \underbrace{\sum_j\overline g_n^j\delta_{\widetilde X_n^j}}_{\text{updated state distribution}}\approx b_n,\qquad
@@ -194,9 +195,9 @@ We selected parents under $\phi$, so we reweight their contributions at $\theta$
 \node[text=blue] at (2.5,1.6){Saved density $g_2^\phi$};
 \node[text=pink] at (9.6,1.6){New density $g_2^\theta$};
 \begin{scope}[visible on=<2->]
-\draw[arr,blue] (3.9,1.5)--(5.4,.8);
-\draw[arr,pink] (8.1,1.5)--(6.8,.8);
-\node at (6.1,.45){Correction: $\displaystyle\frac{\textcolor{pink}{g_2^\theta}}{\textcolor{blue}{g_2^\phi}}$};
+\draw[arr,blue,shorten >=2pt] (3.9,1.5) to[out=-40,in=180] (5.8,.15);
+\draw[arr,pink,shorten >=2pt] (8.1,1.5)--(6.45,.85);
+\node at (6.1,.45){$\displaystyle\frac{\textcolor{pink}{g_2^\theta}}{\textcolor{blue}{g_2^\phi}}$};
 \end{scope}
 \end{tikzpicture}\end{center}
 \uncover<3->{\[

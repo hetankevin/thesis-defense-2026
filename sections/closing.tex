@@ -22,7 +22,7 @@ We observe only position.
 \begin{frame}{Full belief planning is expensive}
 POMDP: partially observed Markov decision process.\\Belief $b$: hidden-state distribution given past observations and actions.
 \begin{center}\begin{tikzpicture}[x=1cm,y=1cm]
-\path[use as bounding box] (0,0) rectangle (12,3.5);
+\path[use as bounding box] (0,-.75) rectangle (12,3.5);
 \node[lab] at (2.8,3.3) {Belief tree};\node[lab] at (9.2,3.3) {QMDP approximation};
 \node[obj] (b) at (2.8,2.6) {$b$};
 \foreach \x/\n/\i in {1.4/l/1,4.2/r/2}{\node[circle,draw,inner sep=2pt] (\n) at (\x,1.6) {};\draw[arr] (b)--node[above,lab]{$a_{\i}$}(\n);}
@@ -40,7 +40,16 @@ POMDP: partially observed Markov decision process.\\Belief $b$: hidden-state dis
 
 \begin{frame}{Using the particle filter to choose actions}
 {\small Joint work with Ziping Xu, NeurIPS 2026.}
-\picturefit[4.1cm]{control-pipeline.pdf}
+\begin{center}\begin{tikzpicture}
+\node[inner sep=0,anchor=south west] (pipeline) at (0,0) {\includegraphics[height=4.1cm]{control-pipeline.pdf}};
+\begin{scope}[x={(pipeline.south east)},y={(pipeline.north west)}]
+% Keep the original illustration; reset only the small planning label in vector text.
+\definecolor{planningred}{HTML}{BD4F4A}
+\fill[planningred] (.741,.43) rectangle (.988,.66);
+\node[text=white,font=\fontsize{8.5}{10}\selectfont,align=center] at (.866,.545)
+ {Planning (MCTQ)\\depth-$d$ MCTS\\+ QMDP bootstrap};
+\end{scope}
+\end{tikzpicture}\end{center}
 {\small $\bar\theta$: fitted model. $b^J$: particle belief. $H_t$: observed history.}\par\smallskip
 {\small Deeper trees need more simulations. The QMDP error bound falls geometrically with depth.}
 \uncover<2->{\gap\small Experiments use state rollouts with a learned actor and critic. Belief-tree depth $d=0$.}
