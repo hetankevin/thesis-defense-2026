@@ -22,7 +22,7 @@ slide,section,title,seconds
 21,actor-critic,Regret over $T$ episodes,110
 22,actor-critic,Online experiment: Tetris,75
 23,actor-critic,When can Alg. 2 learn without optimism?,85
-24,actor-critic,AntMaze: a neural implementation comparison,75
+24,actor-critic,Learning to navigate AntMaze,75
 25,actor-critic,Actor--critic: optimality targets and policy resets,25
 26,filtering,2. Differentiable particle filters,25
 27,filtering,"Monthly cholera deaths in Dhaka, 1891--1940",75

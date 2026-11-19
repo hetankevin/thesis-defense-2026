@@ -35,7 +35,7 @@ POMDP: partially observed Markov decision process.\\Belief $b$: hidden-state dis
 \end{scope}
 \end{tikzpicture}\end{center}
 \uncover<2->{\[Q_{\mathrm{QMDP}}(b,a)=\E_{X\sim b}[Q^*_{\mathrm{fully\ observed}}(X,a)].\]}
-\uncover<3->{A short belief tree plans over the next few observations, then uses QMDP.}
+\uncover<3->{We branch on the next few observations and use QMDP at the leaves.}
 \end{frame}
 
 \begin{frame}{Using the particle filter to choose actions}

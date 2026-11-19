@@ -208,7 +208,6 @@ We selected parents under $\phi$, so we reweight their contributions at $\theta$
 \end{frame}
 
 \begin{frame}{Each copy carries its parent's corrected weight}
-The correction multiplies the weight inherited from the parent.
 \begin{center}\begin{tikzpicture}[x=1cm,y=.9cm,font=\small]
 \path[use as bounding box] (0,-.1) rectangle (12.4,3.55);
 \foreach \x/\a/\size in {1.4/2/.24,3.8/3/.42,6.2/3/.42,8.6/3/.42,11/4/.33}{
@@ -217,7 +216,7 @@ The correction multiplies the weight inherited from the parent.
 \fill[blue!50,visible on=<2->] (\x,1.1) circle(\size);
 }
 \node at (6.2,3.5){Copied parent};
-\node[visible on=<2->] at (6.2,.3){Repeated copies carry the same corrected weight.};
+\node[visible on=<2->] at (6.2,.3){Parent 3 appears three times.};
 \end{tikzpicture}\end{center}
 \uncover<2->{\[
 w_{\rm copy}=w_{\rm parent}\,\frac{g_{\rm parent}^\theta}{g_{\rm parent}^\phi}.
@@ -260,7 +259,7 @@ w(\phi;\phi)=1,\qquad
 \end{columns}
 \uncover<2->{At $\theta=\phi$, the densities agree, but only the numerator varies with $\theta$.}
 \uncover<3->{\gap Automatic differentiation applies this to $\widehat\ell(\theta;\phi)=\sum_n\log\widehat L_n(\theta;\phi)$.}
-\src{Schematic correction curve. These correction weights equal 1 at the baseline; normalized resampling probabilities generally do not.}
+\src{Schematic correction curve. Resampling probabilities need not equal 1.}
 \end{frame}
 
 \begin{frame}{Discounting earlier corrections}

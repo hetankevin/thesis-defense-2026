@@ -410,7 +410,7 @@ For bounded coverage coefficient $c_{\rm off}^*$ and fixed complexity, $N_{\rm o
 \src{$\beta^*$ is the confidence width for the critic.}
 \end{frame}
 
-\begin{frame}{AntMaze: a neural implementation comparison}
+\begin{frame}{Learning to navigate AntMaze}
 \begin{columns}[c]
 \column{.65\textwidth}
 \begin{tikzpicture}
@@ -418,7 +418,7 @@ For bounded coverage coefficient $c_{\rm off}^*$ and fixed complexity, $N_{\rm o
 \node[rotate=90,font=\small] at ($(p.west)+(-.3,0)$) {Evaluation return};
 \end{tikzpicture}
 \column{.33\textwidth}
-Both variants use a soft actor--critic update.\gap
+Both use soft actor--critic with neural networks.\gap
 \textcolor{blue}{Alg. 2H}: best of 10 policy samples, no resets.\gap
 \textcolor{red}{Alg. 1H}: current-policy target.\gap
 \textcolor{green}{Cal-QL}: hybrid RL baseline.
@@ -444,5 +444,5 @@ Alg. 2H reaches the highest return here.
 \node[lab] at (7,.5) {Softmax updates between critic changes};
 \end{scope}
 \end{tikzpicture}\end{center}
-\uncover<3->{Next, how do we fit a model when the state is hidden?}
+\uncover<3->{So far, we have observed the state.}
 \end{frame}
