@@ -1,22 +1,22 @@
 slide,section,title,seconds
 1,opening,,35
 2,opening,Learning from sequential data,150
-3,opening,Two questions,185
+3,opening,Questions,185
 4,actor-critic,1. Actor--critic methods,25
-5,actor-critic,Actions affect later rewards,70
-6,actor-critic,Estimating total reward,95
-7,actor-critic,What is an actor--critic?,85
+5,actor-critic,MDPs 101,70
+6,actor-critic,What is the value of a policy?,95
+7,actor-critic,Actor-critic algorithms,85
 8,actor-critic,The critic update is a regression problem,110
 9,actor-critic,How does the actor use the critic?,85
-10,actor-critic,Exploring rarely tried actions,80
+10,actor-critic,Exploring rarely tried actions with optimism,80
 11,actor-critic,How much reward do we lose while learning?,75
-12,actor-critic,The regression response depends on past critics,85
+12,actor-critic,"Ok, time to unroll the policy recursion",85
 13,actor-critic,How complicated is a sum of critics?,95
 14,actor-critic,Can we update the critic less often?,75
-15,actor-critic,An improving actor can overtake the old critic,105
-16,actor-critic,Fit the critic to the best next action,120
-17,actor-critic,Optimism as the actor changes,75
-18,actor-critic,Give the actor time to catch up,100
+15,actor-critic,Doesn't work,20
+16,actor-critic,An improving actor can overtake the old critic,105
+17,actor-critic,Fit the critic to the best next action,120
+18,actor-critic,Giving the actor time to catch up,100
 19,actor-critic,Alg. 2: update the critic when its regression error grows,95
 20,actor-critic,Bounding the cost of resets,120
 21,actor-critic,Regret over $T$ episodes,110
@@ -28,23 +28,26 @@ slide,section,title,seconds
 27,filtering,"Monthly cholera deaths in Dhaka, 1891--1940",75
 28,filtering,The Dhaka cholera model,110
 29,filtering,Updating the state distribution,120
-30,filtering,Predicting next month's populations,60
+30,filtering,Now let's do this with Monte Carlo,60
 31,filtering,Weighting particles by observed deaths,75
 32,filtering,Resampling particles,55
-33,filtering,Resampling makes the fixed-seed likelihood discontinuous,75
+33,filtering,Problem: resampling makes the fixed-seed likelihood discontinuous,75
 34,filtering,Reweighting gives a smooth likelihood approximation,105
 35,filtering,Correcting the resampling weights,70
-36,filtering,Why unit correction weights still have derivatives,90
-37,filtering,Discounting accumulated importance weights,65
+36,filtering,Dumping this into autograd,90
+37,filtering,"The importance weights accumulate, let's fix that",65
 38,filtering,Likelihood near the baseline recovery rate,65
-39,filtering,How does discounting change the estimated score?,85
+39,filtering,Bias-variance tradeoff,85
 40,filtering,Error in the estimated score,90
 41,filtering,Fitting the model,50
-42,filtering,Likelihood searches for the Dhaka cholera model,65
-43,filtering,GPU particle filtering: Dhaka and London,55
-44,closing,Let's deal with control now,45
-45,closing,QMDP assumes future states will be observed,75
-46,closing,Using the particle filter to choose actions,75
-47,closing,MuJoCo with partially observed states,60
-48,closing,Two themes from my dissertation,60
-49,closing,Thank you everyone!,15
+42,filtering,Optimizing the Dhaka likelihood,50
+43,filtering,Likelihood searches for the Dhaka cholera model,65
+44,filtering,Optimization across models,45
+45,filtering,Optimization on Daphnia and Dhaka,45
+46,filtering,GPU particle filtering: Dhaka and London,55
+47,closing,Let's deal with control now,45
+48,closing,QMDP assumes future states will be observed,75
+49,closing,Using the particle filter to choose actions,75
+50,closing,MuJoCo with partially observed states,60
+51,closing,Two themes from my dissertation,60
+52,closing,Thank you everyone!,15

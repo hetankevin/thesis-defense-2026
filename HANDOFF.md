@@ -1,6 +1,17 @@
 # Thesis defense handoff
 
-Updated November 19, 2026.
+Updated November 20, 2026.
+
+## November 20 additions
+
+Downloaded the current Overleaf source (`/Users/kevin/Downloads/Thesis_Defense_2026-14`) and preserved Kevin's edits by pushing from Overleaf to GitHub, then fast-forwarding this checkout to `a7c48bd` (`save live slide edits`). These edits rename and revise the opening, actor-critic and filtering slides and remove the old optimism frame. Preserve Kevin's wording, including informal titles and deliberate capitalization.
+
+Added exactly the requested material using pre-insertion slide numbers:
+- After slide 14: attached screenshot, unchanged, titled “Doesn't work” (new 15).
+- After slide 40, “Fitting the model”: current DMOP Figure 5 optimization curves (new 42).
+- After slide 41, “Likelihood searches for the Dhaka cholera model”: all five panels of current Figure S.14, split into A–C and D–E for readability (new 44–45).
+
+Both local variants compile without overfull/underfull boxes or TeX errors. Rendered and inspected all four additions. There are 52 main slides and 123 overlay pages, no backup. Timing rows follow Kevin's new frame order and titles; retained allocations unchanged, with 20+50+45+45 seconds for the additions, totaling 3985 seconds (66m25s). This is an allocation, not a rehearsal. Independent review confirmed complete figures and caption fidelity; identified and fixed the need to label Figure 5 as the extended fitting-budget experiment. Fresh pre-sync source export still matches `a7c48bd`. Server synchronization and PDF checks pending for this revision.
 
 ## Current revision, November 19
 

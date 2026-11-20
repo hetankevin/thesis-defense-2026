@@ -350,6 +350,13 @@ For $\alpha<1$, let $H_N(\alpha)=\sum_{r=0}^{N-1}\alpha^r$. Then
 \src{IFAD combines iterated filtering (IF2) with automatic differentiation.}
 \end{frame}
 
+\begin{frame}{Optimizing the Dhaka likelihood}
+\begin{center}
+\includegraphics[width=\textwidth,height=5.8cm,keepaspectratio]{dmop-optimization.pdf}
+\end{center}
+\src{Fig. 5, extended fitting budget. Shading: 10th--100th percentiles. Vertical lines: IF2 to Adam. Red line: best-known maximum (Monte Carlo estimates can exceed it).}
+\end{frame}
+
 \begin{frame}{Likelihood searches for the Dhaka cholera model}
 100 parallel searches per method, about 16 minutes per batch.
 \begin{columns}[c]
@@ -361,6 +368,22 @@ IF2 \hfill $-3754.24$\\
 IFAD-$.97$ \hfill $-3744.40$
 \end{columns}
 \src{IFAD suffix denotes $\alpha$. Red line marks the best fit. Below $-3780$: 2 IF2, 4 IFAD-1, 2 IFAD-0, 0 IFAD-$.97$. Timings exclude diagnostic likelihood calls.}
+\end{frame}
+
+\begin{frame}{Optimization across models}
+\begin{center}
+\includegraphics[width=\textwidth]{dmop-s14-top.pdf}\par\smallskip
+\includegraphics[width=8.5cm]{dmop-s14-legend.pdf}
+\end{center}
+\src{Fig. S.14A--C. Median log likelihood; shading: 10th--100th percentiles. Axes show the region near the final estimates. SPX: stochastic volatility model. DS19: transition-density method; CTDD21: differentiable particle filter.}
+\end{frame}
+
+\begin{frame}{Optimization on Daphnia and Dhaka}
+\begin{center}
+\includegraphics[width=\textwidth]{dmop-s14-bottom.pdf}\par\smallskip
+\includegraphics[width=8.5cm]{dmop-s14-legend.pdf}
+\end{center}
+\src{Fig. S.14D--E. Median log likelihood; shading: 10th--100th percentiles. All methods use common starting points; DS19 and CTDD21 use the same MPIF/IF2 warm start. Axes show the region near the final estimates.}
 \end{frame}
 
 \begin{frame}{GPU particle filtering: Dhaka and London}

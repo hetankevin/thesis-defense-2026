@@ -120,3 +120,16 @@ London runtime table: `https://github.com/pypomp/quant/blob/4e1cb8119a9b7fc696a1
 MuJoCo source is the published arXiv v1 figure, not the older local submission draft: https://arxiv.org/html/2610.27575v1#S5.F3 . Full exact vector asset `figures/control-mujoco-full.pdf` was extracted from `NeurIPS/Figures/mujoco_camera_ready.pdf` in https://arxiv.org/src/2610.27575v1 . SHA256: 329668d311c100294ed8239ba92606edb88da5dda83fab6adf8cb459df859103. `control-mujoco-selected.pdf` crops the Ant and HalfCheetah columns, both observation masks, without changing curves. The legend is reproduced in vector text with the exact original RGB colors. The slide retains original Ant settings and the original 3k cutoff as well as revised runs through 49.2k, and includes the unfavorable HalfCheetah/hidden-position result.
 
 Section 5 states that neural dynamics are learned online, the PF estimates latent states, and the implementation uses state rollouts with a learned actor and a learned critic. Belief-tree depth is zero. Ant uses 16 particles and a ten-step state rollout (not belief-tree depth 10). Five seeds except Ant PF-MCTQ: three revised and two original; mean and 95% t bands, with thin original Ant trajectories. Ant PF-MCTQ uses 10-episode rolling training returns, other curves individual episode training returns. The slide presents empirical comparisons, not a guarantee for the implemented planner.
+
+
+## November 20 additions
+
+The screenshot `rare-policy-switches-screenshot.png` is Kevin's exact attached PNG from November 20, 14:22:34. Inserted unmodified after his current slide 14 with his exact title, "Doesn't work". No new scientific claim or text was added to the screenshot.
+
+The latest arXiv PDF https://arxiv.org/pdf/2407.03085 and source https://arxiv.org/src/2407.03085 were fetched November 20. In this 122-page version, Figure 5 is on PDF page 13 and Figure S-14 on PDF page 116. Original assets are `imgs/precise_traces_long.pdf` and `imgs/benchmarks/optimization_detail.pdf`. Figure 5's shaded regions are 10th–100th percentiles and vertical dotted lines mark IF2→Adam switches. Figure S-14 shows medians and 10th–100th percentile bands near final estimates, not the full search range. Saved-iteration likelihoods are interpolated, final values held after stopping; these diagnostic evaluations do not select fitted parameters. Full-range comparison is S-15.
+
+`dmop-s14-full.pdf` preserves the original figure. The `-top`, `-bottom`, and `-legend` versions are PDF crops for legibility; all five panels, original axes and curves, and complete legend are retained. Figure S.14 caption and Section S12 give common starting points, warm starts for DS19/CTDD21 in Daphnia/Dhaka, model-specific settings, and the distinction between transition approximations used in fitting and original models used for evaluation. No claim of identical fitting procedures or hardware across panels is added. SPX is the stochastic-volatility application. DS19 and CTDD21 labels are explained briefly beside the first group of panels.
+
+- `dmop-optimization.pdf` SHA256: `2a191f3c6af1bc35d7f3e241acfa2cb5979f21e534d97661fd766f67a33dc2aa`
+- `dmop-s14-full.pdf` SHA256: `0339565d167eda07c4c50307ff4492fb1b0a2e376ea800020ed54e45a228ca94`
+- `rare-policy-switches-screenshot.png` SHA256: `8d49381fb631ec6fd65620c04de54d86f37494e72326d4ea5894bfae366d51ad`
