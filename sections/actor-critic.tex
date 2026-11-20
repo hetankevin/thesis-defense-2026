@@ -9,10 +9,9 @@ Joint work: Kevin Tan, Wei Fan, Yuting Wei.\gap ICML 2025
 \column{.44\textwidth}
 \includegraphics[width=\linewidth]{section-warehouse.png}
 \end{columns}
-\gap Can an actor--critic learn efficiently when it has to explore?
 \end{frame}
 
-\begin{frame}{Actions affect later rewards}
+\begin{frame}{MDPs 101}
 \begin{center}\begin{tikzpicture}[x=1cm,y=1cm]
 \path[use as bounding box] (0,0) rectangle (12,4.6);
 \node[obj] (s) at (1.5,3.5) {$s_h$};\node[lab,above=3mm of s] {Position, velocity};
@@ -22,17 +21,16 @@ Joint work: Kevin Tan, Wei Fan, Yuting Wei.\gap ICML 2025
 \draw[arr] (a)--node[above,lab]{dynamics}(sn);
 \node[lab,text=green] at (8,2.7) {Reward $r_h\in[0,1]$};
 \begin{scope}[visible on=<2->]
-\node at (6,1.7) {$\pi_h(a\mid s)=\Pr(a_h=a\mid s_h=s)$};
+\node at (6,1.7) {Transition kernel $\mathbb{P}_h(s_{h+1} | s_h, a_h)$,\;\; policy $\pi_h(a\mid s) : \mathcal{S} \to \Delta(\mathcal{A})$};
 \draw[arr] (.4,.5)--(11.7,.5);
 \foreach \x/\t in {1/1,3/2,5/3,10.7/H}{\draw (\x,.4)--(\x,.6);\node[lab,below] at (\x,.35) {step $\t$};}
 \node at (7.8,.8) {$\cdots$};
 \end{scope}
 \end{tikzpicture}\end{center}
-\uncover<3->{One episode: $H$ decisions. Goal: maximize $\E[\sum_{h=1}^H r_h]$.}
-\src{Finite action set $\A$.}
+\uncover<3->{Goal: maximize $\E[\sum_{h=1}^H r_h]$ over $H$ decisions.}
 \end{frame}
 
-\begin{frame}{Estimating total reward}
+\begin{frame}{What is the value of a policy?}
 \begin{center}\begin{tikzpicture}[x=1cm,y=1cm]
 \path[use as bounding box] (0,0) rectangle (12,3.2);
 \node[obj] (s) at (1,2.1) {$s$};\node[obj] (a) at (3,2.1) {$a$};
@@ -50,11 +48,11 @@ Q_h^\pi(s,a)=\E\!\left[\sum_{k=h}^{H}r_k\;\middle|\;s_h=s,a_h=a,\text{ then }\pi
 \]
 \pause
 \[
-V_h^\pi(s)=\underbrace{\sum_{a\in\A}\pi_h(a\mid s)Q_h^\pi(s,a)}_{\text{average over the first action}}.
+V_h^\pi(s)=\underbrace{\sum_{a\in\A}\pi_h(a\mid s)Q_h^\pi(s,a)}_{\text{average over actions}}. \text{ Bellman equation: } V_h^\pi(s) = \underbrace{\E_\pi\left[r_h(s, a) + V_{h+1}(s')\right].}_{\text{reward plus next step's value}}
 \]
 \end{frame}
 
-\begin{frame}{What is an actor--critic?}
+\begin{frame}{Actor-critic algorithms}
 \begin{center}\begin{tikzpicture}[x=1cm,y=1cm]
 \path[use as bounding box] (0,-.1) rectangle (12,5.3);
 \node[text=blue,font=\large] at (2,4.9) {Critic};
@@ -69,7 +67,7 @@ V_h^\pi(s)=\underbrace{\sum_{a\in\A}\pi_h(a\mid s)Q_h^\pi(s,a)}_{\text{average o
 \draw[arr,visible on=<2->] (3.8,3.7)--node[above,lab]{estimated values}(6.9,3.7);
 \draw[arr,visible on=<3->] (9.5,1.7)--(9.5,.8)--node[below,lab]{new transitions $(s,a,r,s')$}(2,.8)--(2,1.7);
 \end{tikzpicture}\end{center}
-\uncover<2->{The actor gives more probability to actions with higher estimated values.}
+\uncover<2->{(Ideally) the actor gives more probability to actions with higher estimated values.}
 
 \end{frame}
 
@@ -79,23 +77,23 @@ V_h^\pi(s)=\underbrace{\sum_{a\in\A}\pi_h(a\mid s)Q_h^\pi(s,a)}_{\text{average o
 \node[anchor=west] at (0,3.3) {Observed transition: $(s,a,r,s')$};
 \node[obj] (r) at (1,2) {$r$};\node[lab,above=2mm of r] {Observed reward};
 \node[obj] (sp) at (4,2) {$s'$};
-\node (next) at (8,2) {$\sum_b\pi_{h+1}(b\mid s')f_{h+1}(s',b)$};
+\node (next) at (8,2) {$\sum_b\pi_{h+1}(a'\mid s')f_{h+1}(s',a')$};
 \draw[arr] (sp)--(next);\node[lab,above=2mm of next] {Estimated remaining reward};
 \draw[arr,visible on=<2->] (r.south)--(1,.35)--(5.5,.35);
 \draw[arr,visible on=<2->] (next.south)--(8,.35)--(6.5,.35);
 \node[visible on=<2->] at (6,.35) {$y$};
 \end{tikzpicture}\end{center}
 \uncover<2->{\[
-y=r+\sum_b\pi_{h+1}(b\mid s')f_{h+1}(s',b).
+y=r+\sum_{a'}\pi_{h+1}(a'\mid s')f_{h+1}(s',a').
 \]}
 \uncover<3->{\[
 \widehat f_h\in\arg\min_{f_h\in\F_h}\sum_{(s,a,r,s')\in D_h}(f_h(s,a)-y)^2.
 \]}
-\uncover<3->{$D_h$: transitions at step $h$. $\F_h$: regression class.}
+\uncover<3->{$D_h$: dataset of transitions at step $h$. $\F_h$: critic function class.}
 \end{frame}
 
 \begin{frame}{How does the actor use the critic?}
-At step $h$ in episode $t$, the critic scores action $a$ above $b$.
+Say that at step $h$ in episode $t$, the critic thinks action $a$ is better than action $b$.
 \begin{center}\begin{tikzpicture}[x=1cm,y=.84cm]
 \path[use as bounding box] (0,0) rectangle (12,3.65);
 \foreach \x/\lab in {2.4/Current policy,9.55/Updated policy}{
@@ -118,7 +116,7 @@ At step $h$ in episode $t$, the critic scores action $a$ above $b$.
 \uncover<3->{The learning rate $\eta>0$ controls how much the odds shift toward $a$.}
 \end{frame}
 
-\begin{frame}{Exploring rarely tried actions}
+\begin{frame}{Exploring rarely tried actions with optimism}
 \begin{center}\begin{tikzpicture}[x=1cm,y=1cm]
 \path[use as bounding box] (0,0) rectangle (12,3.6);
 \node[obj,circle] (s) at (1,1.8) {$s$};
@@ -159,11 +157,11 @@ f_h(s,a)=\sup_{q\in\mathcal C}q_h(s,a),\qquad
 \Reg(T)=\widetilde O(\sqrt T)\quad\Longrightarrow\quad
 \frac{\Reg(T)}{T}=\widetilde O(T^{-1/2}).
 \]
-Fixed starting state $s_1$.
-\src{$\widetilde O$ hides logarithms. The rate also depends on $H$ and model complexity.}
+That is, starting at some fixed starting state $s_1$.
+\src{$\widetilde O$ is doing a lot of work here and hides logarithms, dependence on $H$, model complexity, etc.}
 \end{frame}
 
-\begin{frame}{The regression response depends on past critics}
+\begin{frame}{Ok, time to unroll the policy recursion}
 From a uniform initial policy,
 \[
 \pi_{t+1,h}(a\mid s)\propto\exp\!\left\{\eta\sum_{\tau=1}^{t}f_{\tau,h}(s,a)\right\}.
@@ -177,9 +175,9 @@ From a uniform initial policy,
 \draw[arr] (5,1)--(8.8,1);\node[lab] at (6.9,1.45) {softmax};
 \end{tikzpicture}\end{center}
 \uncover<2->{\[
-y=r+\sum_b\underbrace{\pi_{t+1,h+1}(b\mid s')}_{\text{depends on past critics}}f_{h+1}(s',b).
+y=r+\sum_{a'}\underbrace{\pi_{t+1,h+1}(a'\mid s')}_{\text{depends on past critics}}f_{h+1}(s',a').
 \]}
-\uncover<3->{Because the policy depends on the same data, we need a bound that holds across these regression responses.}
+\uncover<3->{Oh no. We need to control the log-covering number of the sum of past critics. }
 \end{frame}
 
 \begin{frame}{How complicated is a sum of critics?}
@@ -209,7 +207,7 @@ $f_u(x)=\max(0,x-u)$\par\smallskip
 Each new threshold adds a bend.}
 \end{columns}
 \uncover<3->{\medskip $\mathcal{N}_{\mathcal{F}}(\epsilon)$ is the smallest number of functions needed to approximate every critic within $\epsilon$ everywhere.}
-\uncover<4->{\par\medskip $K$ fitted critics give up to $\mathcal{N}_{\mathcal{F}}(\epsilon)^K$ sequences. Refitting every episode gives $\sqrt{T\log(\mathcal{N}_{\mathcal{F}}(\epsilon)^T)}=T\sqrt{\log\mathcal{N}_{\mathcal{F}}(\epsilon)}$.}
+\uncover<4->{\par\medskip $K$ fitted critics give up to $\mathcal{N}_{\mathcal{F}}(\epsilon)^K$ sequences. So if we refit every episode, we get the very useless bound of $\sqrt{T\log(\mathcal{N}_{\mathcal{F}}(\epsilon)^T)}=T\sqrt{\log\mathcal{N}_{\mathcal{F}}(\epsilon)}$.}
 \end{frame}
 
 \begin{frame}{Can we update the critic less often?}
@@ -226,13 +224,13 @@ Each new threshold adds a bend.}
 \draw[arr] (3.5,1)--(4.4,1);\draw[arr] (7.5,1)--(8.5,1);
 \end{scope}
 \end{tikzpicture}\end{center}
-\uncover<2->{\[y_t^\pi=r+\sum_b\pi_{t,h+1}(b\mid s')f_{h+1}(s',b).\]}
+\uncover<2->{\[y_t^\pi=r+\sum_{a'}\pi_{t,h+1}(a'\mid s')f_{h+1}(s',a').\]}
 
 \uncover<3->{Between critic updates, does the old upper bound still hold?}
 \end{frame}
 
 \begin{frame}{An improving actor can overtake the old critic}
-Between fits, next-action scores $f_{h+1}(s',b)$ stay fixed. The actor changes their weights.
+You end up chasing a moving target.
 \begin{center}\begin{tikzpicture}[x=1cm,y=.85cm]
 \path[use as bounding box] (0,0) rectangle (12,4.75);
 \draw[arr] (1.9,.75)--(1.9,4.3);
@@ -249,7 +247,7 @@ Between fits, next-action scores $f_{h+1}(s',b)$ stay fixed. The actor changes t
 \end{scope}
 \draw[<->,thick,visible on=<3->] (9.55,2.53)--(9.55,3.70);
 \end{tikzpicture}\end{center}
-\uncover<3->{As the policy improves, the old critic can underestimate its target.}
+\uncover<3->{That is, as the policy improves, the old critic can underestimate its target. \newline No longer optimistic!}
 \end{frame}
 
 \begin{frame}{Fit the critic to the best next action}
@@ -265,35 +263,16 @@ Both updates use the same transition $(s,a,r,s')$ and next-action scores.
 \node at (9.15,1.41) {$\displaystyle r+\max_b f_{h+1}(s',b)$};
 \end{scope}
 \end{tikzpicture}\end{center}
-\uncover<2->{When the actor changes, the average changes but the maximum stays fixed.}
+\uncover<2->{So even though the actor changes, the critic is no longer chasing a moving target.}
 \uncover<3->{\[
 \left|\max_b f(s',b)-\max_b g(s',b)\right|\leq\|f-g\|_\infty.
 \]
-A cover of the critics also covers their maxima.}
+Conveniently max is a contraction, so the log-covering number is no longer an issue!}
 \end{frame}
 
-\begin{frame}{Optimism as the actor changes}
-Suppose the critic upper-bounds the expected target using the best next action.
-\begin{center}\begin{tikzpicture}[x=1cm,y=.84cm]
-\path[use as bounding box] (0,0) rectangle (12,4.68);
-\draw[arr] (1.9,.72)--(1.9,4.30);
-\node[lab,rotate=90] at (1,2.55) {Expected target};
-\draw[arr] (1.9,.72)--(10.3,.72) node[right,lab]{episode};
-\draw[pink,very thick] (2.35,3.89)--(9.8,3.89);
-\node[lab,text=pink,anchor=west] at (2.38,4.24) {Current estimate $f_h(s,a)$};
-\draw[green,thick,dashed] (2.35,3.11)--(9.8,3.11);
-\node[lab,text=green,anchor=west] at (2.38,3.42) {Expected best next-action target};
-\begin{scope}[visible on=<2->]
-\draw[blue,very thick] (2.52,1.04) .. controls (5.5,1.30) and (6.6,2.69) .. (9.56,2.87);
-\node[lab,text=blue,anchor=east] at (9.60,1.20) {Actor's expected target};
-\fill[blue] (2.52,1.04) circle(2.7pt);\fill[blue] (9.56,2.87) circle(2.7pt);
-\end{scope}
-\end{tikzpicture}\end{center}
-\uncover<2->{The actor's average cannot exceed the maximum. This upper bound holds as the policy changes.}
-\end{frame}
-
-\begin{frame}{Give the actor time to catch up}
-A new critic may favor an action that the old policy almost never took.
+\begin{frame}{Giving the actor time to catch up}
+Essentially we end up tracking the greedy policy induced by the critic.\newline
+Kind of like DDPG or TD3.
 \begin{center}\begin{tikzpicture}[x=1cm,y=.83cm]
 \path[use as bounding box] (0,0) rectangle (12,4.4);
 \node[lab,anchor=west] at (.4,4.02) {Probability of the newly favored action};
@@ -319,7 +298,7 @@ A new critic may favor an action that the old policy almost never took.
 \end{frame}
 
 \begin{frame}{Alg. 2: update the critic when its regression error grows}
-Using stored transitions $D_{t,h}$ from step $h$, we measure regression loss:
+Using stored transitions $D_{t,h}$ from step $h$, take a look at the regression loss:
 \[
 L_{t,h}(q,f)=\sum_{(s,a,r,s')\in D_{t,h}}[q(s,a)-r-\max_b f_{h+1}(s',b)]^2.
 \]
@@ -361,15 +340,14 @@ Bellman error = critic estimate $-$ expected target. The dimension $d$ measures 
 \end{frame}
 
 \begin{frame}{Regret over $T$ episodes}
-Alg. 2 \hfill Theorem 2, Tan, Fan and Wei (ICML 2025)
 \[
 \Reg(T)=\widetilde O\!\left(
 \underbrace{\sqrt{dH^5T\log|\A|}+dH^3}_{\text{actor tracking and resets}}
 +\underbrace{\sqrt{dH^4T\log\mathcal N}}_{\text{critic estimation}}\right).
 \]
 \pause\gap
-At fixed complexity, the average loss per episode is $\widetilde O(1/\sqrt T)$.
-\src{Probability $\geq 1-\delta$. Take one bounded class containing optimal values and the backups used in the fit. $\mathcal N$ is its $1/T$ covering number.}
+Average loss per episode is $\widetilde O(1/\sqrt T)$. Exactly what we wanted!
+
 \end{frame}
 
 \begin{frame}{Online experiment: Tetris}
@@ -387,6 +365,7 @@ Reference reward $-0.25$ per move. Mean $\pm$ one standard deviation over 30 tri
 \end{frame}
 
 \begin{frame}{When can Alg. 2 learn without optimism?}
+Just one more problem. The optimism implemented is really computationally inefficient. Can we omit it?
 \begin{center}\begin{tikzpicture}[x=1cm,y=.65cm]
 \path[use as bounding box] (0,0) rectangle (12,4.2);
 \node[lab] at (2,3.9) {Offline transitions};\node[lab] at (2,1.3) {Online transitions};
@@ -406,7 +385,7 @@ Reference reward $-0.25$ per move. Mean $\pm$ one standard deviation over 30 tri
 \text{Additional regret}
 =O\!\left(\sqrt{\beta^* H^4 c_{\rm off}^*T^2/N_{\rm off}}\right).
 \]
-For bounded coverage coefficient $c_{\rm off}^*$ and fixed complexity, $N_{\rm off}=\Omega(T)$ keeps this term at $\widetilde O(\sqrt T)$.}
+For coverage coefficient $c_{\rm off}^*$, $N_{\rm off}=\Omega(T)$ keeps this term at $\widetilde O(\sqrt T)$.}
 \src{$\beta^*$ is the confidence width for the critic.}
 \end{frame}
 

@@ -3,9 +3,9 @@
 \begin{frame}{2. Differentiable particle filters}
 {\Large Automatic Differentiation for Inference\\on Partially Observed Markov Process Models}\gap
 Joint work: Kevin Tan, A. J. Abkemeier, Kunyang He,\\Giles Hooker, Edward L. Ionides.
-\gap JRSS-B, revise and resubmit.\par
+\gap JRSS-B, reject -> R\&R -> reject -> major revision.\par
 \vspace{6mm}
-How do we fit a model when we can simulate its states but cannot observe them?
+Fitting a model of a stochastic nonlinear dynamical system when we can simulate its states, but cannot observe them.
 \end{frame}
 
 \begin{frame}{Monthly cholera deaths in Dhaka, 1891--1940}
@@ -29,7 +29,7 @@ Which recovery rate $\gamma$ best fits these 600 monthly death counts?
 \end{frame}
 
 \begin{frame}{Updating the state distribution}
-For fixed parameters $\theta$, $b_n$ is the distribution of hidden states given deaths observed through month $n$.
+Under some parameter $\theta$, we maintain a belief/distribution $b_n$ of hidden states given deaths observed through month $n$.
 \[
  b_n(dx)=\frac{1}{L_n}\,
  \underbrace{\textcolor{green}{g_\theta(y_n\mid x)}}_{\text{measurement}}
@@ -37,14 +37,14 @@ For fixed parameters $\theta$, $b_n$ is the distribution of hidden states given 
  \underbrace{\textcolor{blue}{P_\theta(dx\mid z)}}_{\text{process}}\,
  \underbrace{\textcolor{pink}{b_{n-1}(dz)}}_{\text{last month's filter}} .
 \]
-\pause We average predictions over last month's state distribution, then weight them by the density of observed deaths.
+\pause Take the belief at month $n-1$, propagate it one month forward to month $n$, then update the belief by the density of observed deaths.
 \pause\gap
-$L_n=p_\theta(y_n\mid y_{1:n-1})$ is the predictive density. The likelihood is $\prod_n L_n$.
+$L_n=p_\theta(y_n\mid y_{1:n-1})$ is the conditional likelihood. So the likelihood is $\prod_n L_n$!
 \end{frame}
 
 % Illustrative counts and measurement densities, not a fitted Dhaka trajectory.
-\begin{frame}{Predicting next month's populations}
-A particle gives possible counts of susceptible ($S$), infected ($I$) and immune ($R$) people.
+\begin{frame}{Now let's do this with Monte Carlo}
+Say we maintain several possible counts of susceptible ($S$), infected ($I$) and immune ($R$) people. Simulate it forward by one month.
 \begin{center}\begin{tikzpicture}[x=1cm,y=1cm,font=\small]
 \path[use as bounding box] (0,-.1) rectangle (12.4,4.35);
 \node at (2.4,4.1) {Last month's particles};
@@ -91,7 +91,7 @@ Observed this month: $y_n=12$ deaths.
 \node at (4.4,\y){\d};}
 \begin{scope}[visible on=<2->]
 \draw[arr,thick] (5.15,1.8)--(7.65,1.8);
-\node[align=center] at (6.4,2.85){Measurement\\density, then\\normalize};
+\node[align=center] at (6.4,2.85){Weight by \\ measurement \\density, then\\normalize};
 \node at (6.4,1.15){$g_\theta(y_n\mid\widetilde X_n^j)$};
 \draw[arr] (8.1,.5)--(12.5,.5);
 \node at (10.3,-.4){Particle};
@@ -104,7 +104,7 @@ Observed this month: $y_n=12$ deaths.
 \end{tikzpicture}\end{center}
 \vspace{-2mm}
 \uncover<2->{\[
-\overline g_n^j=\frac{g_n^j}{\sum_m g_n^m},\qquad
+\underbrace{\overline g_n^j=\frac{g_n^j}{\sum_m g_n^m}}_{\text{normalized weights}},\qquad
 \underbrace{\sum_j\overline g_n^j\delta_{\widetilde X_n^j}}_{\text{updated state distribution}}\approx b_n,\qquad
 \underbrace{\widehat L_n=\frac1J\sum_jg_n^j}_{\text{likelihood increment}}.
 \]}
@@ -112,6 +112,8 @@ Observed this month: $y_n=12$ deaths.
 \end{frame}
 
 \begin{frame}{Resampling particles}
+Unimportant particles have weights that shrink exponentially over time. \newline
+Let's get rid of them by resampling.
 \begin{center}\begin{tikzpicture}[x=1cm,y=1cm,font=\small]
 \path[use as bounding box] (0,0) rectangle (12.4,4.6);
 \foreach \j/\y/\r/\sir in {
@@ -129,8 +131,7 @@ Observed this month: $y_n=12$ deaths.
 \node at (9.8,4.25){Equally weighted copies};
 \end{tikzpicture}\end{center}
 \uncover<2->{\[A_n^{1:5}=(2,3,3,3,4),\qquad X_n^j=\widetilde X_n^{A_n^j}.\]}
-\uncover<2->{$A_n^j$ is the parent selected for copy $j$, with probability $\overline g_n^{A_n^j}$.}
-\src{One possible resampling draw. Circle area is proportional to weight. Each copy carries the full state, including modeled deaths.}
+\uncover<2->{$A_n^j$ is the parent/ancestor selected for copy $j$, with probability $\overline g_n^{A_n^j}$.}
 \end{frame}
 
 % Shared axes keep the fixed-seed PF and reweighted likelihood pictures aligned.
@@ -150,7 +151,7 @@ Observed this month: $y_n=12$ deaths.
 \draw[blue,fill=white,thick] (5.4,2.387) circle(2.4pt);
 \fill[blue] (5.4,3.3) circle(2.4pt);
 }
-\begin{frame}[t]{Resampling makes the fixed-seed likelihood discontinuous}
+\begin{frame}[t]{Problem: resampling makes the fixed-seed likelihood discontinuous}
 We keep the seed fixed as $\theta$ varies.
 \begin{center}\begin{tikzpicture}[x=1cm,y=.58cm,font=\small]
 \likelihoodaxes
@@ -167,7 +168,6 @@ We keep the seed fixed as $\theta$ varies.
 \end{scope}
 \end{tikzpicture}\end{center}
 \uncover<3->{At $\phi+\Delta$, changed weights select a different parent. The likelihood estimate jumps.}
-\src{Schematic, with a differentiable simulator. The jump need not occur at the baseline $\phi$.}
 \end{frame}
 
 \begin{frame}[t]{Reweighting gives a smooth likelihood approximation}
@@ -195,7 +195,7 @@ w_{\rm copy}=w_{\rm parent}\,\frac{g_{\rm parent}^\theta}{g_{\rm parent}^\phi}.
 \widehat L_n(\theta;\phi)=\widehat L_n(\phi)\times
 \frac{\text{total corrected weight of copies}}{\text{total incoming weight}}.
 \]}
-\src{Schematic log likelihood $\widehat\ell(\theta;\phi)=\sum_n\log\widehat L_n(\theta;\phi)$. Same value at $\theta=\phi$, with $\phi$ held fixed when differentiating.}
+\src{Of course, the log likelihood is $\widehat\ell(\theta;\phi)=\sum_n\log\widehat L_n(\theta;\phi)$. Same value at $\theta=\phi$, fixing $\phi$ when differentiating.}
 \end{frame}
 
 \begin{frame}{Correcting the resampling weights}
@@ -219,11 +219,11 @@ We selected parents under $\phi$, so we reweight their contributions at $\theta$
 \times\underbrace{\frac{g_2^\theta}{g_2^\phi}}_{\text{correction}}
 =\frac{g_2^\theta}{\sum_k g_k^\phi}.
 \]}
-\src{$g_j^\theta=g_\theta(y_n\mid\widetilde X_n^j(\theta))$: the density includes the change in the simulated state.}
+\src{To be specific $g_j^\theta=g_\theta(y_n\mid\widetilde X_n^j(\theta))$, including the change in the simulated state. Use the reparameterization trick!}
 \end{frame}
 
-\begin{frame}{Why unit correction weights still have derivatives}
-We vary $\theta$ while holding $\phi$ fixed, then evaluate the derivative at $\theta=\phi$.
+\begin{frame}{Dumping this into autograd}
+So we vary $\theta$ while holding $\phi$ fixed, then evaluate the derivative at $\theta=\phi$.
 \begin{columns}[c,onlytextwidth]
 \column{.43\textwidth}
 \begin{tikzpicture}[x=.72cm,y=.72cm,font=\small]
@@ -251,9 +251,8 @@ w(\phi;\phi)=1,\qquad
 =\left.\partial_\theta\log g_2^\theta\right|_{\theta=\phi}.
 \]}
 \end{columns}
-\uncover<2->{\par\smallskip\textbf{Forward:}\quad
-$\widehat\ell(\phi;\phi)=\widehat\ell_{\rm PF}(\phi)$,
-the usual particle-filter estimate.}
+\uncover<2->{\par\smallskip\textbf{This is just } $g_2^\theta / \operatorname{stop\_grad}(g_2^\theta)$!\quad
+So we happily dump the whole thing into autograd, noting that the forward pass is as usual:}
 \uncover<3->{\[
 \underbrace{\left.\nabla_\theta\widehat\ell(\theta;\phi)
 \right|_{\theta=\phi}}_{\text{backward pass}}
@@ -261,11 +260,10 @@ the usual particle-filter estimate.}
 \underbrace{\left.\nabla_\theta\log p_\theta(y_{1:N})
 \right|_{\theta=\phi}}_{\text{score}}.
 \]}
-\src{Schematic correction curve. Correction weights are 1 at the baseline; resampling probabilities generally are not.}
 \end{frame}
 
-\begin{frame}{Discounting accumulated importance weights}
-Each month multiplies the weight by $r_n$, the new measurement density divided by the baseline density.
+\begin{frame}{The importance weights accumulate, let's fix that}
+Each month we multiply the weights $w_n$ by the density ratio correction $r_n$.
 \begin{center}\begin{tikzpicture}[x=1cm,y=.9cm,font=\small]
 \path[use as bounding box] (0,-.15) rectangle (12.4,3.1);
 \foreach \x/\n in {1.8/1,6.2/2,10.6/3}{
@@ -278,13 +276,11 @@ Each month multiplies the weight by $r_n$, the new measurement density divided b
 \node at (10.6,1.2){$w_3=\textcolor{blue}{\alt<2->{r_1^{\alpha^2}}{r_1}}\,\textcolor{pink}{\alt<2->{r_2^\alpha}{r_2}}\,r_3$};
 \node[visible on=<2->] at (6.2,.25){For $\alpha<1$, older log corrections receive less weight.};
 \end{tikzpicture}\end{center}
-Without discounting, off-baseline weights can grow exponentially with the horizon.
+Without discounting, off-baseline weights can grow exponentially with the horizon. On-baseline, the score estimator becomes high-variance. So you discount!
 \uncover<2->{\[
 w_{\rm new}=w_{\rm parent}^{\alpha}r_{\rm new},\qquad 0\le\alpha\le1.
 \]}
-\uncover<3->{At $\phi$, weights stay at 1 but derivatives accumulate.\par
-Discounting can reduce variance, at the cost of bias.}
-\src{Incoming weight is $w_{\rm parent}^\alpha$; the simulated state still depends on $\theta$.}
+\uncover<3->{Gets you a bias-variance tradeoff.}
 \end{frame}
 
 \begin{frame}{Likelihood near the baseline recovery rate}
@@ -292,14 +288,16 @@ Discounting can reduce variance, at the cost of bias.}
 \begin{columns}[c]
 \column{.58\textwidth}\picturefit[4.9cm]{dmop-local-labeled.pdf}
 \column{.39\textwidth}
-Dhaka recovery rate, 10,000 particles.
+Slice of the likelihood for the recovery rate in the Dhaka cholera model, 10,000 particles.
 \pause\gap
-The estimates agree closely at $\phi=18$, with different slopes.
+The estimates agree closely at $\phi=18$. 
+\pause\gap 
+But their slopes are different!
 \end{columns}
 \src{Fig. 1A. Before-resampling estimates, systematic resampling.}
 \end{frame}
 
-\begin{frame}{How does discounting change the estimated score?}
+\begin{frame}{Bias-variance tradeoff}
 \begin{columns}[c,onlytextwidth]
 \column{.56\textwidth}
 \begin{tikzpicture}
@@ -317,7 +315,7 @@ The estimates agree closely at $\phi=18$, with different slopes.
 \column{.41\textwidth}
 1,000 runs of 10,000 particles at the fitted parameters.
 \uncover<2->{\gap Variance rises near $\alpha=1$.}
-\uncover<3->{\gap The blue curve is the mean squared norm. It equals score MSE at a stationary point.}
+\uncover<3->{\gap Blue: MSE, Yellow: Bias, Magenta: Variance. At a stationary point, which we have hopefully found.}
 \end{columns}
 \src{Fig. 1B. Gradient of log likelihood per observation, summed moments across coordinates. Same filter as Fig. 1A.}
 \end{frame}
@@ -333,13 +331,13 @@ For $\alpha<1$, let $H_N(\alpha)=\sum_{r=0}^{N-1}\alpha^r$. Then
 \underbrace{\left[\frac{N(1+\log J)^2}{J}+\frac{N^2}{J^2}\right]H_N(\alpha)^2}_{\text{particle approximation}}
 +\underbrace{N^2(1-\alpha)^2}_{\text{discount-bias bound}} .
 \]
-\src{Theorem 5. After-resampling estimate with multinomial draws, $J\ge2$. Smoothness, bounded positive densities and bounded derivatives (A2, A3, A5), plus sensitivity decay (A6) or joint state--derivative mixing (A6-J).}
+\src{Under suFfiCienT rEGulaRiTy cOndITioNS, i.e. to say smoothness, bounded positive densities and bounded derivatives, plus either sensitivity decay or joint state--derivative mixing.}
 \end{frame}
 
 \begin{frame}{Fitting the model}
 \begin{center}\begin{tikzpicture}[x=1cm,y=1cm]
 \path[use as bounding box] (0,0) rectangle (12,5.4);
-\node[obj] (init) at (1.4,3.6) {$\theta_0$};\node[lab] at (1.4,4.7) {Initial fit\\(iterated filtering)};
+\node[obj] (init) at (1.4,3.6) {$\theta_0$};\node[lab] at (1.4,4.7) {Warm-start with coarse initial fit\\(iterated filtering)};
 \node[obj] (theta) at (5.6,3.6) {$\theta_k$};\node[lab] at (5.6,4.7) {Current parameter};
 \node (score) at (10,3.6) {$\widehat S_{J,\alpha}(\theta_k)$};
 \node[lab] at (10,4.7) {DMOP score};
